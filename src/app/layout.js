@@ -1,7 +1,8 @@
 import { Inter } from "next/font/google";
+import { Notifications } from "@mantine/notifications";
 import "./globals.css";
 
-import { createTheme, MantineProvider } from "@mantine/core";
+import { createTheme, MantineProvider, ColorSchemeScript } from "@mantine/core";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -31,8 +32,14 @@ const theme = createTheme({
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
+            <head>
+                <ColorSchemeScript />
+            </head>
             <body className={inter.className}>
-                <MantineProvider theme={theme}>{children}</MantineProvider>
+                <MantineProvider theme={theme} defaultColorScheme="light">
+                    <Notifications />
+                    {children}
+                </MantineProvider>
             </body>
         </html>
     );

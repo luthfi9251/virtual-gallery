@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique @db.VarChar(20)
+  email        String   @unique @db.VarChar(100)
+  password     String   @db.VarChar(100)
+  nama_lengkap String   @db.VarChar(100)
+  tgl_lhr      DateTime
+  tempat_lhr   String   @db.VarChar(100)
+  role         UserRole @default(USER)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  Seniman      Seniman?
+  Kurator      Kurator?
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Seniman {
+  id          String   @id @default(uuid())
+  foto_profil String?
+  is_verified Boolean  @default(false)
+  deskripsi   String   @db.Text
+  user_id     String   @unique
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  User        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Kurator {
+  id          String   @id @default(uuid())
+  foto_profil String?
+  is_verified Boolean  @default(false)
+  deskripsi   String   @db.Text
+  user_id     String   @unique
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  User        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
