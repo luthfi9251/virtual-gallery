@@ -6,6 +6,7 @@ import {
     Input,
     InputWrapper,
     Textarea,
+    Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useMemo, useState } from "react";
@@ -15,10 +16,32 @@ import {
     MRT_TablePagination,
     MRT_GlobalFilterTextInput,
 } from "mantine-react-table";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { getUnverifiedPelukis, verifPelukis } from "../actions";
 
 export default function DataTableComponent({ records }) {
-    const [opened, { open, close }] = useDisclosure(false);
+    const queryClient = useQueryClient();
+    const { data, isLoading, dataUpdatedAt } = useQuery({
+        queryKey: ["admin", "verifikasi", "pelukis"],
+        queryFn: async () => await getUnverifiedPelukis(),
+        initialData: records,
+        refetchInterval: 30 * 1000,
+    });
+    const updateAt = useMemo(
+        () => new Date(dataUpdatedAt).toLocaleString(),
+        [dataUpdatedAt]
+    );
     const [selectedData, setSelectedData] = useState(null);
+    const mutation = useMutation({
+        mutationFn: async () => verifPelukis(selectedData.id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["admin", "verifikasi", "pelukis"],
+            });
+        },
+    });
+
+    const [opened, { open, close }] = useDisclosure(false);
     let columnTable = useMemo(
         () => [
             {
@@ -75,12 +98,15 @@ export default function DataTableComponent({ records }) {
     );
     const table = useMantineReactTable({
         columns: columnTable,
-        data: records, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+        data: data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
         enableColumnActions: false,
         enableColumnFilters: false,
         enablePagination: true,
         paginationDisplayMode: "pages",
         positionPagination: "bottom",
+        state: {
+            isLoading,
+        },
         initialState: {
             showGlobalFilter: true,
             sorting: [
@@ -104,6 +130,9 @@ export default function DataTableComponent({ records }) {
             className=" shadow-lg rounded-sm border-[1px] overflow-hidden"
         >
             <MRT_GlobalFilterTextInput table={table} />
+            <Text size="xs" suppressHydrationWarning>
+                Terakhir Diperbaharui : {updateAt}
+            </Text>
             <MRT_Table table={table} />
             <MRT_TablePagination table={table} />
             <Modal
@@ -131,7 +160,15 @@ export default function DataTableComponent({ records }) {
                             maxRows={4}
                         />
                     </InputWrapper>
-                    <Button onClick={close}>Verifikasi</Button>
+                    <Button
+                        loading={mutation.isPending}
+                        onClick={() => {
+                            mutation.mutate();
+                            close();
+                        }}
+                    >
+                        Verifikasi
+                    </Button>
                 </Stack>
             </Modal>
         </Stack>

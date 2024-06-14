@@ -30,7 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                 switch (credentials.login_as) {
                     case "PELUKIS":
-                        if (findUser.Seniman) {
+                        if (findUser?.Seniman) {
                             user = findUser;
                             user.login_as = "PELUKIS";
                         } else {
@@ -40,7 +40,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         }
                         break;
                     case "KURATOR":
-                        if (findUser.Kurator) {
+                        if (findUser?.Kurator) {
                             user = findUser;
                             user.login_as = "KURATOR";
                         } else {
@@ -58,7 +58,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         }
                         break;
                     default:
-                        throw new Error("Kesalahan saat registrasi!");
+                        throw new Error("Kesalahan saat autentikasi!");
                         break;
                 }
 

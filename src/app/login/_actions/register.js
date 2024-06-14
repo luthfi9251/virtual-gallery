@@ -1,13 +1,71 @@
 "use server";
-
 import { hashPassword } from "@/lib/bcrypt";
 import { signIn } from "@/auth";
 import prisma from "@/lib/prisma";
+import { auth } from "@/auth";
+
+export const testData = async (data) => {
+    console.log(data);
+    return {
+        success: true,
+        message: "Berhasil test",
+        data: { nama_lengkap: "Luthfi" },
+    };
+};
+
+export const loginUser = async (data) => {
+    try {
+        await signIn("credentials", {
+            email: data.email,
+            password: data.password,
+            login_as: "USER",
+            redirect: false,
+        });
+        let session = await auth();
+        console.log(session);
+
+        return {
+            success: true,
+            message: "Berhasil Log In",
+            data: {
+                redirect_to:
+                    session.user.role === "ADMIN" ? "/a/dashboard" : "/u",
+            },
+        };
+    } catch (err) {
+        console.log(err);
+        return {
+            success: false,
+            message: err.cause?.err?.message,
+            data: null,
+        };
+    }
+};
 
 export const loginPelukis = async (data) => {
-    data["login_as"] = "PELUKIS";
-    console.log({ data });
-    return await signIn("credentials", data);
+    try {
+        await signIn("credentials", {
+            email: data.email,
+            password: data.password,
+            login_as: "PELUKIS",
+            redirect: false,
+        });
+
+        return {
+            success: true,
+            message: "Berhasil Log In",
+            data: {
+                redirect_to: "/",
+            },
+        };
+    } catch (err) {
+        console.log(err);
+        return {
+            success: false,
+            message: err.cause?.err?.message,
+            data: null,
+        };
+    }
 };
 
 export const registerPelukis = async (data) => {
@@ -39,7 +97,11 @@ export const registerPelukis = async (data) => {
                 },
             },
         });
-        return { success: true, message: "Berhasil registrasi" };
+        return {
+            success: true,
+            message: "Berhasil registrasi",
+            data: { nama_lengkap: createUser.nama_lengkap },
+        };
     } catch (err) {
         console.log(err);
         switch (err.meta.target) {
