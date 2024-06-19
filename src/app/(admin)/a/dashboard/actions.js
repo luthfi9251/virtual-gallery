@@ -80,6 +80,7 @@ export const verifKurator = async (idKurator) => {
         },
         data: {
             is_verified: true,
+            verified_at: new Date().toISOString(),
         },
     });
 
@@ -92,6 +93,7 @@ export const verifPelukis = async (idSeniman) => {
         },
         data: {
             is_verified: true,
+            verified_at: new Date().toISOString(),
         },
     });
 

@@ -1,8 +1,8 @@
 import Sidebar from "../../../Sidebar";
 import { auth } from "@/auth";
 export default async function Page() {
-    let session = await auth();
-    console.log(session);
+    // let session = await auth();
+    // console.log(session);
     return (
         <div>
             <p>

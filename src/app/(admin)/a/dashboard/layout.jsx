@@ -79,28 +79,10 @@ let NAV_DATA_GROUP = [
                     {
                         label: (
                             <Text fz="md" fw="500">
-                                Pelukis
-                            </Text>
-                        ),
-                        href: "#",
-                        leftSection: <FaPaintbrush size="1rem" stroke={1.5} />,
-                    },
-                    {
-                        label: (
-                            <Text fz="md" fw="500">
-                                Kurator
-                            </Text>
-                        ),
-                        href: "#",
-                        leftSection: <FaPenFancy size="1rem" stroke={1.5} />,
-                    },
-                    {
-                        label: (
-                            <Text fz="md" fw="500">
                                 User
                             </Text>
                         ),
-                        href: "#",
+                        href: "/a/dashboard/akun",
                         leftSection: <FaUserTie size="1rem" stroke={1.5} />,
                     },
                 ],

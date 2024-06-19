@@ -67,7 +67,7 @@ export default function Sidebar({ children, navData }) {
                 <AppShellSection p="md" grow component={ScrollArea}>
                     {navData.map((item, index) => {
                         return (
-                            <Stack gap="0" my="sm">
+                            <Stack gap="0" my="sm" key={index}>
                                 {item.group && (
                                     <Text
                                         size="sm"
