@@ -1,12 +1,12 @@
 import { Title, Container, Space } from "@mantine/core";
 import DataTable from "./DataTable";
-import { getUnverifiedPelukis } from "../actions";
+import { getUnverifiedKurator } from "../actions";
 
 export default async function Page() {
-    const data = await getUnverifiedPelukis();
+    const data = await getUnverifiedKurator();
     return (
         <Container fluid>
-            <Title order={2}>Verifikasi Akun Pelukis</Title>
+            <Title order={2}>Verifikasi Akun Kurator</Title>
             <Space h="xl" />
             <DataTable records={data} />
         </Container>

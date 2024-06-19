@@ -1,7 +1,13 @@
 import Sidebar from "../../../Sidebar";
 import { Text } from "@mantine/core";
-import { FaChevronRight, FaPaintbrush, FaClipboardList } from "react-icons/fa6";
+import {
+    FaChevronRight,
+    FaPaintbrush,
+    FaClipboardList,
+    FaUserTie,
+} from "react-icons/fa6";
 import { FaHome, FaPenFancy } from "react-icons/fa";
+import { MdManageAccounts } from "react-icons/md";
 
 let NAV_DATA = [
     {
@@ -10,7 +16,7 @@ let NAV_DATA = [
                 Dashboard
             </Text>
         ),
-        href: "#",
+        href: "/a/dashboard",
         leftSection: <FaHome size="1rem" stroke={1.5} />,
     },
     {
@@ -37,13 +43,101 @@ let NAV_DATA = [
                         Kurator
                     </Text>
                 ),
-                href: "#",
+                href: "/a/dashboard/verifikasi-kurator",
                 leftSection: <FaPenFancy size="1rem" stroke={1.5} />,
+            },
+        ],
+    },
+];
+let NAV_DATA_GROUP = [
+    {
+        group: null,
+        link: [
+            {
+                label: (
+                    <Text fz="md" fw="500">
+                        Dashboard
+                    </Text>
+                ),
+                href: "/a/dashboard",
+                leftSection: <FaHome size="1rem" stroke={1.5} />,
+            },
+        ],
+    },
+    {
+        group: "Akun",
+        link: [
+            {
+                label: (
+                    <Text fz="md" fw="500">
+                        Kelola Akun
+                    </Text>
+                ),
+                href: "#",
+                leftSection: <MdManageAccounts size="1rem" stroke={1.5} />,
+                children: [
+                    {
+                        label: (
+                            <Text fz="md" fw="500">
+                                Pelukis
+                            </Text>
+                        ),
+                        href: "#",
+                        leftSection: <FaPaintbrush size="1rem" stroke={1.5} />,
+                    },
+                    {
+                        label: (
+                            <Text fz="md" fw="500">
+                                Kurator
+                            </Text>
+                        ),
+                        href: "#",
+                        leftSection: <FaPenFancy size="1rem" stroke={1.5} />,
+                    },
+                    {
+                        label: (
+                            <Text fz="md" fw="500">
+                                User
+                            </Text>
+                        ),
+                        href: "#",
+                        leftSection: <FaUserTie size="1rem" stroke={1.5} />,
+                    },
+                ],
+            },
+            {
+                label: (
+                    <Text fz="md" fw="500">
+                        Verfikasi Akun
+                    </Text>
+                ),
+                href: "#",
+                leftSection: <FaClipboardList size="1rem" stroke={1.5} />,
+                children: [
+                    {
+                        label: (
+                            <Text fz="md" fw="500">
+                                Pelukis
+                            </Text>
+                        ),
+                        href: "/a/dashboard/verifikasi-pelukis",
+                        leftSection: <FaPaintbrush size="1rem" stroke={1.5} />,
+                    },
+                    {
+                        label: (
+                            <Text fz="md" fw="500">
+                                Kurator
+                            </Text>
+                        ),
+                        href: "/a/dashboard/verifikasi-kurator",
+                        leftSection: <FaPenFancy size="1rem" stroke={1.5} />,
+                    },
+                ],
             },
         ],
     },
 ];
 
 export default function layout({ children }) {
-    return <Sidebar navData={NAV_DATA}>{children}</Sidebar>;
+    return <Sidebar navData={NAV_DATA_GROUP}>{children}</Sidebar>;
 }

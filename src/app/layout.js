@@ -12,16 +12,16 @@ export const metadata = {
 };
 
 const myColor = [
-    "#e5feee",
-    "#d2f9e0",
-    "#a8f1c0",
-    "#7aea9f",
-    "#53e383",
-    "#3bdf70",
-    "#2bdd66",
-    "#1ac455",
-    "#0caf49",
-    "#00963c",
+    "#ebfcff",
+    "#d7f7fc",
+    "#aaeffb",
+    "#7ce7fa",
+    "#60e0f8",
+    "#53dcf8",
+    "#4bdaf9",
+    "#3ec1de",
+    "#2eacc6",
+    "#00849A",
 ];
 
 const theme = createTheme({

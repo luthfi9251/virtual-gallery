@@ -8,7 +8,7 @@ import {
     ScrollArea,
     Burger,
     Group,
-    Skeleton,
+    Stack,
     Text,
     UnstyledButton,
     rem,
@@ -18,10 +18,16 @@ import {
 import Link from "next/link";
 import { useDisclosure } from "@mantine/hooks";
 import { FaChevronRight, FaPaintbrush, FaClipboardList } from "react-icons/fa6";
-import { FaHome, FaPenFancy } from "react-icons/fa";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Sidebar({ children, navData }) {
-    const [opened, { toggle }] = useDisclosure();
+    const [opened, { toggle, close }] = useDisclosure();
+    const pathname = usePathname();
+
+    useEffect(() => {
+        close();
+    }, [pathname]);
 
     return (
         <AppShell
@@ -33,6 +39,7 @@ export default function Sidebar({ children, navData }) {
                 collapsed: { mobile: !opened },
             }}
             padding="md"
+            color="myColor"
         >
             <AppShellHeader hiddenFrom="md">
                 <Group h="100%" px="md">
@@ -43,7 +50,6 @@ export default function Sidebar({ children, navData }) {
                         size="sm"
                     />
                     <Text>LOGO TANART</Text>
-                    {/* <MantineLogo size={30} /> */}
                 </Group>
             </AppShellHeader>
             <AppShellNavbar>
@@ -61,28 +67,57 @@ export default function Sidebar({ children, navData }) {
                 <AppShellSection p="md" grow component={ScrollArea}>
                     {navData.map((item, index) => {
                         return (
-                            <NavLink
-                                key={index}
-                                my="3"
-                                component={Link}
-                                href={item.href}
-                                label={item.label}
-                                leftSection={item.leftSection}
-                            >
-                                {item.children
-                                    ? item.children.map((item2, index2) => (
-                                          <NavLink
-                                              active={index2 == 0}
-                                              key={index2}
-                                              my="3"
-                                              href={item2.href}
-                                              label={item2.label}
-                                              leftSection={item2.leftSection}
-                                              component={Link}
-                                          />
-                                      ))
-                                    : null}
-                            </NavLink>
+                            <Stack gap="0" my="sm">
+                                {item.group && (
+                                    <Text
+                                        size="sm"
+                                        px="md"
+                                        fw={300}
+                                        className=" cursor-default"
+                                    >
+                                        {item.group}
+                                    </Text>
+                                )}
+                                {item.link.map((item1, index1) => {
+                                    return (
+                                        <NavLink
+                                            key={index1}
+                                            h="3rem"
+                                            my="3"
+                                            active={pathname == item1.href}
+                                            component={Link}
+                                            href={item1.href}
+                                            label={item1.label}
+                                            leftSection={item1.leftSection}
+                                            className="rounded data-[active=true]:bg-tanArtBlue-900 data-[active=true]:text-white text-tanArtBlue-900"
+                                        >
+                                            {item1.children
+                                                ? item1.children.map(
+                                                      (item2, index2) => (
+                                                          <NavLink
+                                                              active={
+                                                                  pathname ==
+                                                                  item2.href
+                                                              }
+                                                              key={index2}
+                                                              my="3"
+                                                              href={item2.href}
+                                                              label={
+                                                                  item2.label
+                                                              }
+                                                              leftSection={
+                                                                  item2.leftSection
+                                                              }
+                                                              component={Link}
+                                                              className="rounded data-[active=true]:bg-tanArtBlue-900 data-[active=true]:text-white text-tanArtBlue-900"
+                                                          />
+                                                      )
+                                                  )
+                                                : null}
+                                        </NavLink>
+                                    );
+                                })}
+                            </Stack>
                         );
                     })}
                 </AppShellSection>

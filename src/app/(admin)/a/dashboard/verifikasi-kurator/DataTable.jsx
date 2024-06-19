@@ -7,7 +7,6 @@ import {
     InputWrapper,
     Textarea,
     Text,
-    ScrollAreaAutosize,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useMemo, useState } from "react";
@@ -18,13 +17,13 @@ import {
     MRT_GlobalFilterTextInput,
 } from "mantine-react-table";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { getUnverifiedPelukis, verifPelukis } from "../actions";
+import { getUnverifiedKurator, verifKurator } from "../actions";
 
 export default function DataTableComponent({ records }) {
     const queryClient = useQueryClient();
     const { data, isLoading, dataUpdatedAt } = useQuery({
-        queryKey: ["admin", "verifikasi", "pelukis"],
-        queryFn: async () => await getUnverifiedPelukis(),
+        queryKey: ["admin", "verifikasi", "kurator"],
+        queryFn: async () => await getUnverifiedKurator(),
         initialData: records,
         refetchInterval: 30 * 1000,
     });
@@ -34,10 +33,10 @@ export default function DataTableComponent({ records }) {
     );
     const [selectedData, setSelectedData] = useState(null);
     const mutation = useMutation({
-        mutationFn: async () => verifPelukis(selectedData.id),
+        mutationFn: async () => verifKurator(selectedData.id),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ["admin", "verifikasi", "pelukis"],
+                queryKey: ["admin", "verifikasi", "kurator"],
             });
         },
     });
@@ -134,9 +133,7 @@ export default function DataTableComponent({ records }) {
             <Text size="xs" suppressHydrationWarning>
                 Terakhir Diperbarui : {updateAt}
             </Text>
-            <ScrollAreaAutosize>
-                <MRT_Table table={table} />
-            </ScrollAreaAutosize>
+            <MRT_Table table={table} />
             <MRT_TablePagination table={table} />
             <Modal
                 opened={opened}
