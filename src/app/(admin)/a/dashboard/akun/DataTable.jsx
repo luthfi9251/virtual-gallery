@@ -1,6 +1,18 @@
 "use client";
-import { ActionIcon, Stack, ScrollAreaAutosize } from "@mantine/core";
+import {
+    ActionIcon,
+    Stack,
+    ScrollAreaAutosize,
+    Group,
+    Button,
+    Fieldset,
+    Title,
+    Drawer,
+    Checkbox,
+    CheckboxGroup,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import FormRegisterUser from "@/components/FormRegisterUser";
 import { useMemo, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import MenuItemRow from "./Menu";
@@ -10,10 +22,17 @@ import {
     MRT_TablePagination,
     MRT_GlobalFilterTextInput,
 } from "mantine-react-table";
-import { useEffect } from "react";
-import { getUserDataById } from "@/actions/user";
+import {
+    useForm,
+    isNotEmpty,
+    isEmail,
+    isInRange,
+    hasLength,
+    matchesField,
+} from "@mantine/form";
 
 export default function DataTableComponent({ records }) {
+    const [opened, { open, close }] = useDisclosure(false);
     let columnTable = useMemo(
         () => [
             {
@@ -84,16 +103,86 @@ export default function DataTableComponent({ records }) {
         },
     });
 
+    let formRegister = useForm({
+        name: "register-form",
+        mode: "uncontrolled",
+        initialValues: {
+            nama_lengkap: "",
+            username: "",
+            email: "",
+            tempat_lhr: "",
+            tgl_lhr: "",
+            password: "",
+            "confirm-password": "",
+        },
+        validate: {
+            username: hasLength({ min: 5, max: 20 }),
+            nama_lengkap: isNotEmpty("Nama tidak boleh Kosong!"),
+            email: isEmail("Masukkan Email Valid!"),
+            tempat_lhr: hasLength(
+                { min: 3, max: 100 },
+                "Tempat Lahir minimal 3 huruf dan maksimal 100 huruf!"
+            ),
+            tgl_lhr: isNotEmpty("tidak boleh kosong!"),
+            password: hasLength(
+                { min: 3, max: 100 },
+                "Password minimal 6 huruf"
+            ),
+            "confirm-password": matchesField(
+                "password",
+                "Tidak sama dengan password!"
+            ),
+        },
+    });
+
+    let handleSubmit = (data) => {
+        console.log(data);
+    };
+
     return (
-        <Stack
-            p="sm"
-            className=" shadow-lg rounded-sm border-[1px] overflow-hidden"
-        >
-            <MRT_GlobalFilterTextInput table={table} />
-            <ScrollAreaAutosize>
-                <MRT_Table table={table} />
-            </ScrollAreaAutosize>
-            <MRT_TablePagination table={table} />
-        </Stack>
+        <>
+            <Stack
+                p="sm"
+                className=" shadow-lg rounded-sm border-[1px] overflow-hidden"
+            >
+                <Group justify="space-between">
+                    <MRT_GlobalFilterTextInput table={table} />
+                    <Button color="myColor.8" onClick={open}>
+                        Tambah User
+                    </Button>
+                </Group>
+                <ScrollAreaAutosize>
+                    <MRT_Table table={table} />
+                </ScrollAreaAutosize>
+                <MRT_TablePagination table={table} />
+            </Stack>
+            <Drawer
+                opened={opened}
+                onClose={close}
+                title={<Title order={3}>Tambah User</Title>}
+                position="right"
+                closeOnClickOutside={false}
+            >
+                <Fieldset legend="Data Akun">
+                    <FormRegisterUser
+                        form={formRegister}
+                        submitHandler={handleSubmit}
+                    />
+                </Fieldset>
+                <Fieldset legend="Akses Akun" my={10}>
+                    <Checkbox.Group
+                        defaultValue={["react"]}
+                        label="Pilih akses akun"
+                        description="Jika tidak ada, bisa dikosongkan"
+                    >
+                        <Group mt="xs">
+                            <Checkbox value="PELUKIS" label="Pelukis" />
+                            <Checkbox value="KURATOR" label="Kurator" />
+                        </Group>
+                    </Checkbox.Group>
+                </Fieldset>
+                <Button>Simpan</Button>
+            </Drawer>
+        </>
     );
 }

@@ -1,10 +1,13 @@
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { Notifications } from "@mantine/notifications";
 import QueryProvider from "./QueryProvider";
 import "./globals.css";
 
 import { createTheme, MantineProvider, ColorSchemeScript } from "@mantine/core";
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+    subsets: ["latin"],
+    weight: ["200", "300", "400", "500", "600", "700"],
+});
 
 export const metadata = {
     title: "Create Next App",
@@ -12,22 +15,22 @@ export const metadata = {
 };
 
 const myColor = [
-    "#ebfcff",
-    "#d7f7fc",
-    "#aaeffb",
-    "#7ce7fa",
-    "#60e0f8",
-    "#53dcf8",
-    "#4bdaf9",
-    "#3ec1de",
-    "#2eacc6",
+    "#B4E1E9",
+    "#A9C7D1",
+    "#8DD2DD",
+    "#51A3A9",
+    "#1D9CB3",
+    "#3EB3C6",
     "#00849A",
+    "#2C9FA7",
+    "#3091A1",
 ];
 
 const theme = createTheme({
     colors: {
         myColor,
     },
+    primaryColor: "myColor",
 });
 
 export default function RootLayout({ children }) {
@@ -36,7 +39,7 @@ export default function RootLayout({ children }) {
             <head>
                 <ColorSchemeScript />
             </head>
-            <body className={inter.className}>
+            <body className={poppins.className}>
                 <QueryProvider>
                     <MantineProvider theme={theme} defaultColorScheme="light">
                         <Notifications />

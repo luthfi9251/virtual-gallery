@@ -6,7 +6,7 @@ export default async function Page() {
     const data = await getAllUserAccount();
     return (
         <Container fluid>
-            <Title order={2}>Akun Pengguna</Title>
+            <Title order={2}>Kelola Akun Pengguna</Title>
             <Space h="xl" />
             <DataTable records={data} />
         </Container>

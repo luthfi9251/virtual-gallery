@@ -1,5 +1,5 @@
 "use client";
-import { TextInput, PasswordInput, Button } from "@mantine/core";
+import { TextInput, PasswordInput, Button, Stack, Text } from "@mantine/core";
 import {
     useForm,
     isNotEmpty,
@@ -8,6 +8,7 @@ import {
     hasLength,
     matchesField,
 } from "@mantine/form";
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
@@ -49,21 +50,57 @@ export default function FormLogin({ loginHandler }) {
 
     return (
         <form onSubmit={formLogin.onSubmit(handleSubmitLogin)}>
-            <TextInput
-                label="Email"
-                name="email"
-                key={formLogin.key("email")}
-                {...formLogin.getInputProps("email")}
-            />
-            <PasswordInput
-                label="Password"
-                name="password"
-                key={formLogin.key("password")}
-                {...formLogin.getInputProps("password")}
-            />
-            <Button type="submit" loading={loading}>
-                Submit
-            </Button>
+            <Stack gap="lg">
+                <TextInput
+                    radius="md"
+                    label={
+                        <Text fw="bold" size="xs">
+                            Email
+                        </Text>
+                    }
+                    name="email"
+                    placeholder="Masukkan Email"
+                    key={formLogin.key("email")}
+                    {...formLogin.getInputProps("email")}
+                />
+                <PasswordInput
+                    radius="md"
+                    label={
+                        <Text fw="bold" size="xs">
+                            Kata Sandi
+                        </Text>
+                    }
+                    name="password"
+                    placeholder="Masukkan Kata Sandi"
+                    key={formLogin.key("password")}
+                    {...formLogin.getInputProps("password")}
+                />
+                <Link href="#">
+                    <Text size="xs" className="text-end underline">
+                        Lupa password ?
+                    </Text>
+                </Link>
+                <Button
+                    type="submit"
+                    loading={loading}
+                    color="myColor"
+                    radius="md"
+                    className="hover:bg-white hover:text-tanArtBlue-600 hover:border-tanArtBlue-600 transition-all"
+                >
+                    Submit
+                </Button>
+                <Text size="sm" className="text-center">
+                    Belum punya akun?{" "}
+                    <span>
+                        <Link
+                            href="#"
+                            className=" text-tanArtBlue-600 font-bold"
+                        >
+                            Daftar
+                        </Link>
+                    </span>
+                </Text>
+            </Stack>
         </form>
     );
 }

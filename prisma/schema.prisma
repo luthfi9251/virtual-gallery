@@ -21,6 +21,7 @@ model User {
   nama_lengkap String   @db.VarChar(100)
   tgl_lhr      DateTime
   tempat_lhr   String   @db.VarChar(100)
+  foto_profil  String?
   role         UserRole @default(USER)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
@@ -35,7 +36,6 @@ enum UserRole {
 
 model Seniman {
   id          String    @id @default(uuid())
-  foto_profil String?
   is_verified Boolean   @default(false)
   deskripsi   String    @db.Text
   user_id     String    @unique
@@ -47,7 +47,6 @@ model Seniman {
 
 model Kurator {
   id          String   @id @default(uuid())
-  foto_profil String?
   is_verified Boolean  @default(false)
   deskripsi   String   @db.Text
   user_id     String   @unique
