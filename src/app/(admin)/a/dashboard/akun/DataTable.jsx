@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import FormRegisterUser from "@/components/FormRegisterUser";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useOptimistic, startTransition } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import MenuItemRow from "./Menu";
 import {
@@ -30,9 +30,24 @@ import {
     hasLength,
     matchesField,
 } from "@mantine/form";
+import { adminAddUser } from "@/actions/user";
+import { notifications } from "@mantine/notifications";
 
 export default function DataTableComponent({ records }) {
     const [opened, { open, close }] = useDisclosure(false);
+    const [selectValue, setSelectValue] = useState([]);
+    const [optimisticUser, addOptimisticUser] = useOptimistic(
+        records,
+        (state, { user, operation }) => {
+            if (operation === "ADD") {
+                return [...state, user];
+            } else if (operation === "DELETE") {
+                return state.filter((item) => item.id !== user.id);
+            } else {
+                return [];
+            }
+        }
+    );
     let columnTable = useMemo(
         () => [
             {
@@ -66,9 +81,14 @@ export default function DataTableComponent({ records }) {
                 mantineTableBodyCellProps: {
                     align: "center",
                 },
-                Cell: ({ row }) => {
+                Cell: ({ row, table }) => {
                     return (
-                        <MenuItemRow data={row.original}>
+                        <MenuItemRow
+                            data={row.original}
+                            optimisticHandler={
+                                table.options.meta.addOptimisticUser
+                            }
+                        >
                             <ActionIcon
                                 component="button"
                                 size="md"
@@ -92,6 +112,9 @@ export default function DataTableComponent({ records }) {
         enablePagination: true,
         paginationDisplayMode: "pages",
         positionPagination: "bottom",
+        meta: {
+            addOptimisticUser,
+        },
         initialState: {
             showGlobalFilter: true,
         },
@@ -136,7 +159,22 @@ export default function DataTableComponent({ records }) {
     });
 
     let handleSubmit = (data) => {
-        console.log(data);
+        adminAddUser(data, selectValue)
+            .then((res) => {
+                notifications.show({
+                    title: "Berhasil Registrasi!",
+                    message: `Berhasil menambahkan akun`,
+                });
+                formRegister.reset();
+                close();
+            })
+            .catch((err) => {
+                notifications.show({
+                    color: "red",
+                    title: "Gagal Registrasi!",
+                    message: err.message,
+                });
+            });
     };
 
     return (
@@ -170,8 +208,9 @@ export default function DataTableComponent({ records }) {
                     />
                 </Fieldset>
                 <Fieldset legend="Akses Akun" my={10}>
-                    <Checkbox.Group
-                        defaultValue={["react"]}
+                    <CheckboxGroup
+                        // value={selectValue}
+                        onChange={setSelectValue}
                         label="Pilih akses akun"
                         description="Jika tidak ada, bisa dikosongkan"
                     >
@@ -179,9 +218,11 @@ export default function DataTableComponent({ records }) {
                             <Checkbox value="PELUKIS" label="Pelukis" />
                             <Checkbox value="KURATOR" label="Kurator" />
                         </Group>
-                    </Checkbox.Group>
+                    </CheckboxGroup>
                 </Fieldset>
-                <Button>Simpan</Button>
+                <Button onClick={() => formRegister.onSubmit(handleSubmit)()}>
+                    Simpan
+                </Button>
             </Drawer>
         </>
     );

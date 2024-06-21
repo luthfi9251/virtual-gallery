@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
+
 export default function FormLogin({ loginHandler }) {
     let [loading, setLoading] = useState(false);
     let router = useRouter();
@@ -87,7 +88,7 @@ export default function FormLogin({ loginHandler }) {
                     radius="md"
                     className="hover:bg-white hover:text-tanArtBlue-600 hover:border-tanArtBlue-600 transition-all"
                 >
-                    Submit
+                    Masuk
                 </Button>
                 <Text size="sm" className="text-center">
                     Belum punya akun?{" "}

@@ -17,7 +17,7 @@ export default function UserProfile() {
     return (
         <Grid gutter={{ base: 3, md: "md" }}>
             <GridCol span={{ base: 12, md: 10 }}>
-                <Fieldset legend="Foto Profil">
+                <Fieldset legend="Foto Profil" className="shadow">
                     <Grid>
                         <GridCol span={{ base: 12, md: 6 }}>
                             <Image
@@ -49,9 +49,7 @@ export default function UserProfile() {
                                     description="Input description"
                                     placeholder="Pilih Foto"
                                 />
-                                <Button maw={rem(120)} color="myColor.9">
-                                    Simpan
-                                </Button>
+                                <Button maw={rem(120)}>Simpan</Button>
                             </Stack>
                         </GridCol>
                     </Grid>

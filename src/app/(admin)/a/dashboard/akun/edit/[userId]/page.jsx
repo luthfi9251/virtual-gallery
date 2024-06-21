@@ -1,15 +1,31 @@
-import { Grid, Space, Container, Title } from "@mantine/core";
+import { Group, Space, Container, Title, ActionIcon } from "@mantine/core";
 import UserDataForm from "./UserDataForm";
 import UserProfile from "./UserProfile";
 import SecondaryAccount from "./SecondaryAccount";
 import { getUserDataById } from "@/actions/user";
+import { FaArrowLeft } from "react-icons/fa";
+import Link from "next/link";
+import { URL_TANART } from "@/variables/url";
 
 export default async function Page({ params }) {
     let userData = await getUserDataById(params.userId);
-    console.log(userData);
     return (
         <Container fluid>
-            <Title order={2}>Edit Akun</Title>
+            <Group>
+                <ActionIcon
+                    component={Link}
+                    href={URL_TANART.ADMIN_DASHBOARD_AKUN}
+                    variant="transparent"
+                    color="black"
+                    aria-label="Settings"
+                >
+                    <FaArrowLeft
+                        style={{ width: "70%", height: "70%" }}
+                        stroke={1.5}
+                    />
+                </ActionIcon>
+                <Title order={2}>Edit Akun</Title>
+            </Group>
             <Space h="xl" />
             <UserProfile />
             <UserDataForm data={userData} />
