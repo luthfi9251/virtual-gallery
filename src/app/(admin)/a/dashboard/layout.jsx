@@ -9,46 +9,6 @@ import {
 import { FaHome, FaPenFancy } from "react-icons/fa";
 import { MdManageAccounts } from "react-icons/md";
 
-let NAV_DATA = [
-    {
-        label: (
-            <Text fz="md" fw="500">
-                Dashboard
-            </Text>
-        ),
-        href: "/a/dashboard",
-        leftSection: <FaHome size="1rem" stroke={1.5} />,
-    },
-    {
-        label: (
-            <Text fz="md" fw="500">
-                Verfikasi Akun
-            </Text>
-        ),
-        href: "#",
-        leftSection: <FaClipboardList size="1rem" stroke={1.5} />,
-        children: [
-            {
-                label: (
-                    <Text fz="md" fw="400">
-                        Pelukis
-                    </Text>
-                ),
-                href: "/a/dashboard/verifikasi-pelukis",
-                leftSection: <FaPaintbrush size="1rem" stroke={1.5} />,
-            },
-            {
-                label: (
-                    <Text fz="md" fw="400">
-                        Kurator
-                    </Text>
-                ),
-                href: "/a/dashboard/verifikasi-kurator",
-                leftSection: <FaPenFancy size="1rem" stroke={1.5} />,
-            },
-        ],
-    },
-];
 let NAV_DATA_GROUP = [
     {
         group: null,

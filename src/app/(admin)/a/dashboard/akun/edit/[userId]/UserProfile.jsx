@@ -4,61 +4,59 @@ import {
     GridCol,
     Image,
     FileInput,
-    Fieldset,
-    Button,
     Stack,
+    Button,
+    Center,
     rem,
 } from "@mantine/core";
 import NextImage from "next/image";
 import { useState } from "react";
+import CropperModal from "@/components/CropperModal";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function UserProfile() {
-    const [imgUrl, setImgUrl] = useState("/EMPTY_USER_PROFILE.jpg");
+    const [imgUrl, setImgUrl] = useState("/EMPTY_USER_PROFILE.png");
+    const [opened, { open, close }] = useDisclosure(false);
     return (
-        <Grid gutter={{ base: 3, md: "md" }}>
-            <GridCol span={{ base: 12, md: 10 }}>
-                <Fieldset legend="Foto Profil" className="shadow">
+        <>
+            <Grid gutter={{ base: 3, md: "md" }}>
+                <GridCol span={12}>
                     <Grid>
-                        <GridCol span={{ base: 12, md: 6 }}>
-                            <Image
-                                component={NextImage}
-                                width={200}
-                                height={200}
-                                mah={200}
-                                maw={200}
-                                src={imgUrl}
-                                alt="My image"
-                            />
-                        </GridCol>
-                        <GridCol span={{ base: 12, md: 6 }}>
-                            <Stack>
-                                <FileInput
-                                    onChange={(file) => {
-                                        if (file) {
-                                            let URLIMG =
-                                                URL.createObjectURL(file);
-                                            setImgUrl(URLIMG);
-                                        } else {
-                                            setImgUrl(
-                                                "/EMPTY_USER_PROFILE.jpg"
-                                            );
-                                        }
-                                    }}
-                                    label="Unggah Foto Profil"
-                                    accept="image/png,image/jpeg"
-                                    description="Input description"
-                                    placeholder="Pilih Foto"
-                                />
-                                <Button maw={rem(120)}>Simpan</Button>
-                            </Stack>
+                        <GridCol span={12}>
+                            <Center>
+                                <Stack justify="center" align="center">
+                                    <Image
+                                        component={NextImage}
+                                        width={300}
+                                        height={300}
+                                        mah={300}
+                                        maw={300}
+                                        mih={300}
+                                        miw={300}
+                                        src={imgUrl}
+                                        alt="My image"
+                                        className=" border rounded-full p-1"
+                                    />
+                                    <Button
+                                        maw={rem(120)}
+                                        variant="outline"
+                                        onClick={open}
+                                    >
+                                        Ubah Foto
+                                    </Button>
+                                </Stack>
+                            </Center>
                         </GridCol>
                     </Grid>
-                </Fieldset>
-            </GridCol>
-            <GridCol
-                span={{ base: 12, md: 2 }}
-                py={{ base: 1, md: 20 }}
-            ></GridCol>
-        </Grid>
+                </GridCol>
+            </Grid>
+            <CropperModal
+                open={open}
+                opened={opened}
+                close={close}
+                setPreview={setImgUrl}
+                type="PROFILE_PICTURE"
+            />
+        </>
     );
 }

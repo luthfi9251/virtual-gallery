@@ -30,7 +30,12 @@ const theme = createTheme({
     colors: {
         myColor,
     },
+    fontFamily: poppins.style.fontFamily,
     primaryColor: "myColor",
+    headings: {
+        // Use default theme if you want to provide default Mantine fonts as a fallback
+        fontFamily: `${poppins.style.fontFamily}`,
+    },
 });
 
 export default function RootLayout({ children }) {
@@ -41,7 +46,11 @@ export default function RootLayout({ children }) {
             </head>
             <body className={poppins.className}>
                 <QueryProvider>
-                    <MantineProvider theme={theme} defaultColorScheme="light">
+                    <MantineProvider
+                        theme={theme}
+                        defaultColorScheme="light"
+                        withGlobalStyles
+                    >
                         <Notifications />
                         {children}
                     </MantineProvider>

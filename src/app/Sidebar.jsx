@@ -20,6 +20,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { FaChevronRight, FaPaintbrush, FaClipboardList } from "react-icons/fa6";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import Image from "next/image";
 
 export default function Sidebar({ children, navData }) {
     const [opened, { toggle, close }] = useDisclosure();
@@ -49,11 +50,17 @@ export default function Sidebar({ children, navData }) {
                         hiddenFrom="sm"
                         size="sm"
                     />
-                    <Text>LOGO TANART</Text>
+                    <Image
+                        src="/tanart-logo.png"
+                        width={100}
+                        height={100}
+                        alt="Logo"
+                    />
+                    <Text>Tan Artspace</Text>
                 </Group>
             </AppShellHeader>
             <AppShellNavbar>
-                <AppShellSection p="md" bg={"white"} className=" border-b-2">
+                <AppShellSection p="sm" bg={"white"} className=" border-b-2">
                     <Group>
                         <Burger
                             opened={opened}
@@ -61,7 +68,20 @@ export default function Sidebar({ children, navData }) {
                             hiddenFrom="sm"
                             size="sm"
                         />
-                        <Text>LOGO TANART</Text>
+                        <Image
+                            src="/tanart-logo.png"
+                            width={50}
+                            height={50}
+                            alt="Logo"
+                        />
+                        <Text
+                            size="md"
+                            fw="bold"
+                            color="myColor"
+                            className=" cursor-default"
+                        >
+                            Tan Artspace
+                        </Text>
                     </Group>
                 </AppShellSection>
                 <AppShellSection p="md" grow component={ScrollArea}>

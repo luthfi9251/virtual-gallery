@@ -1,8 +1,8 @@
 "use client";
 import {
-    Container,
+    Text,
     TextInput,
-    Textarea,
+    Stack,
     PasswordInput,
     Group,
     Button,
@@ -15,11 +15,15 @@ import {
     hasLength,
     matchesField,
 } from "@mantine/form";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { notifications } from "@mantine/notifications";
 import { DateInput } from "@mantine/dates";
+import Link from "next/link";
+import CrossIcon from "@/components/icons/CrossIcon";
+import { usePathname, useSearchParams } from "next/navigation";
+import { addUser } from "@/actions/user";
 
-const WITH_DESCRIPTION = {
+const WITHOUT_DESCRIPTION = {
     initialValues: {
         nama_lengkap: "",
         username: "",
@@ -31,42 +35,12 @@ const WITH_DESCRIPTION = {
         deskripsi: "",
     },
     validate: {
-        username: hasLength({ min: 5, max: 20 }),
+        username: hasLength({ min: 5, max: 20 }, "Minimal 5 Karakter!"),
         nama_lengkap: isNotEmpty("Nama tidak boleh Kosong!"),
         email: isEmail("Masukkan Email Valid!"),
-        tempat_lhr: hasLength(
-            { min: 3, max: 100 },
-            "Tempat Lahir minimal 3 huruf dan maksimal 100 huruf!"
-        ),
-        tgl_lhr: isNotEmpty("tidak boleh kosong!"),
-        password: hasLength({ min: 3, max: 100 }, "Password minimal 6 huruf"),
-        "confirm-password": matchesField(
-            "password",
-            "Tidak sama dengan password!"
-        ),
-        deskripsi: isNotEmpty("tidak boleh kosong!"),
-    },
-};
-const WITHOUT_DESCRIPTION = {
-    initialValues: {
-        nama_lengkap: "",
-        username: "",
-        email: "",
-        tempat_lhr: "",
-        tgl_lhr: "",
-        password: "",
-        "confirm-password": "",
-    },
-    validate: {
-        username: hasLength({ min: 5, max: 20 }),
-        nama_lengkap: isNotEmpty("Nama tidak boleh Kosong!"),
-        email: isEmail("Masukkan Email Valid!"),
-        tempat_lhr: hasLength(
-            { min: 3, max: 100 },
-            "Tempat Lahir minimal 3 huruf dan maksimal 100 huruf!"
-        ),
-        tgl_lhr: isNotEmpty("tidak boleh kosong!"),
-        password: hasLength({ min: 3, max: 100 }, "Password minimal 6 huruf"),
+        tempat_lhr: isNotEmpty("Tidak boleh kosong!"),
+        tgl_lhr: isNotEmpty("Tidak boleh kosong!"),
+        password: hasLength({ min: 6, max: 100 }, "Password minimal 6 huruf"),
         "confirm-password": matchesField(
             "password",
             "Tidak sama dengan password!"
@@ -79,34 +53,37 @@ export default function FormRegister({
     useDeskripsi = false,
 }) {
     let [loading, setLoading] = useState(false);
-    let formRegister = useForm({
+    let [error, setError] = useState(null);
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const createQueryString = useCallback(
+        (name, value) => {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set(name, value);
+
+            return params.toString();
+        },
+        [searchParams]
+    );
+    let form = useForm({
         name: "register-form",
         mode: "uncontrolled",
-        initialValues: useDeskripsi
-            ? WITH_DESCRIPTION.initialValues
-            : WITHOUT_DESCRIPTION.initialValues,
-        validate: useDeskripsi
-            ? WITH_DESCRIPTION.validate
-            : WITHOUT_DESCRIPTION.validate,
+        initialValues: WITHOUT_DESCRIPTION.initialValues,
+        validate: WITHOUT_DESCRIPTION.validate,
     });
 
     let handleRegister = async (data) => {
+        setError(null);
         setLoading(true);
-        registerHandler(data)
+        addUser(data)
             .then((res) => {
-                if (res.success) {
-                    notifications.show({
-                        title: "Berhasil Registrasi!",
-                        message: `Silahkan Login keakun anda, ${res.data.nama_lengkap}`,
-                    });
-                    // redirect
-                } else {
-                    notifications.show({
-                        color: "red",
-                        title: "Gagal Registrasi!",
-                        message: res.message,
-                    });
-                }
+                notifications.show({
+                    title: "Berhasil Registrasi!",
+                    message: `Silahkan Login ke akun anda!`,
+                });
+            })
+            .catch((err) => {
+                setError(err.message);
             })
             .finally(() => {
                 setLoading(false);
@@ -114,64 +91,123 @@ export default function FormRegister({
     };
 
     return (
-        <form action="" onSubmit={formRegister.onSubmit(handleRegister)}>
-            <TextInput
-                label="Nama Lengkap"
-                name="nama_lengkap"
-                key={formRegister.key("nama_lengkap")}
-                {...formRegister.getInputProps("nama_lengkap")}
-            />
-            <TextInput
-                label="Email"
-                name="email"
-                key={formRegister.key("email")}
-                {...formRegister.getInputProps("email")}
-            />
-            <TextInput
-                label="Username"
-                name="username"
-                key={formRegister.key("username")}
-                {...formRegister.getInputProps("username")}
-            />
-            <TextInput
-                label="Tempat Lahir"
-                name="tempat_lhr"
-                key={formRegister.key("tempat_lhr")}
-                {...formRegister.getInputProps("tempat_lhr")}
-            />
-            <DateInput
-                label="Tanggal Lahir"
-                placeholder="Tanggal Lahir"
-                valueFormat="DD MMMM YYYY"
-                maxDate={new Date()}
-                name="tgl_lhr"
-                key={formRegister.key("tgl_lhr")}
-                {...formRegister.getInputProps("tgl_lhr")}
-            />
-            <PasswordInput
-                label="Password"
-                name="password"
-                key={formRegister.key("password")}
-                {...formRegister.getInputProps("password")}
-            />
-            <PasswordInput
-                label="Confirm Password"
-                name="confirm-password"
-                key={formRegister.key("confirm-password")}
-                {...formRegister.getInputProps("confirm-password")}
-            />
-            {useDeskripsi && (
-                <Textarea
-                    label="Apa pengalaman anda sebagai Pelukis?"
-                    name="deskripsi"
-                    key={formRegister.key("deskripsi")}
-                    {...formRegister.getInputProps("deskripsi")}
+        <form action="" onSubmit={form.onSubmit(handleRegister)}>
+            <Stack gap="xs">
+                <TextInput
+                    label={
+                        <Text fw="bold" size="xs" span>
+                            Nama Lengkap
+                        </Text>
+                    }
+                    name="nama_lengkap"
+                    placeholder="Masukkan Nama lengkap"
+                    key={form.key("nama_lengkap")}
+                    withAsterisk
+                    {...form.getInputProps("nama_lengkap")}
                 />
-            )}
+                <TextInput
+                    label={
+                        <Text fw="bold" size="xs" span>
+                            Email
+                        </Text>
+                    }
+                    name="email"
+                    placeholder="Masukkan Email"
+                    key={form.key("email")}
+                    withAsterisk
+                    {...form.getInputProps("email")}
+                />
+                <TextInput
+                    label={
+                        <Text fw="bold" size="xs" span>
+                            Username
+                        </Text>
+                    }
+                    name="username"
+                    placeholder="Masukkan Username"
+                    key={form.key("username")}
+                    withAsterisk
+                    {...form.getInputProps("username")}
+                />
+                <Group grow align="flex-start">
+                    <TextInput
+                        label={
+                            <Text fw="bold" size="xs" span>
+                                Tempat Lahir
+                            </Text>
+                        }
+                        name="tempat_lhr"
+                        placeholder="Masukkan Tempat Lahir"
+                        key={form.key("tempat_lhr")}
+                        withAsterisk
+                        {...form.getInputProps("tempat_lhr")}
+                    />
+                    <DateInput
+                        label={
+                            <Text fw="bold" size="xs" span>
+                                Tanggal lahir
+                            </Text>
+                        }
+                        placeholder="Masukkan Tanggal Lahir"
+                        valueFormat="DD MMMM YYYY"
+                        maxDate={new Date()}
+                        name="tgl_lhr"
+                        key={form.key("tgl_lhr")}
+                        withAsterisk
+                        {...form.getInputProps("tgl_lhr")}
+                    />
+                </Group>
+                <PasswordInput
+                    label={
+                        <Text fw="bold" size="xs" span>
+                            Kata Sandi
+                        </Text>
+                    }
+                    placeholder="Masukkan Kata Sandi"
+                    name="password"
+                    key={form.key("password")}
+                    withAsterisk
+                    {...form.getInputProps("password")}
+                />
+                <PasswordInput
+                    label={
+                        <Text fw="bold" size="xs" span>
+                            Konfirmasi Kata Sandi
+                        </Text>
+                    }
+                    placeholder="Ulangi Kata Sandi"
+                    name="confirm-password"
+                    key={form.key("confirm-password")}
+                    withAsterisk
+                    {...form.getInputProps("confirm-password")}
+                />
+                {error && (
+                    <Group className="bg-red-100 rounded-md py-2 px-2 border-red-300 border-2">
+                        <CrossIcon w={20} h={20} />
+                        <Text size="xs" color="red" className=" cursor-default">
+                            Kesalahan : {error}
+                        </Text>
+                    </Group>
+                )}
 
-            <Button type="submit" loading={loading}>
-                Submit
-            </Button>
+                <Button type="submit" loading={loading}>
+                    Daftar
+                </Button>
+                <Text size="sm" className="text-center">
+                    Sudah punya akun?{" "}
+                    <span>
+                        <Link
+                            href={`${pathname}?${createQueryString(
+                                "action",
+                                "login"
+                            )}`}
+                            className=" text-tanArtBlue-600 font-bold"
+                        >
+                            Masuk
+                        </Link>
+                    </span>
+                </Text>
+            </Stack>
         </form>
     );
 }

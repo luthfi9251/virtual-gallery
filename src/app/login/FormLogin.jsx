@@ -1,5 +1,12 @@
 "use client";
-import { TextInput, PasswordInput, Button, Stack, Text } from "@mantine/core";
+import {
+    TextInput,
+    PasswordInput,
+    Button,
+    Stack,
+    Text,
+    Group,
+} from "@mantine/core";
 import {
     useForm,
     isNotEmpty,
@@ -8,20 +15,37 @@ import {
     hasLength,
     matchesField,
 } from "@mantine/form";
+import CrossIcon from "@/components/icons/CrossIcon";
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useCallback } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { notifications } from "@mantine/notifications";
 
 export default function FormLogin({ loginHandler }) {
     let [loading, setLoading] = useState(false);
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
     let router = useRouter();
+
+    const createQueryString = useCallback(
+        (name, value) => {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set(name, value);
+
+            return params.toString();
+        },
+        [searchParams]
+    );
+
     let formLogin = useForm({
         name: "login-form",
         mode: "uncontrolled",
         initialValues: {
             email: "",
             password: "",
+        },
+        validate: {
+            email: isEmail("Masukkan email yang valid!"),
         },
     });
 
@@ -81,6 +105,15 @@ export default function FormLogin({ loginHandler }) {
                         Lupa password ?
                     </Text>
                 </Link>
+
+                {false && (
+                    <Group className="bg-red-100 rounded-md py-2 px-2 border-red-300 border-2">
+                        <CrossIcon w={20} h={20} />
+                        <Text size="xs" color="red" className=" cursor-default">
+                            Email atau sandi Anda salah. Silakan coba lagi{" "}
+                        </Text>
+                    </Group>
+                )}
                 <Button
                     type="submit"
                     loading={loading}
@@ -90,11 +123,15 @@ export default function FormLogin({ loginHandler }) {
                 >
                     Masuk
                 </Button>
+
                 <Text size="sm" className="text-center">
                     Belum punya akun?{" "}
                     <span>
                         <Link
-                            href="#"
+                            href={`${pathname}?${createQueryString(
+                                "action",
+                                "register"
+                            )}`}
                             className=" text-tanArtBlue-600 font-bold"
                         >
                             Daftar
