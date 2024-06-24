@@ -21,8 +21,9 @@ import NextImage from "next/image";
 import Step1Icon from "@/components/icons/Step1Icon";
 import Step3Icon from "@/components/icons/Step3Icon";
 import TickCircle from "@/components/icons/TickCircle";
+import CrossIcon from "@/components/icons/CrossIcon";
 import { useDebouncedCallback } from "@mantine/hooks";
-import { isEmailUsed } from "@/actions/user";
+import { isEmailUsed, pengajuanAkun, addUser } from "@/actions/user";
 import {
     useForm,
     isNotEmpty,
@@ -32,6 +33,7 @@ import {
     matchesField,
 } from "@mantine/form";
 import { useSearchParams } from "next/navigation";
+import { notifications } from "@mantine/notifications";
 
 const TYPE = {
     KURATOR: "kurator",
@@ -41,17 +43,30 @@ const TYPE = {
 function StepFirst({ handleNextStep, handleUpdateData, mode }) {
     let [allowNextStep, setAllowNextStep] = useState(false);
     let [email, setEmail] = useState(null);
+    let [error, setError] = useState(null);
     let [isLoading, setIsLoading] = useState(false);
     let [isEmailUsedState, setIsEmailUsedState] = useState(false);
     const handleSearch = useDebouncedCallback(async (query) => {
-        if (query) {
-            let res = await isEmailUsed(query);
-            setIsLoading(false);
-            setEmail(query);
-            setIsEmailUsedState(res);
-            setAllowNextStep(true);
-        } else {
-            setIsLoading(false);
+        try {
+            if (query) {
+                let res = await isEmailUsed(query);
+                // console.log(res[1]?.Seniman && mode === TYPE.PELUKIS);
+                setIsLoading(false);
+
+                if (res[1]?.Seniman && mode === TYPE.PELUKIS) {
+                    throw new Error("Anda sudah mengajukan sebagai Seniman");
+                } else if (res[1]?.Kurator && mode === TYPE.KURATOR) {
+                    throw new Error("Anda sudah mengajukan sebagai Kurator");
+                }
+
+                setEmail(query);
+                setIsEmailUsedState(res[0]);
+                setAllowNextStep(true);
+            } else {
+                setIsLoading(false);
+            }
+        } catch (err) {
+            setError(err.message);
         }
     }, 1000);
 
@@ -105,6 +120,7 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                     }
                     name="email"
                     onChange={(e) => {
+                        setError(null);
                         setIsLoading(true);
                         setAllowNextStep(false);
                         setIsEmailUsedState(false);
@@ -132,6 +148,21 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                         </Text>
                     </Flex>
                 )}
+                {error && (
+                    <Flex
+                        align="flex-start"
+                        gap="sm"
+                        className=" bg-error-50 rounded-md py-2 px-2 border-error-100 border-2"
+                    >
+                        <CrossIcon w={20} h={20} />
+                        <Text
+                            size="xs"
+                            className=" cursor-default text-error-200"
+                        >
+                            {error}
+                        </Text>
+                    </Flex>
+                )}
                 <Space h="md" />
                 <Button
                     className=" self-end"
@@ -148,10 +179,7 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                 >
                     Bergabunglah dengan Komunitas Pelukis Kami !{" "}
                 </Title>
-                <Text
-                    size="sm"
-                    className=" font-medium text-tanArt-grey text-end"
-                >
+                <Text className="text-xs md:text-sm font-medium text-tanArt-grey text-end">
                     Apakah Anda seorang pelukis berbakat yang mencari platform
                     untuk memamerkan karya Anda? Kami mengundang Anda untuk
                     bergabung dengan komunitas pelukis kami!
@@ -176,7 +204,9 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
     );
 }
 
-function StepSecond({ handleNextStep, handleUpdateData }) {
+function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
+    let [isLoading, setIsLoading] = useState(false);
+    let [error, setError] = useState(null);
     let form = useForm({
         name: "register-form",
         mode: "uncontrolled",
@@ -205,8 +235,8 @@ function StepSecond({ handleNextStep, handleUpdateData }) {
     });
 
     let handleSubmit = (data) => {
+        setIsLoading(true);
         handleUpdateData((state) => {
-            console.log({ state });
             return {
                 ...state,
                 isCreateNewUser: true,
@@ -216,7 +246,24 @@ function StepSecond({ handleNextStep, handleUpdateData }) {
                 },
             };
         });
-        handleNextStep(2);
+        if (dataStepper.isCreateNewUser) {
+            let dataServer = {
+                ...data,
+                email: dataStepper.user.email,
+            };
+            addUser(dataServer)
+                .then((res) => {
+                    setIsLoading(false);
+                    handleNextStep(2);
+                    return;
+                })
+                .catch((err) => {
+                    setIsLoading(false);
+                    setError(err.message);
+                    // throw err;
+                });
+        }
+        // handleNextStep(2);
     };
 
     return (
@@ -297,7 +344,26 @@ function StepSecond({ handleNextStep, handleUpdateData }) {
                             withAsterisk
                             {...form.getInputProps("confirm-password")}
                         />
-                        <Button className=" self-end" type="submit">
+                        {error && (
+                            <Flex
+                                align="flex-start"
+                                gap="sm"
+                                className=" bg-error-50 rounded-md py-2 px-2 border-error-100 border-2"
+                            >
+                                <CrossIcon w={20} h={20} />
+                                <Text
+                                    size="xs"
+                                    className=" cursor-default text-error-200"
+                                >
+                                    {error}
+                                </Text>
+                            </Flex>
+                        )}
+                        <Button
+                            className=" self-end"
+                            type="submit"
+                            loading={isLoading}
+                        >
                             Selanjutnya
                         </Button>
                     </Stack>
@@ -310,10 +376,7 @@ function StepSecond({ handleNextStep, handleUpdateData }) {
                 >
                     Silahkan lengkapi data Anda
                 </Title>
-                <Text
-                    size="sm"
-                    className=" font-medium text-tanArt-grey text-end"
-                >
+                <Text className="text-xs md:text-sm font-medium text-tanArt-grey text-end">
                     Kami memerlukan identitas anda untuk menyambungkan anda ke
                     Komunitas, tidak perlu risau karena kami akan menjamin
                     keamanan data Anda.
@@ -339,6 +402,7 @@ function StepSecond({ handleNextStep, handleUpdateData }) {
 }
 
 function StepThird({ handleNextStep, dataStepper, mode }) {
+    let [isLoading, setIsLoading] = useState(false);
     let form = useForm({
         name: "register-form",
         mode: "uncontrolled",
@@ -353,7 +417,28 @@ function StepThird({ handleNextStep, dataStepper, mode }) {
         },
     });
     let handleSubmit = (data) => {
-        console.log({ data, dataStepper });
+        setIsLoading(true);
+        let dataToServer = {
+            ...dataStepper,
+            user: {
+                deskripsi: data.deskripsi,
+                ...dataStepper.user,
+            },
+        };
+        // console.log({ dataToServer, mode });
+        pengajuanAkun(mode, dataToServer)
+            .then((res) => {
+                notifications.show({
+                    title: "Pengajuan Berhasil!",
+                    message: `Terimakasih, permintaan anda akan direview oleh Tim TanArt terlebih dahulu.`,
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     };
     return (
         <Flex
@@ -379,7 +464,11 @@ function StepThird({ handleNextStep, dataStepper, mode }) {
                         key={form.key("deskripsi")}
                     />
                     <Space h="md" />
-                    <Button className=" self-end" type="submit">
+                    <Button
+                        className=" self-end"
+                        type="submit"
+                        loading={isLoading}
+                    >
                         Kirim
                     </Button>
                 </form>
@@ -391,10 +480,7 @@ function StepThird({ handleNextStep, dataStepper, mode }) {
                 >
                     {mode === TYPE.KURATOR ? "Kurator" : "Pelukis"}
                 </Title>
-                <Text
-                    size="sm"
-                    className=" font-medium text-tanArt-grey text-end"
-                >
+                <Text className="text-xs md:text-sm font-medium text-tanArt-grey text-end">
                     {mode === TYPE.KURATOR
                         ? "kurator/ku·ra·tor/ n 1 pengurus atau pengawas harta benda orang yang pailit dan sebagainya; 2 anggota pengawas dari perguruan tinggi; penyantun; 3 pengurus atau pengawas museum (gedung pameran seni lukis, perpustakaan, dan sebagainya);"
                         : "pelukis/pe·lu·kis/ n orang yang berprofesi melukis (seniman dalam seni lukis lukis);"}
@@ -420,6 +506,7 @@ function StepThird({ handleNextStep, dataStepper, mode }) {
 }
 
 export default function Content() {
+    const [success, setSuccess] = useState(false);
     const params = useSearchParams();
     const mode = useMemo(
         () =>
@@ -437,7 +524,7 @@ export default function Content() {
             direction="column"
             align="center"
         >
-            <div className="h-20 w-2/3 md:w-1/2 py-1 px-2 flex flex-col justify-center">
+            <div className="h-20 w-full md:w-1/2 py-1 px-4 flex flex-col justify-center">
                 <Stepper
                     active={active}
                     onStepClick={setActive}
@@ -460,11 +547,19 @@ export default function Content() {
                 {active === 1 && (
                     <StepSecond
                         handleNextStep={setActive}
+                        dataStepper={dataStepper}
                         handleUpdateData={setDataStepper}
                         mode={mode}
                     />
                 )}
                 {active === 2 && (
+                    <StepThird
+                        handleNextStep={setActive}
+                        dataStepper={dataStepper}
+                        mode={mode}
+                    />
+                )}
+                {success && (
                     <StepThird
                         handleNextStep={setActive}
                         dataStepper={dataStepper}

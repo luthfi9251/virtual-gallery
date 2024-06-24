@@ -223,8 +223,45 @@ export const isEmailUsed = async (email) => {
     });
 
     if (data) {
-        return true;
+        return [true, data];
     } else {
-        return false;
+        return [false, data];
+    }
+};
+
+export const addpelukisOrKuratorFromEmail = async (mode, data) => {
+    try {
+        const { email, deskripsi } = data;
+        let query = {
+            data: {
+                deskripsi,
+                is_verified: false,
+                User: {
+                    connect: {
+                        email,
+                    },
+                },
+            },
+        };
+
+        if (mode === "pelukis") {
+            return await prisma.Seniman.create(query);
+        } else {
+            return await prisma.Kurator.create(query);
+        }
+    } catch (err) {
+        throw err;
+    }
+};
+
+export const pengajuanAkun = async (mode, data) => {
+    try {
+        let { user } = data;
+
+        let pengajuan = await addpelukisOrKuratorFromEmail(mode, user);
+        return pengajuan;
+    } catch (err) {
+        console.log(err);
+        throw err;
     }
 };

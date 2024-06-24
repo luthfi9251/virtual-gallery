@@ -46,12 +46,12 @@ model Seniman {
 }
 
 model Kurator {
-  id          String   @id @default(uuid())
-  is_verified Boolean  @default(false)
-  deskripsi   String   @db.Text
-  user_id     String   @unique
-  verified_at DateTime
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  User        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id          String    @id @default(uuid())
+  is_verified Boolean   @default(false)
+  deskripsi   String    @db.Text
+  user_id     String    @unique
+  verified_at DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  User        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
