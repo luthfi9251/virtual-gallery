@@ -210,3 +210,21 @@ export const updateUser = async (data) => {
         throw err;
     }
 };
+
+export const isEmailUsed = async (email) => {
+    let data = await prisma.User.findFirst({
+        where: {
+            email,
+        },
+        include: {
+            Seniman: true,
+            Kurator: true,
+        },
+    });
+
+    if (data) {
+        return true;
+    } else {
+        return false;
+    }
+};

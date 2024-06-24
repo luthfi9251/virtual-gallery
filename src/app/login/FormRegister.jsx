@@ -182,9 +182,12 @@ export default function FormRegister({
                     {...form.getInputProps("confirm-password")}
                 />
                 {error && (
-                    <Group className="bg-red-100 rounded-md py-2 px-2 border-red-300 border-2">
+                    <Group className=" bg-error-50 rounded-md py-2 px-2 border-error-100 border-2">
                         <CrossIcon w={20} h={20} />
-                        <Text size="xs" color="red" className=" cursor-default">
+                        <Text
+                            size="xs"
+                            className=" cursor-default text-error-200"
+                        >
                             Kesalahan : {error}
                         </Text>
                     </Group>

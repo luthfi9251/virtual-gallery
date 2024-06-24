@@ -23,7 +23,7 @@ export default function Page(props) {
             <Flex
                 direction={{ base: "column", sm: "row" }}
                 h={{ md: "100%" }}
-                className="gap-10 md:gap-0 md:h-full"
+                className="gap-10 md:gap-0 md:max-h-full"
             >
                 <BackgroundImage
                     src={
@@ -63,7 +63,7 @@ export default function Page(props) {
                                 <Text className="cursor-default text-sm md:text-md">
                                     {isRegisterAction
                                         ? "Selamat datang di galeri seni kami! Dengan mendaftar, Anda akan mendapatkan akses eksklusif ke koleksi karya seni menakjubkan, pameran virtual, dan berbagai acara seni yang menginspirasi. Jadilah bagian dari komunitas yang mencintai seni dan temukan keindahan yang tak terbatas."
-                                        : "Kami senang melihat Anda kembali! Masuklah ke akun Anda untuk mengakses koleksi seni eksklusif, pameran virtual, dan fitur-fiturmenarik lainnya. Jika Anda baru di sini,daftar sekarang untuk mulai menjelajahi dunia seni kami."}
+                                        : "Kami senang melihat Anda kembali! Masuklah ke akun Anda untuk mengakses koleksi seni eksklusif, pameran virtual, dan fitur-fitur menarik lainnya. Jika Anda baru di sini,daftar sekarang untuk mulai menjelajahi dunia seni kami."}
                                 </Text>
                             </Stack>
                         </Center>
@@ -71,7 +71,7 @@ export default function Page(props) {
                     </Container>
                 </BackgroundImage>
                 <Container className="md:w-1/2 p-6 flex justify-center">
-                    <Center h="100%" className="md:w-2/3">
+                    <Center h="100%" className="md:w-2/3 md:max-h-screen">
                         <Stack gap={10}>
                             <Title
                                 order={1}
@@ -86,7 +86,13 @@ export default function Page(props) {
                                     : "Masukkan email anda di bawah ini untuk login ke akun anda"}
                             </Text>
                             <ScrollAreaAutosize
-                                mah={{ base: "100%", md: 500, lg: "100%" }}
+                                mah={{
+                                    base: 500,
+                                    sm: "100%",
+                                    md: 500,
+                                    lg: 500,
+                                    xl: "100%",
+                                }}
                             >
                                 {isRegisterAction ? (
                                     <FormRegister registerHandler={testData} />
