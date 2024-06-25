@@ -1,5 +1,4 @@
 "use client";
-
 import {
     TextInput,
     Title,
@@ -14,13 +13,17 @@ import {
     Group,
     Textarea,
     Loader,
+    SimpleGrid,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useMemo, useState } from "react";
 import NextImage from "next/image";
 import Step1Icon from "@/components/icons/Step1Icon";
+import Step2Icon from "@/components/icons/Step2Icon";
 import Step3Icon from "@/components/icons/Step3Icon";
 import TickCircle from "@/components/icons/TickCircle";
+import CompleteIcon from "@/components/icons/CompleteIcon";
 import CrossIcon from "@/components/icons/CrossIcon";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { isEmailUsed, pengajuanAkun, addUser } from "@/actions/user";
@@ -177,12 +180,14 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                     order={2}
                     className=" text-tanArtBlue-600 text-end font-bold"
                 >
-                    Bergabunglah dengan Komunitas Pelukis Kami !{" "}
+                    {mode === TYPE.KURATOR
+                        ? "Bergabunglah dengan Komunitas Kurator Kami !"
+                        : "Bergabunglah dengan Komunitas Pelukis Kami !"}
                 </Title>
                 <Text className="text-xs md:text-sm font-medium text-tanArt-grey text-end">
-                    Apakah Anda seorang pelukis berbakat yang mencari platform
-                    untuk memamerkan karya Anda? Kami mengundang Anda untuk
-                    bergabung dengan komunitas pelukis kami!
+                    {mode === TYPE.KURATOR
+                        ? "Apakah Anda memiliki mata tajam untuk seni ? Kami mengundang Anda untuk menjadi bagian dari komunitas kurator kami yang dinamis dan kreatif!"
+                        : "Apakah Anda seorang pelukis berbakat yang mencari platform untuk memamerkan karya Anda? AKami mengundang Anda untuk bergabung dengan komunitas pelukis kami!"}
                 </Text>
                 <Space h={{ base: "sm", sm: "sm", md: "md" }} />
                 <Text
@@ -267,124 +272,126 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
     };
 
     return (
-        <Flex
-            direction={{ base: "column-reverse", sm: "row-reverse" }}
-            className="h-full"
-        >
-            <div className=" flex-1 md:p-8 p-4 flex flex-col gap-3 justify-center">
+        <Flex direction={{ base: "column" }} className="h-full">
+            <div className=" flex-1 md:px-8 md:py-1 p-4 flex flex-col gap-2 md:gap-5 justify-center">
+                <Title
+                    order={1}
+                    fw={"bold"}
+                    className="text-2xl md:text-3xl xl:text-4xl"
+                >
+                    Daftar
+                </Title>
+                <Text size="sm" className="text-tanArt-grey">
+                    Masukkan data diri anda di bawah ini
+                </Text>
+            </div>
+            <div className=" flex-1 md:px-8 md:py-1  p-4 flex flex-col gap-3 justify-center">
                 <form onSubmit={form.onSubmit(handleSubmit)}>
-                    <Stack gap="xs">
-                        <TextInput
-                            label={
-                                <Text fw="bold" size="xs" span>
-                                    Nama Lengkap
-                                </Text>
-                            }
-                            name="nama_lengkap"
-                            key={form.key("nama_lengkap")}
-                            withAsterisk
-                            {...form.getInputProps("nama_lengkap")}
-                        />
-                        <TextInput
-                            label={
-                                <Text fw="bold" size="xs" span>
-                                    Username
-                                </Text>
-                            }
-                            name="username"
-                            key={form.key("username")}
-                            withAsterisk
-                            {...form.getInputProps("username")}
-                        />
-                        <Group grow align="flex-start">
+                    <SimpleGrid spacing="md" cols={{ base: 1, sm: 1, md: 2 }}>
+                        <Stack>
                             <TextInput
                                 label={
                                     <Text fw="bold" size="xs" span>
-                                        Tempat Lahir
+                                        Nama Lengkap
                                     </Text>
                                 }
-                                name="tempat_lhr"
-                                key={form.key("tempat_lhr")}
+                                name="nama_lengkap"
+                                key={form.key("nama_lengkap")}
                                 withAsterisk
-                                {...form.getInputProps("tempat_lhr")}
+                                {...form.getInputProps("nama_lengkap")}
                             />
-                            <DateInput
+                            <TextInput
                                 label={
                                     <Text fw="bold" size="xs" span>
-                                        Tanggal lahir
+                                        Username
                                     </Text>
                                 }
-                                valueFormat="DD MMMM YYYY"
-                                maxDate={new Date()}
-                                name="tgl_lhr"
-                                key={form.key("tgl_lhr")}
+                                name="username"
+                                key={form.key("username")}
                                 withAsterisk
-                                {...form.getInputProps("tgl_lhr")}
+                                {...form.getInputProps("username")}
                             />
-                        </Group>
-                        <PasswordInput
-                            label={
-                                <Text fw="bold" size="xs" span>
-                                    Kata Sandi
-                                </Text>
-                            }
-                            name="password"
-                            key={form.key("password")}
-                            withAsterisk
-                            {...form.getInputProps("password")}
-                        />
-                        <PasswordInput
-                            label={
-                                <Text fw="bold" size="xs" span>
-                                    Konfirmasi Kata Sandi
-                                </Text>
-                            }
-                            name="confirm-password"
-                            key={form.key("confirm-password")}
-                            withAsterisk
-                            {...form.getInputProps("confirm-password")}
-                        />
-                        {error && (
-                            <Flex
-                                align="flex-start"
-                                gap="sm"
-                                className=" bg-error-50 rounded-md py-2 px-2 border-error-100 border-2"
-                            >
-                                <CrossIcon w={20} h={20} />
-                                <Text
-                                    size="xs"
-                                    className=" cursor-default text-error-200"
+                            <Group grow align="flex-start">
+                                <TextInput
+                                    label={
+                                        <Text fw="bold" size="xs" span>
+                                            Tempat Lahir
+                                        </Text>
+                                    }
+                                    name="tempat_lhr"
+                                    key={form.key("tempat_lhr")}
+                                    withAsterisk
+                                    {...form.getInputProps("tempat_lhr")}
+                                />
+                                <DateInput
+                                    label={
+                                        <Text fw="bold" size="xs" span>
+                                            Tanggal lahir
+                                        </Text>
+                                    }
+                                    valueFormat="DD MMMM YYYY"
+                                    maxDate={new Date()}
+                                    name="tgl_lhr"
+                                    key={form.key("tgl_lhr")}
+                                    withAsterisk
+                                    {...form.getInputProps("tgl_lhr")}
+                                />
+                            </Group>
+                        </Stack>
+                        <Stack>
+                            <PasswordInput
+                                label={
+                                    <Text fw="bold" size="xs" span>
+                                        Kata Sandi
+                                    </Text>
+                                }
+                                name="password"
+                                key={form.key("password")}
+                                withAsterisk
+                                {...form.getInputProps("password")}
+                            />
+                            <PasswordInput
+                                label={
+                                    <Text fw="bold" size="xs" span>
+                                        Konfirmasi Kata Sandi
+                                    </Text>
+                                }
+                                name="confirm-password"
+                                key={form.key("confirm-password")}
+                                withAsterisk
+                                {...form.getInputProps("confirm-password")}
+                            />
+                            {error && (
+                                <Flex
+                                    align="flex-start"
+                                    gap="sm"
+                                    className=" bg-error-50 rounded-md py-2 px-2 border-error-100 border-2"
                                 >
-                                    {error}
-                                </Text>
-                            </Flex>
-                        )}
-                        <Button
-                            className=" self-end"
-                            type="submit"
-                            loading={isLoading}
-                        >
-                            Selanjutnya
-                        </Button>
-                    </Stack>
+                                    <CrossIcon w={20} h={20} />
+                                    <Text
+                                        size="xs"
+                                        className=" cursor-default text-error-200"
+                                    >
+                                        {error}
+                                    </Text>
+                                </Flex>
+                            )}
+                        </Stack>
+                    </SimpleGrid>
                 </form>
             </div>
-            <div className=" flex-1 md:p-8 p-4 flex flex-col gap-2 md:gap-5 justify-center">
-                <Title
-                    order={2}
-                    className=" text-tanArtBlue-600 text-end font-bold"
+            <div className="md:py-3 md:px-8 p-4 flex flex-col gap-3">
+                <Button
+                    className=" self-end"
+                    type="submit"
+                    loading={isLoading}
+                    onClick={() => form.onSubmit(handleSubmit)()}
                 >
-                    Silahkan lengkapi data Anda
-                </Title>
-                <Text className="text-xs md:text-sm font-medium text-tanArt-grey text-end">
-                    Kami memerlukan identitas anda untuk menyambungkan anda ke
-                    Komunitas, tidak perlu risau karena kami akan menjamin
-                    keamanan data Anda.
-                </Text>
-                <Space h={{ base: "sm", sm: "sm", md: "md" }} />
+                    Selanjutnya
+                </Button>
                 <Text
                     size="sm"
-                    className=" flex flex-row-reverse items-center font-bold text-tanArtBlue-600 gap-5"
+                    className=" flex flex-row-reverse items-center font-bold text-tanArtBlue-600 gap-2"
                 >
                     <span>
                         <NextImage
@@ -520,7 +527,7 @@ export default function Content() {
     });
     return (
         <Flex
-            className="bg-white w-5/6 md:w-2/3 lg:aspect-[2/1] max-w-[1100px] rounded-lg mdoverflow-hidden"
+            className="bg-white w-5/6 md:w-2/3 lg:aspect-[2/1] max-w-[1100px] rounded-lg md:overflow-hidden"
             direction="column"
             align="center"
         >
@@ -531,8 +538,11 @@ export default function Content() {
                     size="xs"
                     allowNextStepsSelect={false}
                 >
-                    <StepperStep icon={<Step1Icon w={40} h={40} />} />
-                    <StepperStep />
+                    <StepperStep
+                        icon={<Step1Icon w={40} h={40} />}
+                        // completedIcon={<CompleteIcon w={40} h={40} />}
+                    />
+                    <StepperStep icon={<Step2Icon w={40} h={40} />} />
                     <StepperStep icon={<Step3Icon w={40} h={40} />} />
                 </Stepper>
             </div>
