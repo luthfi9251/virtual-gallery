@@ -111,7 +111,10 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                 >
                     {mode === TYPE.KURATOR ? "Kurator" : "Pelukis"}
                 </Title>
-                <Text size="sm" className="text-tanArt-grey">
+                <Text
+                    size={{ base: "xs", sm: "xs", md: "sm" }}
+                    className="text-tanArt-grey"
+                >
                     Masukkan email Anda untuk melakukan pengajuan akun{" "}
                     {mode === TYPE.KURATOR ? "Kurator" : "Pelukis"}
                 </Text>
@@ -273,7 +276,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
 
     return (
         <Flex direction={{ base: "column" }} className="h-full">
-            <div className=" flex-1 md:px-8 md:py-1 p-4 flex flex-col gap-2 md:gap-5 justify-center">
+            <div className=" flex-1 md:px-8 md:py-1 p-4 flex flex-col gap-2 justify-center">
                 <Title
                     order={1}
                     fw={"bold"}
@@ -287,8 +290,8 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
             </div>
             <div className=" flex-1 md:px-8 md:py-1  p-4 flex flex-col gap-3 justify-center">
                 <form onSubmit={form.onSubmit(handleSubmit)}>
-                    <SimpleGrid spacing="md" cols={{ base: 1, sm: 1, md: 2 }}>
-                        <Stack>
+                    <SimpleGrid spacing="lg" cols={{ base: 1, sm: 1, md: 2 }}>
+                        <Stack gap="xs">
                             <TextInput
                                 label={
                                     <Text fw="bold" size="xs" span>
@@ -338,7 +341,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                                 />
                             </Group>
                         </Stack>
-                        <Stack>
+                        <Stack gap="xs">
                             <PasswordInput
                                 label={
                                     <Text fw="bold" size="xs" span>
@@ -380,7 +383,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                     </SimpleGrid>
                 </form>
             </div>
-            <div className="md:py-3 md:px-8 p-4 flex flex-col gap-3">
+            <div className="md:py-5 md:pt-0 md:px-8 p-4 flex flex-col gap-3">
                 <Button
                     className=" self-end"
                     type="submit"
@@ -527,7 +530,7 @@ export default function Content() {
     });
     return (
         <Flex
-            className="bg-white w-5/6 md:w-2/3 lg:aspect-[2/1] max-w-[1100px] rounded-lg md:overflow-hidden"
+            className="bg-white w-5/6 md:w-2/3 unxl:aspect-[2/1] max-w-[1100px] rounded-lg md:overflow-hidden shadow-md"
             direction="column"
             align="center"
         >
