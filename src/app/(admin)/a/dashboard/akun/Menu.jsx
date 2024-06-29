@@ -134,6 +134,7 @@ export default function MenuItemRow(props) {
                                 disabled
                             />
                         </SimpleGrid>
+                        <TextInput label="Role" value={data?.role} disabled />
                     </Fieldset>
                     {data?.Seniman && (
                         <Fieldset legend="Akun Pelukis">

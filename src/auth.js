@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "./lib/prisma";
 import { comparePassword } from "@/lib/bcrypt";
+import { ROLE } from "./variables/page";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     debug: true,
@@ -13,65 +14,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             credentials: {
                 email: {},
                 password: {},
-                login_as: {},
             },
             authorize: async (credentials) => {
-                let user = null;
-
                 let findUser = await prisma.User.findUnique({
                     where: {
                         email: credentials.email,
                     },
-                    include: {
-                        Seniman: true,
-                        Kurator: true,
-                    },
                 });
-
-                switch (credentials.login_as) {
-                    case "PELUKIS":
-                        if (findUser?.Seniman) {
-                            user = findUser;
-                            user.login_as = "PELUKIS";
-                        } else {
-                            throw new Error(
-                                "Anda tidak memiliki akun Pelukis!"
-                            );
-                        }
-                        break;
-                    case "KURATOR":
-                        if (findUser?.Kurator) {
-                            user = findUser;
-                            user.login_as = "KURATOR";
-                        } else {
-                            throw new Error(
-                                "Anda tidak memiliki akun Pelukis!"
-                            );
-                        }
-                        break;
-                    case "USER":
-                        if (findUser) {
-                            user = findUser;
-                            user.login_as = findUser.role;
-                        } else {
-                            throw new Error("Akun tidak ditemukan!");
-                        }
-                        break;
-                    default:
-                        throw new Error("Kesalahan saat autentikasi!");
-                        break;
+                if (!findUser) {
+                    throw new Error("Akun tidak ditemukan!");
                 }
-
                 let checkPassword = comparePassword(
                     credentials.password,
-                    user.password
+                    findUser.password
                 );
 
                 if (!checkPassword) {
                     throw new Error("Password salah!");
                 }
-                console.log({ user });
-                return user;
+                return findUser;
             },
         }),
     ],
@@ -79,7 +40,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
-                token.login_as = user.login_as;
             }
             return token;
         },
@@ -98,12 +58,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             session.user.email = findUser.email;
             session.user.nama_lengkap = findUser.nama_lengkap;
             session.user.role = findUser.role;
-            session.user.login_as = token.login_as;
-            if (token.login_as === "PELUKIS") {
-                session.user.pelukis = findUser.Seniman;
-            } else if (token.login_as === "KURATOR") {
-                session.user.pelukis = findUser.Kurator;
+            session.user.Seniman = findUser.Seniman;
+            session.user.Kurator = findUser.Kurator;
+            let userAccess = [];
+
+            if (findUser.Seniman) {
+                userAccess.push(ROLE.PELUKIS);
             }
+            if (findUser.Kurator) {
+                userAccess.push(ROLE.KURATOR);
+            }
+            userAccess.push(findUser.role);
+            session.user.accessRole = userAccess;
+
             return session;
         },
     },

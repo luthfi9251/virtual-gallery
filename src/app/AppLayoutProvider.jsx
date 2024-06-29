@@ -39,24 +39,17 @@ const theme = createTheme({
     },
 });
 
-export default function RootLayout({ children }) {
+export default function AppLayoutProvider({ children }) {
     return (
-        <html lang="en">
-            <head>
-                <ColorSchemeScript />
-            </head>
-            <body className={poppins.className}>
-                <QueryProvider>
-                    <MantineProvider
-                        theme={theme}
-                        defaultColorScheme="light"
-                        withGlobalStyles
-                    >
-                        <Notifications />
-                        {children}
-                    </MantineProvider>
-                </QueryProvider>
-            </body>
-        </html>
+        <QueryProvider>
+            <MantineProvider
+                theme={theme}
+                defaultColorScheme="light"
+                withGlobalStyles
+            >
+                <Notifications />
+                {children}
+            </MantineProvider>
+        </QueryProvider>
     );
 }

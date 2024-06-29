@@ -8,6 +8,8 @@ import {
 } from "react-icons/fa6";
 import { FaHome, FaPenFancy } from "react-icons/fa";
 import { MdManageAccounts } from "react-icons/md";
+import withAuthAndRoleCheck from "@/hoc/withAuthAndRoleCheck";
+import { PAGE_CONFIG } from "@/variables/page";
 
 let NAV_DATA_GROUP = [
     {
@@ -80,6 +82,8 @@ let NAV_DATA_GROUP = [
     },
 ];
 
-export default function layout({ children }) {
+async function layout({ children }) {
     return <Sidebar navData={NAV_DATA_GROUP}>{children}</Sidebar>;
 }
+
+export default withAuthAndRoleCheck(layout, PAGE_CONFIG.ADMIN_DASHBOARD.name);

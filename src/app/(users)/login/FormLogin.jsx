@@ -23,6 +23,7 @@ import { notifications } from "@mantine/notifications";
 
 export default function FormLogin({ loginHandler }) {
     let [loading, setLoading] = useState(false);
+    let [error, setError] = useState(null);
     const pathname = usePathname();
     const searchParams = useSearchParams();
     let router = useRouter();
@@ -51,6 +52,7 @@ export default function FormLogin({ loginHandler }) {
 
     let handleSubmitLogin = async (data) => {
         setLoading(true);
+        setError(null);
         loginHandler(data)
             .then((res) => {
                 if (res?.success) {
@@ -59,13 +61,14 @@ export default function FormLogin({ loginHandler }) {
                         message: `Selamat datang`,
                     });
                     // redirect
-                    router.push(res.data.redirect_to);
+                    router.push("/");
                 } else {
-                    notifications.show({
-                        color: "red",
-                        title: "Gagal!",
-                        message: res.message,
-                    });
+                    setError(res.message || "Terjadi kesalahan saat Login!");
+                    // notifications.show({
+                    //     color: "red",
+                    //     title: "Gagal!",
+                    //     message: res.message,
+                    // });
                 }
             })
             .finally(() => {
@@ -106,7 +109,7 @@ export default function FormLogin({ loginHandler }) {
                     </Text>
                 </Link>
 
-                {false && (
+                {error && (
                     <Group className="bg-red-100 rounded-md py-2 px-2 border-red-300 border-2">
                         <CrossIcon w={20} h={20} />
                         <Text size="xs" color="red" className=" cursor-default">

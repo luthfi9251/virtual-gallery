@@ -37,6 +37,7 @@ import {
 } from "@mantine/form";
 import { useSearchParams } from "next/navigation";
 import { notifications } from "@mantine/notifications";
+import Link from "next/link";
 
 const TYPE = {
     KURATOR: "kurator",
@@ -193,20 +194,22 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                         : "Apakah Anda seorang pelukis berbakat yang mencari platform untuk memamerkan karya Anda? AKami mengundang Anda untuk bergabung dengan komunitas pelukis kami!"}
                 </Text>
                 <Space h={{ base: "sm", sm: "sm", md: "md" }} />
-                <Text
-                    size="sm"
-                    className=" flex flex-row-reverse items-center font-bold text-tanArtBlue-600 gap-5"
-                >
-                    <span>
-                        <NextImage
-                            src="/tanart-logo.png"
-                            alt="Logo Tanart"
-                            width={30}
-                            height={30}
-                        />
-                    </span>
-                    Tanart Space
-                </Text>
+                <Link href="/" className=" self-end">
+                    <Text
+                        size="sm"
+                        className=" flex flex-row-reverse items-center font-bold text-tanArtBlue-600 gap-5"
+                    >
+                        <span>
+                            <NextImage
+                                src="/tanart-logo.png"
+                                alt="Logo Tanart"
+                                width={30}
+                                height={30}
+                            />
+                        </span>
+                        Tanart Space
+                    </Text>
+                </Link>
             </div>
         </Flex>
     );
@@ -392,20 +395,22 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                 >
                     Selanjutnya
                 </Button>
-                <Text
-                    size="sm"
-                    className=" flex flex-row-reverse items-center font-bold text-tanArtBlue-600 gap-2"
-                >
-                    <span>
-                        <NextImage
-                            src="/tanart-logo.png"
-                            alt="Logo Tanart"
-                            width={30}
-                            height={30}
-                        />
-                    </span>
-                    Tanart Space
-                </Text>
+                <Link href="/" className=" self-end">
+                    <Text
+                        size="sm"
+                        className=" flex flex-row-reverse items-center font-bold text-tanArtBlue-600 gap-2"
+                    >
+                        <span>
+                            <NextImage
+                                src="/tanart-logo.png"
+                                alt="Logo Tanart"
+                                width={30}
+                                height={30}
+                            />
+                        </span>
+                        Tanart Space
+                    </Text>
+                </Link>
             </div>
         </Flex>
     );
@@ -496,20 +501,22 @@ function StepThird({ handleNextStep, dataStepper, mode }) {
                         : "pelukis/pe·lu·kis/ n orang yang berprofesi melukis (seniman dalam seni lukis lukis);"}
                 </Text>
                 <Space h={{ base: "sm", sm: "sm", md: "md" }} />
-                <Text
-                    size="sm"
-                    className=" flex flex-row-reverse items-center font-bold text-tanArtBlue-600 gap-5"
-                >
-                    <span>
-                        <NextImage
-                            src="/tanart-logo.png"
-                            alt="Logo Tanart"
-                            width={30}
-                            height={30}
-                        />
-                    </span>
-                    Tanart Space
-                </Text>
+                <Link href="/" className=" self-end">
+                    <Text
+                        size="sm"
+                        className=" flex flex-row-reverse items-center font-bold text-tanArtBlue-600 gap-5"
+                    >
+                        <span>
+                            <NextImage
+                                src="/tanart-logo.png"
+                                alt="Logo Tanart"
+                                width={30}
+                                height={30}
+                            />
+                        </span>
+                        Tanart Space
+                    </Text>
+                </Link>
             </div>
         </Flex>
     );
@@ -530,7 +537,7 @@ export default function Content() {
     });
     return (
         <Flex
-            className="bg-white w-5/6 md:w-2/3 unxl:aspect-[2/1] max-w-[1100px] rounded-lg md:overflow-hidden shadow-md"
+            className="bg-white w-5/6 md:w-2/3 xl:aspect-[2/1] max-w-[1100px] rounded-lg md:overflow-hidden shadow-md"
             direction="column"
             align="center"
         >

@@ -1,5 +1,6 @@
 "use server";
 import prisma from "@/lib/prisma";
+import { hashPassword } from "@/lib/bcrypt";
 import { revalidatePath } from "next/cache";
 import { URL_TANART } from "@/variables/url";
 
@@ -82,12 +83,12 @@ export const addUser = async (data) => {
             tempat_lhr,
             role,
         } = data;
-
+        let hashedPassword = hashPassword(password);
         let addQuery = await prisma.User.create({
             data: {
                 username,
                 email,
-                password,
+                password: hashedPassword,
                 nama_lengkap,
                 tgl_lhr: new Date(tgl_lhr).toISOString(),
                 tempat_lhr,

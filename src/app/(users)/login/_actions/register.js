@@ -5,7 +5,6 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 
 export const testData = async (data) => {
-    console.log(data);
     return {
         success: true,
         message: "Berhasil test",
@@ -15,22 +14,14 @@ export const testData = async (data) => {
 
 export const loginUser = async (data) => {
     try {
-        await signIn("credentials", {
+        let authSignIn = await signIn("credentials", {
             email: data.email,
             password: data.password,
-            login_as: "USER",
             redirect: false,
         });
-        let session = await auth();
-        console.log(session);
-
         return {
             success: true,
             message: "Berhasil Log In",
-            data: {
-                redirect_to:
-                    session.user.role === "ADMIN" ? "/a/dashboard" : "/u",
-            },
         };
     } catch (err) {
         console.log(err);
