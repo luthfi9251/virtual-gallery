@@ -60,12 +60,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             session.user.role = findUser.role;
             session.user.Seniman = findUser.Seniman;
             session.user.Kurator = findUser.Kurator;
+            session.user.foto_profil = findUser.foto_profil;
             let userAccess = [];
 
-            if (findUser.Seniman) {
+            if (findUser.Seniman?.is_verified) {
                 userAccess.push(ROLE.PELUKIS);
             }
-            if (findUser.Kurator) {
+            if (findUser.Kurator?.is_verified) {
                 userAccess.push(ROLE.KURATOR);
             }
             userAccess.push(findUser.role);

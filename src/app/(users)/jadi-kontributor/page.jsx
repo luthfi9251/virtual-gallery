@@ -1,5 +1,6 @@
 import { Container, BackgroundImage, Center } from "@mantine/core";
 import Content from "./Content";
+import { Suspense } from "react";
 
 export default function Page() {
     return (
@@ -10,7 +11,9 @@ export default function Page() {
             >
                 <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
                 <Center className="relative md:absolute z-20 inset-0">
-                    <Content />
+                    <Suspense>
+                        <Content />
+                    </Suspense>
                 </Center>
             </BackgroundImage>
         </Container>

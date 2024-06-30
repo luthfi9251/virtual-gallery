@@ -21,6 +21,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Avatar } from "@mantine/core";
 import AvatarNavbar from "@/components/AvatarNavbar";
 import { useMemo } from "react";
+import myImageLoader from "@/loader/imageLoader";
 
 function NavItem({ href, title }) {
     return (
@@ -35,11 +36,15 @@ function NavItem({ href, title }) {
 
 export default function Navbar({ children, session }) {
     const [opened, { toggle }] = useDisclosure();
+    const imageUrl = useMemo(
+        () => session?.user?.foto_profil || null,
+        [session]
+    );
     const roleAccess = useMemo(() => {
         return {
             admin: session?.user.role === "ADMIN",
-            pelukis: session?.user.Seniman,
-            kurator: session?.user.Kurator,
+            pelukis: session?.user.Seniman?.is_verified,
+            kurator: session?.user.Kurator?.is_verified,
         };
     }, [session]);
 
@@ -87,6 +92,7 @@ export default function Navbar({ children, session }) {
                         <Box visibleFrom="sm">
                             {session?.user ? (
                                 <AvatarNavbar
+                                    profilePicture={imageUrl}
                                     isMobile={false}
                                     isAdmin={roleAccess.admin}
                                     isKurator={roleAccess.kurator}
@@ -114,7 +120,15 @@ export default function Navbar({ children, session }) {
                         <UnstyledButton w="100%">
                             <Group>
                                 <Avatar
-                                    src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
+                                    src={
+                                        imageUrl
+                                            ? myImageLoader({
+                                                  src: imageUrl,
+                                                  width: 100,
+                                                  quality: 75,
+                                              })
+                                            : "/EMPTY_USER_PROFILE.png"
+                                    }
                                     radius="xl"
                                 />
 
@@ -124,7 +138,7 @@ export default function Navbar({ children, session }) {
                                         fw={500}
                                         className=" cursor-default"
                                     >
-                                        Harriette Spoonlicker
+                                        {session?.user.nama_lengkap}
                                     </Text>
 
                                     <Text
@@ -132,10 +146,11 @@ export default function Navbar({ children, session }) {
                                         size="xs"
                                         className=" cursor-default"
                                     >
-                                        hspoonlicker@outlook.com
+                                        {session?.user.email}
                                     </Text>
                                 </div>
                                 <AvatarNavbar
+                                    profilePicture={imageUrl}
                                     isMobile={true}
                                     isAdmin={roleAccess.admin}
                                     isKurator={roleAccess.kurator}

@@ -13,8 +13,11 @@ import {
 import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa6";
 import { LogOut } from "./AuthComponent";
+import NextImage from "next/image";
+import myImageLoader from "@/loader/imageLoader";
 
 export default function AvatarNavbar({
+    profilePicture,
     isMobile,
     isAdmin = false,
     isKurator = false,
@@ -40,7 +43,15 @@ export default function AvatarNavbar({
                     </Box>
                 ) : (
                     <Avatar
-                        src="/EMPTY_USER_PROFILE.png"
+                        src={
+                            profilePicture
+                                ? myImageLoader({
+                                      src: profilePicture,
+                                      width: 100,
+                                      quality: 75,
+                                  })
+                                : "/EMPTY_USER_PROFILE.png"
+                        }
                         className="border cursor-pointer"
                         alt="it's me"
                     />

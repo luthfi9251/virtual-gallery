@@ -14,7 +14,9 @@ import {
     CircleStencil,
     ImageRestriction,
 } from "react-advanced-cropper";
+import { uploadProfilePicture } from "@/actions/user";
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { notifications } from "@mantine/notifications";
 
 const ProfilePictureCropper = forwardRef(({ image }, ref) => {
     return (
@@ -49,6 +51,7 @@ const CropperWrapper = forwardRef(({ type, image }, ref) => {
 });
 
 export default function CropperModal({
+    idUser,
     opened,
     open,
     close,
@@ -58,17 +61,37 @@ export default function CropperModal({
     const inputRef = useRef(null);
     const cropperRef = useRef(null);
     const [image, setImage] = useState(null);
+    const [imageExt, setImageExt] = useState(null);
 
     const onCrop = () => {
         const cropper = cropperRef.current;
         if (cropper) {
             const canvas = cropper.getCanvas();
-            // const newTab = window.open();
-            // if (newTab && canvas) {
-            //     newTab.document.body.innerHTML = `<img src="${canvas.toDataURL()}"></img>`;
-            // }
+            const form = new FormData();
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    form.append("image", blob);
+                    form.append("ext", imageExt);
+                    form.append("type", "profile");
+                    uploadProfilePicture(form, idUser)
+                        .then((res) => {
+                            notifications.show({
+                                title: "Berhasil",
+                                message: "Berhasil memperbaharui foto profil!",
+                            });
+                        })
+                        .catch((err) => {
+                            notifications.show({
+                                color: "red",
+                                title: "Gagal",
+                                message: "Gagal memperbaharui foto profil!",
+                            });
+                        });
+                }
+            }, "image/jpeg");
             setPreview(canvas.toDataURL());
             setImage(null);
+            setImageExt(null);
             close();
         }
     };
@@ -86,6 +109,8 @@ export default function CropperModal({
                         if (file) {
                             let URLIMG = URL.createObjectURL(file);
                             setImage(URLIMG);
+                            console.log({ file, ext: file.name.split(".")[1] });
+                            setImageExt(file.name.split(".")[1]);
                         } else {
                             setImage("/EMPTY_USER_PROFILE.jpg");
                         }

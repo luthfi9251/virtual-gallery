@@ -27,7 +27,10 @@ export default async function Page({ params }) {
                 <Title order={2}>Edit Akun</Title>
             </Group>
             <Space h="xl" />
-            <UserProfile />
+            <UserProfile
+                idUser={params.userId}
+                imageProfile={userData.foto_profil}
+            />
             <UserDataForm data={userData} />
             {userData.Seniman && (
                 <SecondaryAccount

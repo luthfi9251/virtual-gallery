@@ -13,9 +13,10 @@ import NextImage from "next/image";
 import { useState } from "react";
 import CropperModal from "@/components/CropperModal";
 import { useDisclosure } from "@mantine/hooks";
+import myImageLoader from "@/loader/imageLoader";
 
-export default function UserProfile() {
-    const [imgUrl, setImgUrl] = useState("/EMPTY_USER_PROFILE.png");
+export default function UserProfile({ idUser, imageProfile }) {
+    const [imgUrl, setImgUrl] = useState(imageProfile || null);
     const [opened, { open, close }] = useDisclosure(false);
     return (
         <>
@@ -26,6 +27,7 @@ export default function UserProfile() {
                             <Center>
                                 <Stack justify="center" align="center">
                                     <Image
+                                        loader={imgUrl ? myImageLoader : null}
                                         component={NextImage}
                                         width={300}
                                         height={300}
@@ -33,9 +35,14 @@ export default function UserProfile() {
                                         maw={300}
                                         mih={300}
                                         miw={300}
-                                        src={imgUrl}
+                                        src={
+                                            imgUrl
+                                                ? imgUrl
+                                                : "/EMPTY_USER_PROFILE.png"
+                                        }
                                         alt="My image"
                                         className=" border rounded-full p-1"
+                                        priority
                                     />
                                     <Button
                                         maw={rem(120)}
@@ -51,6 +58,7 @@ export default function UserProfile() {
                 </GridCol>
             </Grid>
             <CropperModal
+                idUser={idUser}
                 open={open}
                 opened={opened}
                 close={close}
