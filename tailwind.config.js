@@ -37,6 +37,7 @@ module.exports = {
                 },
                 tanArt: {
                     grey: "#A0A0A0",
+                    greyDark: "#F2F2F2",
                 },
             },
         },

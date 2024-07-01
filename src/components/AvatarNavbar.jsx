@@ -67,7 +67,11 @@ export default function AvatarNavbar({
                         Dashboard Admin
                     </MenuItem>
                 )}
-                {isPelukis && <MenuItem>Dashboard Pelukis</MenuItem>}
+                {isPelukis && (
+                    <MenuItem component={Link} href="/p/dashboard">
+                        Dashboard Pelukis
+                    </MenuItem>
+                )}
                 {isKurator && <MenuItem>Dashboard Kurator</MenuItem>}
 
                 {isAdmin || isPelukis || isKurator ? <MenuDivider /> : null}
