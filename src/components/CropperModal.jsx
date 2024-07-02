@@ -109,7 +109,6 @@ export default function CropperModal({
                         if (file) {
                             let URLIMG = URL.createObjectURL(file);
                             setImage(URLIMG);
-                            console.log({ file, ext: file.name.split(".")[1] });
                             setImageExt(file.name.split(".")[1]);
                         } else {
                             setImage("/EMPTY_USER_PROFILE.jpg");

@@ -43,6 +43,7 @@ model Seniman {
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
   User        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  Karya       Karya[]
 }
 
 model Kurator {
@@ -54,4 +55,27 @@ model Kurator {
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
   User        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Karya {
+  id          String      @id @default(uuid())
+  judul       String
+  deskripsi   String      @db.Text
+  lukisan_url String
+  keterangan  String      @db.Text
+  harga       Decimal?
+  panjang     Decimal?
+  lebar       Decimal?
+  status      StatusKarya @default(DIKURASI)
+  Seniman     Seniman     @relation(fields: [seniman_id], references: [id])
+  seniman_id  String
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+}
+
+enum StatusKarya {
+  DIKURASI
+  TERKURASI
+  SELESAI
+  TERJUAL
 }

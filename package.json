@@ -9,6 +9,9 @@
         "lint": "next lint",
         "cypress:open": "cypress open"
     },
+    "prisma": {
+        "seed": "node prisma/seed.js"
+    },
     "dependencies": {
         "@mantine/core": "^7.10.2",
         "@mantine/dates": "^7.10.2",

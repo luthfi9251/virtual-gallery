@@ -1,3 +1,4 @@
+"use client";
 import {
     Card,
     CardSection,
@@ -9,23 +10,24 @@ import {
     Avatar,
 } from "@mantine/core";
 import Image from "next/image";
+import myImageLoader, { karyaImageLoader } from "@/loader/imageLoader";
 
 function Status({ status }) {
-    if (status === "PENDING") {
+    if (status === "DIKURASI") {
         return (
-            <Text className="absolute bg-red-600 ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white">
+            <Text className="absolute bg-tanArt-greyLight ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default">
                 Pending
             </Text>
         );
     } else if (status === "TERKURASI") {
         return (
-            <Text className="absolute bg-red-600 ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white">
+            <Text className="absolute bg-tanArt-yellow ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default">
                 TERKURASI
             </Text>
         );
     } else if (status === "SELESAI") {
         return (
-            <Text className="absolute bg-red-600 ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white">
+            <Text className="absolute bg-tanArt-green ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default">
                 SELESAI
             </Text>
         );
@@ -48,59 +50,56 @@ function Status({ status }) {
 }
 let STATUS_DEF = ["PENDING", "TERKURASI", "SELESAI", "TERJUAL"];
 
-export default function CardKarya() {
+export default function CardKarya({ data, index, clickHandler }) {
     return (
-        <Card className="p-3 shadow border min-w-[150px] w-full max-w-[300px] min-h-[200px] h-full max-h-96 flex flex-col items-center">
-            <CardSection className=" rounded aspect-[4/5] w-full m-0 p-10 relative bg-tanArt-greyDark">
-                <Image fill src="/bg-login.jpg" className=" object-contain" />
-                {/* <Text className="absolute bg-red-600 ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white">
-                    Terkurasi
-                </Text>
-
-                <Text className="absolute inset-0 text-centerS flex justify-center items-center font-bold text-white z-20 text-3xl cursor-default">
-                    TERJUAL
-                </Text>
-                <Overlay
-                    color="#000"
-                    backgroundOpacity={0.5}
-                    className="rounded z-10"
-                /> */}
-                <Status
-                    status={
-                        STATUS_DEF[
-                            Math.floor(Math.random() * STATUS_DEF.length)
-                        ]
-                    }
+        <Card
+            className="p-3 shadow border min-w-[150px] w-full max-w-[300px] min-h-[200px] h-full max-h-96 flex flex-col items-center hover:bg-slate-100 transition-all cursor-pointer"
+            onClick={() => clickHandler(data)}
+        >
+            <CardSection className=" rounded aspect-[4/5] w-full max-h-[230px] m-0 p-10 relative bg-tanArt-greyDark">
+                <Image
+                    fill
+                    src={data?.lukisan_url}
+                    loader={karyaImageLoader}
+                    quality={30}
+                    className=" object-cover"
+                    loading={index < 6 ? "eager" : "lazy"}
+                    alt="thumbnail"
                 />
+                <Status status={data?.status} />
             </CardSection>
             <Group gap="xs" className="my-1 self-start">
                 <Avatar
-                    src="/EMPTY_USER_PROFILE.png"
+                    src={
+                        data?.foto_profil
+                            ? myImageLoader({
+                                  src: data?.foto_profil,
+                                  width: 100,
+                                  quality: 75,
+                              })
+                            : "/EMPTY_USER_PROFILE.png"
+                    }
                     variant="transparent"
                     size="xs"
                     alt="Image"
                 />
                 <Text className="max-w-[170px] line-clamp-1 font-light text-[10px] text-tanArt-grey">
-                    Robby Hairdryer
+                    {data?.nama_lengkap}
                 </Text>
             </Group>
-            <Stack gap={5} className="cursor-default">
-                <Text className=" font-medium line-clamp-1">
-                    Desired destiny Desired destiny Desired destiny Desired
-                    destiny
+            <Stack gap={5} className=" grow self-start" justify="space-between">
+                <Text className=" font-medium line-clamp-1">{data?.judul}</Text>
+                <Text className="grow text-[10px] line-clamp-3">
+                    {data?.deskripsi}
                 </Text>
-                <Text className=" text-[10px] line-clamp-3">
-                    Lukisan ini menggambarkan perjalanan hidup yang dipandu oleh
-                    takdir. menggambarkan perjalanan hidup yang dipandu oleh
-                    menggambarkan perjalanan hidup yang dipandu oleh
-                    menggambarkan perjalanan hidup yang dipandu oleh
-                </Text>
-                <Group>
+                <Group className=" justify-self-end">
                     <Text className="font-light text-[10px] text-tanArt-grey">
-                        2024
+                        {data?.created_at
+                            ? new Date(data?.created_at).getFullYear()
+                            : null}
                     </Text>
                     <Text className="font-light text-[10px] text-tanArt-grey">
-                        50 x 70 cm
+                        {data?.panjang + ""} x {data?.lebar + ""} cm
                     </Text>
                 </Group>
             </Stack>

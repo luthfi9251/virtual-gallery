@@ -168,7 +168,7 @@ export default function Navbar({ children, session }) {
                 </AppShellSection>
             </AppShellNavbar>
 
-            <AppShellMain>{children}</AppShellMain>
+            <AppShellMain className="px-0 md:px-4">{children}</AppShellMain>
         </AppShell>
     );
 }

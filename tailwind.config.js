@@ -38,6 +38,9 @@ module.exports = {
                 tanArt: {
                     grey: "#A0A0A0",
                     greyDark: "#F2F2F2",
+                    greyLight: "#A6A6A6",
+                    yellow: "#FFC63B",
+                    green: "#4BC27E",
                 },
             },
         },
