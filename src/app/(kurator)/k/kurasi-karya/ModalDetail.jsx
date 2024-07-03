@@ -1,9 +1,8 @@
 "use client";
-import BaseModalKarya, { KuratorComment } from "@/components/BaseModalKarya";
+import BaseModalKarya from "@/components/BaseModalKarya";
 import {
     ScrollArea,
     ScrollAreaAutosize,
-    Button,
     Space,
     Stack,
     Title,
@@ -31,7 +30,7 @@ const TabKaryaInformation = ({ information }) => {
             </TabsList>
 
             <TabsPanel value="informasi" className="grow py-5 cursor-default">
-                <Stack>
+                <Stack h={"100%"}>
                     <Stack gap="xs">
                         <Text className="text-sm font-semibold">Deskripsi</Text>
                         <Text className="text-sm">{information.deskripsi}</Text>
@@ -59,11 +58,7 @@ const TabKaryaInformation = ({ information }) => {
                     </Stack>
                 </Stack>
             </TabsPanel>
-            <TabsPanel value="review" className="py-5" component={Stack}>
-                <KuratorComment />
-                <KuratorComment />
-                <KuratorComment />
-            </TabsPanel>
+            <TabsPanel value="review" className="py-5"></TabsPanel>
         </Tabs>
     );
 };

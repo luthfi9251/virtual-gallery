@@ -38,7 +38,29 @@ async function main() {
                 "$2a$10$7DHdR6aHst478sBQyl8.quRLxEHjuUuWgJGSpb7q/V8Ro6zRGyIFa", //passwordadmin
         },
     });
-    console.log({ AdminAccount, PelukisAccount });
+    const KuratorAccount = await prisma.user.upsert({
+        where: { email: "kurator@kurator.com" },
+        update: {},
+        create: {
+            email: "kurator@kurator.com",
+            username: "kuratorhandal",
+            nama_lengkap: "Kurator Handal",
+            tempat_lhr: "Demak",
+            tgl_lhr: new Date().toISOString(),
+            role: "USER",
+            Kurator: {
+                create: {
+                    is_verified: true,
+                    verified_at: new Date().toISOString(),
+                    deskripsi:
+                        "saya tidak memiliki pengalamana sebagai kurator hehehehehhehehhehehhehehehheheh",
+                },
+            },
+            password:
+                "$2a$10$7DHdR6aHst478sBQyl8.quRLxEHjuUuWgJGSpb7q/V8Ro6zRGyIFa", //passwordadmin
+        },
+    });
+    console.log({ AdminAccount, PelukisAccount, KuratorAccount });
 }
 main()
     .then(async () => {

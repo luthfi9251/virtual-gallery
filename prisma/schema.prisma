@@ -47,30 +47,32 @@ model Seniman {
 }
 
 model Kurator {
-  id          String    @id @default(uuid())
-  is_verified Boolean   @default(false)
-  deskripsi   String    @db.Text
-  user_id     String    @unique
+  id          String        @id @default(uuid())
+  is_verified Boolean       @default(false)
+  deskripsi   String        @db.Text
+  user_id     String        @unique
   verified_at DateTime?
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  User        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  User        User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  KurasiKarya KurasiKarya[]
 }
 
 model Karya {
-  id          String      @id @default(uuid())
+  id          String        @id @default(uuid())
   judul       String
-  deskripsi   String      @db.Text
+  deskripsi   String        @db.Text
   lukisan_url String
-  keterangan  String      @db.Text
+  keterangan  String        @db.Text
   harga       Decimal?
   panjang     Decimal?
   lebar       Decimal?
-  status      StatusKarya @default(DIKURASI)
-  Seniman     Seniman     @relation(fields: [seniman_id], references: [id])
+  status      StatusKarya   @default(DIKURASI)
+  Seniman     Seniman       @relation(fields: [seniman_id], references: [id])
   seniman_id  String
-  created_at  DateTime    @default(now())
-  updated_at  DateTime    @updatedAt
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  KurasiKarya KurasiKarya[]
 }
 
 enum StatusKarya {
@@ -78,4 +80,19 @@ enum StatusKarya {
   TERKURASI
   SELESAI
   TERJUAL
+}
+
+model KurasiKarya {
+  id         Int      @id @default(autoincrement())
+  Kurator    Kurator  @relation(fields: [kurator_id], references: [id])
+  kurator_id String
+  Karya      Karya    @relation(fields: [karya_id], references: [id])
+  karya_id   String
+  komentar   String   @db.Text
+  harga_maks Decimal
+  harga_min  Decimal
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([kurator_id, karya_id], name: "kurasiKaryaIdentifier")
 }

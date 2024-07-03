@@ -4,12 +4,15 @@ import { useDisclosure } from "@mantine/hooks";
 import { useState, useMemo } from "react";
 import CardKarya from "@/components/CardKarya";
 import ModalDetailKarya from "./ModalDetail";
+import { useMediaQuery } from "@mantine/hooks";
 
 export default function TabContent({ data }) {
+    const isMobile = useMediaQuery("(max-width: 48em)");
     const [activeTab, setActiveTab] = useState("all");
     const [activeData, setActiveData] = useState(null);
     const disclosure = useDisclosure(false);
     const [dataOriginal, setDataOriginal] = useState(data);
+
     const karyaFiltered = useMemo(() => {
         switch (activeTab) {
             case "pending":
@@ -39,12 +42,37 @@ export default function TabContent({ data }) {
     return (
         <>
             <Tabs value={activeTab} onChange={setActiveTab}>
-                <TabsList grow>
-                    <TabsTab value="all">Semua</TabsTab>
-                    <TabsTab value="pending">Sedang Dikurasi</TabsTab>
-                    <TabsTab value="terkurasi">Menunggu Persetujuan</TabsTab>
-                    <TabsTab value="selesai">Selesai Dikurasi</TabsTab>
-                    <TabsTab value="terjual">Terjual</TabsTab>
+                <TabsList grow={isMobile}>
+                    <TabsTab
+                        value="all"
+                        className="hover:bg-tanArtBlue-600 hover:text-white"
+                    >
+                        Semua
+                    </TabsTab>
+                    <TabsTab
+                        value="pending"
+                        className="hover:bg-tanArtBlue-600 hover:text-white"
+                    >
+                        Sedang Dikurasi
+                    </TabsTab>
+                    <TabsTab
+                        value="terkurasi"
+                        className="hover:bg-tanArtBlue-600 hover:text-white"
+                    >
+                        Menunggu Persetujuan
+                    </TabsTab>
+                    <TabsTab
+                        value="selesai"
+                        className="hover:bg-tanArtBlue-600 hover:text-white"
+                    >
+                        Selesai Dikurasi
+                    </TabsTab>
+                    <TabsTab
+                        value="terjual"
+                        className="hover:bg-tanArtBlue-600 hover:text-white"
+                    >
+                        Terjual
+                    </TabsTab>
                 </TabsList>
 
                 <TabsPanel value="all" className="py-5">

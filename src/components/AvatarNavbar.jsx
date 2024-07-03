@@ -91,7 +91,11 @@ export default function AvatarNavbar({
                         Dashboard Pelukis
                     </MenuItem>
                 )}
-                {isKurator && <MenuItem>Dashboard Kurator</MenuItem>}
+                {isKurator && (
+                    <MenuItem component={Link} href="/k/kurasi-karya">
+                        Dashboard Kurator
+                    </MenuItem>
+                )}
 
                 {isAdmin || isPelukis || isKurator ? <MenuDivider /> : null}
                 <MenuLabel>Jadi Kontributor</MenuLabel>

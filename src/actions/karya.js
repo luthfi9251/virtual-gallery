@@ -44,3 +44,81 @@ export const unggahKaryaPelukis = async (formData) => {
         throw err;
     }
 };
+
+export const getAllKaryaNotYetCurratedByCurrentUser = async () => {
+    try {
+        let session = await auth();
+
+        let kurator_karya = await prisma.Kurator.findUnique({
+            where: {
+                id: session.user.Kurator.id,
+            },
+            select: {
+                id: true,
+                KurasiKarya: {
+                    select: {
+                        id: true,
+                        Karya: {
+                            select: {
+                                id: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        let karyaIds = kurator_karya.KurasiKarya.map((item) => item.Karya.id);
+        let karyaUncurrated = await prisma.Karya.findMany({
+            where: {
+                id: {
+                    not: {
+                        in: karyaIds,
+                    },
+                },
+            },
+            select: {
+                id: true,
+                judul: true,
+                deskripsi: true,
+                keterangan: true,
+                harga: true,
+                created_at: true,
+                panjang: true,
+                lebar: true,
+                status: true,
+                lukisan_url: true,
+                Seniman: {
+                    select: {
+                        User: {
+                            select: {
+                                nama_lengkap: true,
+                                foto_profil: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        // console.log(karyaUncurrated);
+        return karyaUncurrated.map((item) => {
+            return {
+                id: item.id,
+                judul: item.judul,
+                deskripsi: item.deskripsi,
+                keterangan: item.keterangan,
+                harga: item.harga,
+                created_at: item.created_at,
+                status: item.status,
+                lukisan_url: item.lukisan_url,
+                panjang: item.panjang + "",
+                lebar: item.lebar + "",
+                id_karya: item.id,
+                nama_lengkap: item.Seniman.User.nama_lengkap,
+                foto_profil: item.Seniman.User.foto_profil,
+            };
+        });
+    } catch (err) {
+        throw err;
+    }
+};

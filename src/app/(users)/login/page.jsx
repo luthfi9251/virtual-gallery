@@ -31,7 +31,7 @@ export default function Page(props) {
                     }
                     w={{ md: "50%" }}
                     h={{ base: "auto", md: "100%" }}
-                    className="rounded-b-xl md:rounded-bl-none md:rounded-r-[50px] overflow-hidden md:w-1/2"
+                    className="rounded overflow-hidden md:w-1/2"
                 >
                     <Container fluid m={0} className="relative h-full w-full">
                         <Center className="relative md:absolute inset-0 z-10 p-1 py-10 md:p-4 text-white">
