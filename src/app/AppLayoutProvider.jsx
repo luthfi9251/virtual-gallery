@@ -1,5 +1,6 @@
 import { Poppins } from "next/font/google";
 import { Notifications } from "@mantine/notifications";
+import { ModalsProvider } from "@mantine/modals";
 import QueryProvider from "./QueryProvider";
 import "./globals.css";
 
@@ -48,7 +49,7 @@ export default function AppLayoutProvider({ children }) {
                 withGlobalStyles
             >
                 <Notifications />
-                {children}
+                <ModalsProvider>{children}</ModalsProvider>
             </MantineProvider>
         </QueryProvider>
     );

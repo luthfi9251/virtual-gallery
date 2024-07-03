@@ -1,7 +1,7 @@
 "use client";
 import BaseModalKarya, { KuratorComment } from "@/components/BaseModalKarya";
 import {
-    ScrollArea,
+    ActionIcon,
     ScrollAreaAutosize,
     Button,
     Space,
@@ -13,9 +13,16 @@ import {
     TabsList,
     TabsPanel,
     TabsTab,
+    Menu,
+    MenuTarget,
+    MenuDropdown,
+    MenuLabel,
+    MenuItem,
 } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import { useState, useMemo } from "react";
 import { AvatarProfileSmall } from "@/components/AvatarNavbar";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const TabKaryaInformation = ({ information }) => {
     const [activeTab, setActiveTab] = useState("informasi");
@@ -23,14 +30,17 @@ const TabKaryaInformation = ({ information }) => {
         <Tabs
             value={activeTab}
             onChange={setActiveTab}
-            className="grow flex flex-col"
+            className="grow flex flex-col overflow-y-auto"
         >
             <TabsList grow>
                 <TabsTab value="informasi">Informasi</TabsTab>
                 <TabsTab value="review">Review</TabsTab>
             </TabsList>
 
-            <TabsPanel value="informasi" className="grow py-5 cursor-default">
+            <TabsPanel
+                value="informasi"
+                className="grow py-5 cursor-default overflow-y-auto"
+            >
                 <Stack>
                     <Stack gap="xs">
                         <Text className="text-sm font-semibold">Deskripsi</Text>
@@ -59,12 +69,56 @@ const TabKaryaInformation = ({ information }) => {
                     </Stack>
                 </Stack>
             </TabsPanel>
-            <TabsPanel value="review" className="py-5" component={Stack}>
+            <TabsPanel
+                value="review"
+                className="py-5 overflow-y-auto"
+                component={Stack}
+            >
                 <KuratorComment />
                 <KuratorComment />
                 <KuratorComment />
             </TabsPanel>
         </Tabs>
+    );
+};
+
+const openDeleteModal = () =>
+    modals.openConfirmModal({
+        title: "Hapus Karya",
+        centered: true,
+        children: (
+            <Text size="sm">
+                Anda yakin akan menghapus karya anda? Seluruh data kurasi pada
+                karya ini akan ikut terhapus
+            </Text>
+        ),
+        labels: { confirm: "Hapus Karya", cancel: "Batal" },
+        confirmProps: { color: "red" },
+        onCancel: () => console.log("Cancel"),
+        onConfirm: () => console.log("Confirmed"),
+    });
+
+const MenuKarya = () => {
+    return (
+        <Menu shadow="md" width={200} position="bottom-end">
+            <MenuTarget>
+                <ActionIcon
+                    variant="transparent"
+                    className="absolute top-0 right-0 text-black"
+                >
+                    <BsThreeDotsVertical
+                        style={{ width: "70%", height: "70%" }}
+                        stroke={1.5}
+                    />
+                </ActionIcon>
+            </MenuTarget>
+
+            <MenuDropdown>
+                <MenuLabel>Aksi</MenuLabel>
+                <MenuItem>Ubah</MenuItem>
+                <MenuItem onClick={openDeleteModal}>Hapus</MenuItem>
+            </MenuDropdown>
+        </Menu>
     );
 };
 
@@ -74,7 +128,8 @@ export default function ModalDetailKarya({ disclosure, dataActive }) {
             disclosure={disclosure}
             imageSrc={dataActive?.lukisan_url}
         >
-            <Stack className="w-full max-h-full" gap={5}>
+            <Stack className="w-full h-full relative" gap={5}>
+                <MenuKarya />
                 <Title order={2}>{dataActive?.judul}</Title>
                 <Group>
                     <AvatarProfileSmall
@@ -83,7 +138,6 @@ export default function ModalDetailKarya({ disclosure, dataActive }) {
                     />
                     <Text className="text-sm">{dataActive?.nama_lengkap}</Text>
                 </Group>
-                <Space h="sm" />
                 <TabKaryaInformation
                     information={{
                         keterangan: dataActive?.keterangan,
@@ -93,6 +147,7 @@ export default function ModalDetailKarya({ disclosure, dataActive }) {
                         panjang: dataActive?.panjang,
                     }}
                 />
+                {/* <Button>Test Button</Button> */}
             </Stack>
         </BaseModalKarya>
     );
