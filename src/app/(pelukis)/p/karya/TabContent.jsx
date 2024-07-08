@@ -1,5 +1,12 @@
 "use client";
-import { Tabs, TabsList, TabsPanel, TabsTab, SimpleGrid } from "@mantine/core";
+import {
+    Tabs,
+    TabsList,
+    TabsPanel,
+    TabsTab,
+    SimpleGrid,
+    Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState, useMemo } from "react";
 import CardKarya from "@/components/CardKarya";
@@ -53,19 +60,19 @@ export default function TabContent({ data }) {
                         value="pending"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
-                        Sedang Dikurasi
+                        Menunggu Kurasi
                     </TabsTab>
                     <TabsTab
                         value="terkurasi"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
-                        Menunggu Persetujuan
+                        Sudah Kurasi
                     </TabsTab>
                     <TabsTab
                         value="selesai"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
-                        Selesai Dikurasi
+                        Siap Pamer
                     </TabsTab>
                     <TabsTab
                         value="terjual"
@@ -76,6 +83,11 @@ export default function TabContent({ data }) {
                 </TabsList>
 
                 <TabsPanel value="all" className="py-5">
+                    {karyaFiltered.length < 1 && (
+                        <Text className="w-full text-center text-xs">
+                            Tidak ada karya
+                        </Text>
+                    )}
                     <SimpleGrid
                         spacing={{ base: "xs", md: "md" }}
                         verticalSpacing={{ base: "xs", md: "md" }}
@@ -93,6 +105,11 @@ export default function TabContent({ data }) {
                     </SimpleGrid>
                 </TabsPanel>
                 <TabsPanel value="pending" className="py-5">
+                    {karyaFiltered.length < 1 && (
+                        <Text className="w-full text-center text-xs">
+                            Tidak ada karya
+                        </Text>
+                    )}
                     <SimpleGrid
                         spacing={{ base: "xs", md: "md" }}
                         verticalSpacing={{ base: "xs", md: "md" }}
@@ -109,6 +126,11 @@ export default function TabContent({ data }) {
                     </SimpleGrid>
                 </TabsPanel>
                 <TabsPanel value="terkurasi" className="py-5">
+                    {karyaFiltered.length < 1 && (
+                        <Text className="w-full text-center text-xs">
+                            Tidak ada karya
+                        </Text>
+                    )}
                     <SimpleGrid
                         spacing={{ base: "xs", md: "md" }}
                         verticalSpacing={{ base: "xs", md: "md" }}
@@ -125,6 +147,11 @@ export default function TabContent({ data }) {
                     </SimpleGrid>
                 </TabsPanel>
                 <TabsPanel value="selesai" className="py-5">
+                    {karyaFiltered.length < 1 && (
+                        <Text className="w-full text-center text-xs">
+                            Tidak ada karya
+                        </Text>
+                    )}
                     <SimpleGrid
                         spacing={{ base: "xs", md: "md" }}
                         verticalSpacing={{ base: "xs", md: "md" }}
@@ -141,6 +168,11 @@ export default function TabContent({ data }) {
                     </SimpleGrid>
                 </TabsPanel>
                 <TabsPanel value="terjual" className="py-5">
+                    {karyaFiltered.length < 1 && (
+                        <Text className="w-full text-center text-xs">
+                            Tidak ada karya
+                        </Text>
+                    )}
                     <SimpleGrid
                         spacing={{ base: "xs", md: "md" }}
                         verticalSpacing={{ base: "xs", md: "md" }}

@@ -63,7 +63,9 @@ model Karya {
   judul       String
   deskripsi   String        @db.Text
   lukisan_url String
-  keterangan  String        @db.Text
+  aliran      String
+  media       String
+  teknik      String
   harga       Decimal?
   panjang     Decimal?
   lebar       Decimal?

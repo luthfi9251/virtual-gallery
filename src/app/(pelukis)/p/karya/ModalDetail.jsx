@@ -47,12 +47,16 @@ const TabKaryaInformation = ({ information }) => {
                         <Text className="text-sm">{information.deskripsi}</Text>
                     </Stack>
                     <Stack gap="xs">
-                        <Text className="text-sm font-semibold">
-                            Keterangan
-                        </Text>
-                        <Text className="text-sm">
-                            {information.keterangan}
-                        </Text>
+                        <Text className="text-sm font-semibold">Aliran</Text>
+                        <Text className="text-sm">{information.aliran}</Text>
+                    </Stack>
+                    <Stack gap="xs">
+                        <Text className="text-sm font-semibold">Media</Text>
+                        <Text className="text-sm">{information.media}</Text>
+                    </Stack>
+                    <Stack gap="xs">
+                        <Text className="text-sm font-semibold">Teknik</Text>
+                        <Text className="text-sm">{information.teknik}</Text>
                     </Stack>
                     <Stack gap="xs">
                         <Text className="text-sm font-semibold">Harga</Text>
@@ -140,14 +144,16 @@ export default function ModalDetailKarya({ disclosure, dataActive }) {
                 </Group>
                 <TabKaryaInformation
                     information={{
-                        keterangan: dataActive?.keterangan,
                         deskripsi: dataActive?.deskripsi,
+                        aliran: dataActive?.aliran,
+                        media: dataActive?.media,
+                        teknik: dataActive?.teknik,
                         harga: dataActive?.harga,
                         lebar: dataActive?.lebar,
                         panjang: dataActive?.panjang,
                     }}
                 />
-                {/* <Button>Test Button</Button> */}
+                <Button>Test Button</Button>
             </Stack>
         </BaseModalKarya>
     );

@@ -4,6 +4,7 @@ import { hashPassword } from "@/lib/bcrypt";
 import { revalidatePath } from "next/cache";
 import { URL_TANART } from "@/variables/url";
 import { uploadImageToBackend } from "./image";
+import { signIn } from "@/auth";
 
 export const getAllUserAccount = async () => {
     let data = await prisma.User.findMany({
@@ -97,6 +98,7 @@ export const addUser = async (data) => {
                 role,
             },
         });
+        await loginUser({ email, password });
         return addQuery;
     } catch (err) {
         console.log(err);
@@ -108,6 +110,27 @@ export const addUser = async (data) => {
             default:
                 throw new Error("Gagal Registrasi Akun!");
         }
+    }
+};
+
+export const loginUser = async (data) => {
+    try {
+        let authSignIn = await signIn("credentials", {
+            email: data.email,
+            password: data.password,
+            redirect: false,
+        });
+        return {
+            success: true,
+            message: "Berhasil Log In",
+        };
+    } catch (err) {
+        console.log(err);
+        return {
+            success: false,
+            message: err.cause?.err?.message,
+            data: null,
+        };
     }
 };
 

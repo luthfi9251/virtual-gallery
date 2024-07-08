@@ -86,11 +86,11 @@ export default function ModalCropperUnggah(props) {
     };
     return (
         <Modal opened={opened} onClose={onClose} centered size="auto">
-            <Stack gap="md">
+            <Stack gap="md" className="h-full px-2">
                 <div className="relative">
                     <FixedCropper
                         ref={cropperRef}
-                        className="max-h-[600px] max-w-[600px] bg-black py-3 px-2"
+                        className="max-h-[500px] max-w-[500px] bg-black py-3 px-2"
                         src={image}
                         stencilProps={{
                             handlers: false,

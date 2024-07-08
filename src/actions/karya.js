@@ -12,7 +12,6 @@ export const unggahKaryaPelukis = async (formData) => {
         }
 
         let imageServiceBody = new FormData();
-        console.log({ ext: formData.get("ext"), karya: formData.get("karya") });
         imageServiceBody.append("type", "thumbnail");
         imageServiceBody.append("ext", formData.get("ext"));
         imageServiceBody.append("image", formData.get("karya"));
@@ -26,7 +25,9 @@ export const unggahKaryaPelukis = async (formData) => {
             data: {
                 judul: formData.get("judul"),
                 deskripsi: formData.get("deskripsi"),
-                keterangan: formData.get("keterangan"),
+                aliran: formData.get("aliran"),
+                media: formData.get("media"),
+                teknik: formData.get("teknik"),
                 panjang: formData.get("panjang"),
                 lebar: formData.get("lebar"),
                 status: "DIKURASI",
@@ -81,7 +82,9 @@ export const getAllKaryaNotYetCurratedByCurrentUser = async () => {
                 id: true,
                 judul: true,
                 deskripsi: true,
-                keterangan: true,
+                aliran: true,
+                media: true,
+                teknik: true,
                 harga: true,
                 created_at: true,
                 panjang: true,
@@ -106,7 +109,9 @@ export const getAllKaryaNotYetCurratedByCurrentUser = async () => {
                 id: item.id,
                 judul: item.judul,
                 deskripsi: item.deskripsi,
-                keterangan: item.keterangan,
+                aliran: item.aliran,
+                media: item.media,
+                teknik: item.teknik,
                 harga: item.harga,
                 created_at: item.created_at,
                 status: item.status,

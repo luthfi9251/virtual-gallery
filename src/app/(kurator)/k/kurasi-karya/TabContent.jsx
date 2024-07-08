@@ -50,9 +50,20 @@ export default function TabContent({ data }) {
         disclosure[1].open();
     };
 
+    const handleGetData = async (mode) => {
+        console.log(mode);
+        if (activeTab === "butuh_kurasi") {
+            return await getAllKaryaNotYetCurratedByCurrentUser();
+        } else {
+            return [];
+        }
+    };
+
     const karyaUncurated = useQuery({
         queryKey: ["kurator", activeTab],
-        queryFn: async () => await getAllKaryaNotYetCurratedByCurrentUser(),
+        queryFn: handleGetData,
+        staleTime: 0,
+        initialData: [],
     });
     return (
         <>
@@ -78,7 +89,9 @@ export default function TabContent({ data }) {
                             <Loader />
                         </Center>
                     ) : karyaUncurated.data.length < 1 ? (
-                        <Text>Tidak ada Data</Text>
+                        <Text className="text-center text-xs">
+                            Tidak ada Data
+                        </Text>
                     ) : (
                         <SimpleGrid
                             spacing={{ base: "xs", md: "md" }}
@@ -104,7 +117,9 @@ export default function TabContent({ data }) {
                             <Loader />
                         </Center>
                     ) : karyaUncurated.data.length < 1 ? (
-                        <Text>Tidak ada Data</Text>
+                        <Text className="text-center text-xs">
+                            Tidak ada Data
+                        </Text>
                     ) : (
                         <SimpleGrid
                             spacing={{ base: "xs", md: "md" }}
@@ -125,7 +140,11 @@ export default function TabContent({ data }) {
                     )}
                 </TabsPanel>
             </Tabs>
-            <ModalDetailKarya disclosure={disclosure} dataActive={activeData} />
+            <ModalDetailKarya
+                disclosure={disclosure}
+                dataActive={activeData}
+                mode={activeTab === "butuh_kurasi" ? "kurasi" : "default"}
+            />
         </>
     );
 }

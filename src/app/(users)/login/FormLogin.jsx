@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useState, useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { notifications } from "@mantine/notifications";
+import { loginUser } from "@/actions/user";
 
 export default function FormLogin({ loginHandler }) {
     let [loading, setLoading] = useState(false);
@@ -53,22 +54,16 @@ export default function FormLogin({ loginHandler }) {
     let handleSubmitLogin = async (data) => {
         setLoading(true);
         setError(null);
-        loginHandler(data)
+        loginUser(data)
             .then((res) => {
                 if (res?.success) {
                     notifications.show({
                         title: "Halo!",
                         message: `Selamat datang`,
                     });
-                    // redirect
                     router.push("/");
                 } else {
                     setError(res.message || "Terjadi kesalahan saat Login!");
-                    // notifications.show({
-                    //     color: "red",
-                    //     title: "Gagal!",
-                    //     message: res.message,
-                    // });
                 }
             })
             .finally(() => {

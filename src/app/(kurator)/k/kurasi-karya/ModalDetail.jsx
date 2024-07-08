@@ -2,7 +2,7 @@
 import BaseModalKarya from "@/components/BaseModalKarya";
 import {
     ScrollArea,
-    ScrollAreaAutosize,
+    Button,
     Space,
     Stack,
     Title,
@@ -22,26 +22,33 @@ const TabKaryaInformation = ({ information }) => {
         <Tabs
             value={activeTab}
             onChange={setActiveTab}
-            className="grow flex flex-col"
+            className="grow flex flex-col overflow-y-auto"
         >
             <TabsList grow>
                 <TabsTab value="informasi">Informasi</TabsTab>
                 <TabsTab value="review">Review</TabsTab>
             </TabsList>
 
-            <TabsPanel value="informasi" className="grow py-5 cursor-default">
-                <Stack h={"100%"}>
+            <TabsPanel
+                value="informasi"
+                className="grow py-5 cursor-default overflow-y-auto"
+            >
+                <Stack>
                     <Stack gap="xs">
                         <Text className="text-sm font-semibold">Deskripsi</Text>
                         <Text className="text-sm">{information.deskripsi}</Text>
                     </Stack>
                     <Stack gap="xs">
-                        <Text className="text-sm font-semibold">
-                            Keterangan
-                        </Text>
-                        <Text className="text-sm">
-                            {information.keterangan}
-                        </Text>
+                        <Text className="text-sm font-semibold">Aliran</Text>
+                        <Text className="text-sm">{information.aliran}</Text>
+                    </Stack>
+                    <Stack gap="xs">
+                        <Text className="text-sm font-semibold">Media</Text>
+                        <Text className="text-sm">{information.media}</Text>
+                    </Stack>
+                    <Stack gap="xs">
+                        <Text className="text-sm font-semibold">Teknik</Text>
+                        <Text className="text-sm">{information.teknik}</Text>
                     </Stack>
                     <Stack gap="xs">
                         <Text className="text-sm font-semibold">Harga</Text>
@@ -58,18 +65,26 @@ const TabKaryaInformation = ({ information }) => {
                     </Stack>
                 </Stack>
             </TabsPanel>
-            <TabsPanel value="review" className="py-5"></TabsPanel>
+            <TabsPanel
+                value="review"
+                className="py-5 overflow-y-auto"
+            ></TabsPanel>
         </Tabs>
     );
 };
 
-export default function ModalDetailKarya({ disclosure, dataActive }) {
+export default function ModalDetailKarya({
+    disclosure,
+    dataActive,
+    mode = "default",
+}) {
+    const [showKurasiForm, setShowKurasiForm] = useState(false);
     return (
         <BaseModalKarya
             disclosure={disclosure}
             imageSrc={dataActive?.lukisan_url}
         >
-            <Stack className="w-full max-h-full" gap={5}>
+            <Stack className="w-full h-full" gap={5}>
                 <Title order={2}>{dataActive?.judul}</Title>
                 <Group>
                     <AvatarProfileSmall
@@ -78,16 +93,28 @@ export default function ModalDetailKarya({ disclosure, dataActive }) {
                     />
                     <Text className="text-sm">{dataActive?.nama_lengkap}</Text>
                 </Group>
-                <Space h="sm" />
-                <TabKaryaInformation
-                    information={{
-                        keterangan: dataActive?.keterangan,
-                        deskripsi: dataActive?.deskripsi,
-                        harga: dataActive?.harga,
-                        lebar: dataActive?.lebar,
-                        panjang: dataActive?.panjang,
-                    }}
-                />
+                {showKurasiForm ? (
+                    <></>
+                ) : (
+                    <>
+                        <TabKaryaInformation
+                            information={{
+                                deskripsi: dataActive?.deskripsi,
+                                aliran: dataActive?.aliran,
+                                media: dataActive?.media,
+                                teknik: dataActive?.teknik,
+                                harga: dataActive?.harga,
+                                lebar: dataActive?.lebar,
+                                panjang: dataActive?.panjang,
+                            }}
+                        />
+                        {mode === "kurasi" && (
+                            <Button onClick={() => setShowKurasiForm(true)}>
+                                Kurasi
+                            </Button>
+                        )}
+                    </>
+                )}
             </Stack>
         </BaseModalKarya>
     );

@@ -20,7 +20,7 @@ import { notifications } from "@mantine/notifications";
 import { DateInput } from "@mantine/dates";
 import Link from "next/link";
 import CrossIcon from "@/components/icons/CrossIcon";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { addUser } from "@/actions/user";
 
 const WITHOUT_DESCRIPTION = {
@@ -48,14 +48,12 @@ const WITHOUT_DESCRIPTION = {
     },
 };
 
-export default function FormRegister({
-    registerHandler,
-    useDeskripsi = false,
-}) {
+export default function FormRegister() {
     let [loading, setLoading] = useState(false);
     let [error, setError] = useState(null);
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const router = useRouter();
     const createQueryString = useCallback(
         (name, value) => {
             const params = new URLSearchParams(searchParams.toString());
@@ -79,8 +77,9 @@ export default function FormRegister({
             .then((res) => {
                 notifications.show({
                     title: "Berhasil Registrasi!",
-                    message: `Silahkan Login ke akun anda!`,
+                    message: `Selamat datang!`,
                 });
+                router.push("/");
             })
             .catch((err) => {
                 setError(err.message);

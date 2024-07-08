@@ -11,6 +11,7 @@ import {
     Textarea,
     NumberInput,
     Title,
+    Fieldset,
 } from "@mantine/core";
 import {
     useForm,
@@ -31,13 +32,12 @@ import { useRouter } from "next/navigation";
 function ImagePreview({ aspect, imageURL, openCropper }) {
     if (aspect === "1/1") {
         return (
-            <div className="flex items-center relative">
+            <div className="w-full h-full flex items-center relative max-w-[900px] max-h-[800px] border">
                 <Image
                     src={imageURL}
-                    width={700}
-                    height={700}
                     alt="preview"
-                    className=" aspect-[1/1] object-cover rounded"
+                    fill
+                    className="object-contain rounded"
                 />
                 <ActionIcon
                     className="absolute bottom-2 right-2"
@@ -57,13 +57,12 @@ function ImagePreview({ aspect, imageURL, openCropper }) {
         );
     } else if (aspect === "4/5") {
         return (
-            <div className="flex items-center relative">
+            <div className="w-full h-full flex items-center relative max-w-[900px] max-h-[800px] border">
                 <Image
                     src={imageURL}
-                    width={600}
-                    height={600}
+                    fill
                     alt="preview"
-                    className="aspect-[4/5] object-cover  rounded"
+                    className="object-contain  rounded"
                 />
                 <ActionIcon
                     className="absolute bottom-2 right-2"
@@ -83,13 +82,12 @@ function ImagePreview({ aspect, imageURL, openCropper }) {
         );
     } else if (aspect === "3/2") {
         return (
-            <div className="flex items-center relative">
+            <div className="w-full h-full flex items-center relative max-w-[900px] max-h-[800px] border">
                 <Image
                     src={imageURL}
-                    width={800}
-                    height={800}
+                    fill
                     alt="preview"
-                    className="aspect-[3/2] object-cover rounded"
+                    className="object-contain  rounded"
                 />
                 <ActionIcon
                     className="absolute bottom-2 right-2"
@@ -129,7 +127,9 @@ export default function Page() {
         initialValues: {
             judul: "",
             deskripsi: "",
-            keterangan: "",
+            aliran: "",
+            media: "",
+            teknik: "",
             panjang: 0,
             lebar: 0,
         },
@@ -142,10 +142,9 @@ export default function Page() {
                 { min: 5, max: 500 },
                 "Minimal 5 Karakter dan Maksimal 500 Karakter!"
             ),
-            keterangan: hasLength(
-                { min: 5, max: 500 },
-                "Minimal 5 Karakter dan Maksimal 500 Karakter!"
-            ),
+            aliran: isNotEmpty("Tidak boleh kosong!"),
+            media: isNotEmpty("Tidak boleh kosong!"),
+            teknik: isNotEmpty("Tidak boleh kosong!"),
             panjang: isNotEmpty("Tidak boleh kosong!"),
             lebar: isNotEmpty("Tidak boleh kosong!"),
         },
@@ -157,7 +156,9 @@ export default function Page() {
 
         formData.append("judul", data.judul);
         formData.append("deskripsi", data.deskripsi);
-        formData.append("keterangan", data.keterangan);
+        formData.append("aliran", data.aliran);
+        formData.append("teknik", data.teknik);
+        formData.append("media", data.media);
         formData.append("panjang", data.panjang);
         formData.append("lebar", data.lebar);
         formData.append("ext", imageExt);
@@ -191,11 +192,8 @@ export default function Page() {
 
     return (
         <>
-            <SimpleGrid
-                cols={{ base: 1, sm: 2 }}
-                className="min-h-[calc(100vh-100px)]"
-            >
-                <div className="h-full flex items-center justify-center flex-col gap-2 relative">
+            <div className="p-4 h-full md:h-[calc(100vh-100px)] w-full flex flex-col md:flex-row gap-3">
+                <div className="md:flex-1 h-[600px] md:h-full overflow-hidden flex items-center justify-center flex-col gap-2 relative">
                     {imageURLPreview ? (
                         <ImagePreview
                             aspect={imageAspectRatio}
@@ -221,13 +219,15 @@ export default function Page() {
                         Pilih File
                     </Button>
                 </div>
-                <div className="h-full flex items-center justify-center flex-col gap-2 relative">
-                    <Stack className="w-full max-w-[700px] p-2">
-                        <Title order={2}>Informasi Karya</Title>
-                        <Text size="sm">
-                            Silahkan isi informasi merngenai karya yang akan
-                            anda unggah
-                        </Text>
+                <div className="py-1 overflow-y-auto md:flex-1 h-full flex items-center justify-center flex-col gap-2 relative">
+                    <Stack className="w-full max-w-[700px] md:h-full" gap="xs">
+                        <div>
+                            <Title order={2}>Informasi Karya</Title>
+                            <Text size="sm">
+                                Silahkan isi informasi merngenai karya yang akan
+                                anda unggah
+                            </Text>
+                        </div>
 
                         <form onSubmit={form.onSubmit(handleUnggahKarya)}>
                             <Stack gap={{ base: "xs", md: "sm" }}>
@@ -257,26 +257,62 @@ export default function Page() {
                                         </Text>
                                     }
                                     description="Berikan deskripsi karya anda secara lengkap"
-                                    rows={4}
+                                    rows={2}
                                     withAsterisk
                                     {...form.getInputProps("deskripsi")}
                                 />
-                                <Textarea
+                                <TextInput
                                     label={
                                         <Text
                                             fw="bold"
                                             className="text-sm"
                                             span
                                         >
-                                            Keterangan
+                                            Aliran
                                         </Text>
                                     }
-                                    description="Berikan keterangan mengenai aspek teknis lukisan seperti ukuran, bahan, dan cat yang digunakan"
-                                    rows={4}
                                     withAsterisk
-                                    {...form.getInputProps("keterangan")}
+                                    radius="md"
+                                    description="Aliran lukisan yang digunakan"
+                                    {...form.getInputProps("aliran")}
                                 />
-                                <SimpleGrid cols={2} className="w-full">
+                                <TextInput
+                                    label={
+                                        <Text
+                                            fw="bold"
+                                            className="text-sm"
+                                            span
+                                        >
+                                            Media
+                                        </Text>
+                                    }
+                                    withAsterisk
+                                    radius="md"
+                                    description="Media yang digunakan"
+                                    {...form.getInputProps("media")}
+                                />
+                                <TextInput
+                                    label={
+                                        <Text
+                                            fw="bold"
+                                            className="text-sm"
+                                            span
+                                        >
+                                            Teknik
+                                        </Text>
+                                    }
+                                    withAsterisk
+                                    radius="md"
+                                    description="Teknik yang digunakan"
+                                    {...form.getInputProps("teknik")}
+                                />
+
+                                <SimpleGrid
+                                    cols={2}
+                                    className="w-full"
+                                    component={Fieldset}
+                                    legend="Dimensi Karya"
+                                >
                                     <NumberInput
                                         label={
                                             <Text
@@ -312,7 +348,7 @@ export default function Page() {
                                 </SimpleGrid>
                                 <Button
                                     type="submit"
-                                    className=" self-end"
+                                    className=" md:self-end"
                                     loading={isLoading}
                                 >
                                     Unggah
@@ -321,7 +357,7 @@ export default function Page() {
                         </form>
                     </Stack>
                 </div>
-            </SimpleGrid>
+            </div>
             <ModalCropperUnggah
                 aspect={imageAspectRatio}
                 setAspect={setImageAspectRatio}

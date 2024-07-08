@@ -20,7 +20,7 @@ export const DropzoneImage = forwardRef(
 
         return (
             <Dropzone
-                className="grow flex items-center justify-center aspect-[4/5] w-full lg:w-auto max-w-[1080]"
+                className="grow flex items-center justify-center w-full lg:w-auto max-w-[1080]"
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
                 openRef={ref}
