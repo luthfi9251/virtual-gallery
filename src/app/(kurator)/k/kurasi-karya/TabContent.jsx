@@ -7,67 +7,69 @@ import {
     SimpleGrid,
     Loader,
     Text,
-    Center,
+    Group,
+    TextInput,
+    NumberInput,
+    Textarea,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState, useMemo } from "react";
 import CardKarya from "@/components/CardKarya";
 import ModalDetailKarya from "./ModalDetail";
 import { useMediaQuery } from "@mantine/hooks";
-import { useQuery } from "@tanstack/react-query";
-import { getAllKaryaNotYetCurratedByCurrentUser } from "@/actions/karya";
+import { useRouter } from "next/navigation";
+import { LuPencil } from "react-icons/lu";
 
-export default function TabContent({ data }) {
+const Status = ({ count }) => {
+    if (count < 1) {
+        return (
+            <Text className="absolute bg-yellow-500 ronded top-1 right-1 text-xs px-3 py-1 text-center font-semibold text-white cursor-default flex items-center justify-center gap-2 rounded">
+                <LuPencil className=" inline-block" />
+                <span>{count} / 3</span>
+            </Text>
+        );
+    } else if (count < 3) {
+        return (
+            <Text className="absolute bg-blue-500 ronded top-1 right-1 text-xs px-3 py-1 text-center font-semibold text-white cursor-default flex items-center justify-center gap-2 rounded">
+                <LuPencil className=" inline-block" />
+                <span>{count} / 3</span>
+            </Text>
+        );
+    } else {
+        return (
+            <Text className="absolute bg-green-600 ronded top-1 right-1 text-xs px-3 py-1 text-center font-semibold text-white cursor-default flex items-center justify-center gap-2 rounded">
+                <LuPencil className=" inline-block" />
+                <span>{count} / 3</span>
+            </Text>
+        );
+    }
+};
+
+export default function TabContent({ data, mode }) {
+    const router = useRouter();
     const isMobile = useMediaQuery("(max-width: 48em)");
-    const [activeTab, setActiveTab] = useState("butuh_kurasi");
     const [activeData, setActiveData] = useState(null);
     const disclosure = useDisclosure(false);
-    const [dataOriginal, setDataOriginal] = useState(data);
-
-    const karyaFiltered = useMemo(() => {
-        switch (activeTab) {
-            case "pending":
-                return dataOriginal.filter(
-                    (item) => item.status === "DIKURASI"
-                );
-            case "terkurasi":
-                return dataOriginal.filter(
-                    (item) => item.status === "TERKURASI"
-                );
-            case "selesai":
-                return dataOriginal.filter((item) => item.status === "SELESAI");
-            case "terjual":
-                return dataOriginal.filter((item) => item.status === "TERJUAL");
-
-            default:
-                return dataOriginal;
-                break;
-        }
-    }, [activeTab]);
 
     const handleCardOnClick = (data) => {
         setActiveData(data);
         disclosure[1].open();
     };
 
-    const handleGetData = async (mode) => {
-        console.log(mode);
-        if (activeTab === "butuh_kurasi") {
-            return await getAllKaryaNotYetCurratedByCurrentUser();
-        } else {
-            return [];
-        }
+    const onChangeTabHandler = () => {
+        router.push(
+            `/k/kurasi-karya?tab=${
+                mode === "kurasi" ? "sudah_kurasi" : "kurasi"
+            }`
+        );
     };
 
-    const karyaUncurated = useQuery({
-        queryKey: ["kurator", activeTab],
-        queryFn: handleGetData,
-        staleTime: 0,
-        initialData: [],
-    });
     return (
         <>
-            <Tabs value={activeTab} onChange={setActiveTab}>
+            <Tabs
+                value={mode === "kurasi" ? "butuh_kurasi" : "sudah_kurasi"}
+                onChange={onChangeTabHandler}
+            >
                 <TabsList grow={isMobile}>
                     <TabsTab
                         value="butuh_kurasi"
@@ -84,11 +86,7 @@ export default function TabContent({ data }) {
                 </TabsList>
 
                 <TabsPanel value="butuh_kurasi" className="py-5 h-full">
-                    {karyaUncurated.isFetching ? (
-                        <Center className="">
-                            <Loader />
-                        </Center>
-                    ) : karyaUncurated.data.length < 1 ? (
+                    {data.length < 1 ? (
                         <Text className="text-center text-xs">
                             Tidak ada Data
                         </Text>
@@ -99,24 +97,23 @@ export default function TabContent({ data }) {
                             cols={{ base: 2, sm: 3, md: 4, lg: 5 }}
                             px={0}
                         >
-                            {karyaUncurated.isFetched &&
-                                karyaUncurated.data.map((item, i) => (
-                                    <CardKarya
-                                        key={i}
-                                        index={i}
-                                        data={item}
-                                        clickHandler={handleCardOnClick}
-                                    />
-                                ))}
+                            {data.map((item, i) => (
+                                <CardKarya
+                                    key={i}
+                                    index={i}
+                                    data={item}
+                                    count={item.kurasi_count}
+                                    clickHandler={handleCardOnClick}
+                                    statusSection={
+                                        <Status count={item.kurasi_count} />
+                                    }
+                                />
+                            ))}
                         </SimpleGrid>
                     )}
                 </TabsPanel>
                 <TabsPanel value="sudah_kurasi" className="py-5">
-                    {karyaUncurated.isFetching ? (
-                        <Center className="">
-                            <Loader />
-                        </Center>
-                    ) : karyaUncurated.data.length < 1 ? (
+                    {data.length < 1 ? (
                         <Text className="text-center text-xs">
                             Tidak ada Data
                         </Text>
@@ -127,15 +124,17 @@ export default function TabContent({ data }) {
                             cols={{ base: 2, sm: 3, md: 4, lg: 5 }}
                             px={0}
                         >
-                            {karyaUncurated.isFetched &&
-                                karyaUncurated.data.map((item, i) => (
-                                    <CardKarya
-                                        key={i}
-                                        index={i}
-                                        data={item}
-                                        clickHandler={handleCardOnClick}
-                                    />
-                                ))}
+                            {data.map((item, i) => (
+                                <CardKarya
+                                    key={i}
+                                    index={i}
+                                    data={item}
+                                    clickHandler={handleCardOnClick}
+                                    statusSection={
+                                        <Status count={item.kurasi_count} />
+                                    }
+                                />
+                            ))}
                         </SimpleGrid>
                     )}
                 </TabsPanel>
@@ -143,7 +142,7 @@ export default function TabContent({ data }) {
             <ModalDetailKarya
                 disclosure={disclosure}
                 dataActive={activeData}
-                mode={activeTab === "butuh_kurasi" ? "kurasi" : "default"}
+                mode={mode === "kurasi" ? "kurasi" : "default"}
             />
         </>
     );

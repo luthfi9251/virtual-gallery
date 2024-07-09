@@ -4,7 +4,7 @@ import {
     ActionIcon,
     ScrollAreaAutosize,
     Button,
-    Space,
+    NumberInput,
     Stack,
     Title,
     Group,
@@ -20,16 +20,99 @@ import {
     MenuItem,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import { useState, useMemo } from "react";
+import { useState, forwardRef, useMemo } from "react";
 import { AvatarProfileSmall } from "@/components/AvatarNavbar";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useQuery } from "@tanstack/react-query";
+import LoadingWrapper from "@/components/LoadingWrapper";
+import { getAllKurasiKaryaComment } from "@/actions/kurator";
+import { getMinAndMaxHarga, updateKaryaSetharga } from "@/actions/karya";
+import { useForm, isInRange, isNotEmpty } from "@mantine/form";
+import { formatToRupiah } from "@/lib/formatter";
+import { notifications } from "@mantine/notifications";
+
+const FormHarga = forwardRef(
+    ({ showFormHandler, handleSubmitForm, idKarya, isLoading }, ref) => {
+        const hargaQuery = useQuery({
+            queryKey: ["karya", "minmax", idKarya],
+            queryFn: async () => await getMinAndMaxHarga(idKarya),
+        });
+
+        let formHarga = useForm({
+            name: "harga-form",
+            mode: "uncontrolled",
+            initialValues: {
+                harga: 0,
+            },
+            validate: {
+                harga: isNotEmpty("Harga tidak boleh kosong!"),
+            },
+        });
+
+        return (
+            <form
+                className="grow"
+                onSubmit={formHarga.onSubmit(handleSubmitForm)}
+            >
+                <Stack className="h-full">
+                    <NumberInput
+                        radius="md"
+                        label={
+                            <Text fw="bold" size="xs" span>
+                                Harga
+                            </Text>
+                        }
+                        name="harga"
+                        leftSection={"Rp. "}
+                        thousandSeparator=" "
+                        withAsterisk
+                        allowNegative={false}
+                        key={formHarga.key("harga")}
+                        {...formHarga.getInputProps("harga")}
+                    />
+                    <Text className="text-xs bg-yellow-200 p-2 rounded cursor-default">{`Disarankan untuk memberikan harga sesuai batasan yang diberikan oleh kurator. Batasan harga saat ini : ${formatToRupiah(
+                        hargaQuery.data?.harga_min || 0
+                    )} - ${formatToRupiah(
+                        hargaQuery.data?.harga_maks || 0
+                    )}`}</Text>
+                    <Group cols={2} className="my-5 self-end w-full">
+                        <Button
+                            variant="outline"
+                            className="flex-1"
+                            onClick={() => showFormHandler(false)}
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            className="flex-1"
+                            type="submit"
+                            loading={isLoading}
+                        >
+                            Simpan
+                        </Button>
+                    </Group>
+                </Stack>
+            </form>
+        );
+    }
+);
 
 const TabKaryaInformation = ({ information }) => {
     const [activeTab, setActiveTab] = useState("informasi");
+    const kuratorQuery = useQuery({
+        queryKey: ["kurator", "comment", information.id],
+        queryFn: async () => await getAllKurasiKaryaComment(information.id),
+    });
+
     return (
         <Tabs
             value={activeTab}
-            onChange={setActiveTab}
+            onChange={(val) => {
+                if (val === "review") {
+                    kuratorQuery.refetch();
+                }
+                setActiveTab(val);
+            }}
             className="grow flex flex-col overflow-y-auto"
         >
             <TabsList grow>
@@ -78,9 +161,17 @@ const TabKaryaInformation = ({ information }) => {
                 className="py-5 overflow-y-auto"
                 component={Stack}
             >
-                <KuratorComment />
-                <KuratorComment />
-                <KuratorComment />
+                <LoadingWrapper isLoading={kuratorQuery.isFetching}>
+                    {kuratorQuery.data?.map((item, key) => {
+                        return (
+                            <KuratorComment
+                                key={key}
+                                userInfo={item.userInfo}
+                                kurasiData={item.kurasiData}
+                            />
+                        );
+                    })}
+                </LoadingWrapper>
             </TabsPanel>
         </Tabs>
     );
@@ -126,7 +217,40 @@ const MenuKarya = () => {
     );
 };
 
-export default function ModalDetailKarya({ disclosure, dataActive }) {
+export default function ModalDetailKarya({
+    disclosure,
+    dataActive,
+    setOriginalData,
+}) {
+    const [showHargaForm, setShowHargaForm] = useState(false);
+    const [isLoadingUpdateHarga, setIsLoadingUpdateHarga] = useState(false);
+
+    const handleSetHarga = async (data) => {
+        const filterAndUpdateState = (state) => {
+            return state.map((item) =>
+                item.id === dataActive?.id_karya
+                    ? { ...item, status: "SELESAI", harga: data.harga }
+                    : item
+            );
+        };
+
+        setIsLoadingUpdateHarga(true);
+        updateKaryaSetharga(dataActive.id_karya, data.harga)
+            .then((res) => {
+                setOriginalData((s) => filterAndUpdateState(s));
+                setShowHargaForm(false);
+                notifications.show({
+                    title: "Berhasil Update Harga!",
+                    message: `Selamat, Karya anda siap untuk dipamerkan!`,
+                });
+                disclosure[1].close();
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => setIsLoadingUpdateHarga(false));
+    };
+
     return (
         <BaseModalKarya
             disclosure={disclosure}
@@ -142,18 +266,37 @@ export default function ModalDetailKarya({ disclosure, dataActive }) {
                     />
                     <Text className="text-sm">{dataActive?.nama_lengkap}</Text>
                 </Group>
-                <TabKaryaInformation
-                    information={{
-                        deskripsi: dataActive?.deskripsi,
-                        aliran: dataActive?.aliran,
-                        media: dataActive?.media,
-                        teknik: dataActive?.teknik,
-                        harga: dataActive?.harga,
-                        lebar: dataActive?.lebar,
-                        panjang: dataActive?.panjang,
-                    }}
-                />
-                <Button>Test Button</Button>
+                {showHargaForm ? (
+                    <>
+                        <FormHarga
+                            handleSubmitForm={handleSetHarga}
+                            idKarya={dataActive?.id_karya}
+                            showFormHandler={setShowHargaForm}
+                            isLoading={isLoadingUpdateHarga}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <TabKaryaInformation
+                            information={{
+                                id: dataActive?.id_karya,
+                                deskripsi: dataActive?.deskripsi,
+                                aliran: dataActive?.aliran,
+                                media: dataActive?.media,
+                                teknik: dataActive?.teknik,
+                                harga: dataActive?.harga,
+                                lebar: dataActive?.lebar,
+                                panjang: dataActive?.panjang,
+                            }}
+                        />
+                        {!showHargaForm &&
+                            dataActive?.status === "TERKURASI" && (
+                                <Button onClick={() => setShowHargaForm(true)}>
+                                    Tentukan Harga
+                                </Button>
+                            )}
+                    </>
+                )}
             </Stack>
         </BaseModalKarya>
     );

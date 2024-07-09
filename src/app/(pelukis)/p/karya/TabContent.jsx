@@ -39,7 +39,7 @@ export default function TabContent({ data }) {
                 return dataOriginal;
                 break;
         }
-    }, [activeTab]);
+    }, [activeTab, dataOriginal]);
 
     const handleCardOnClick = (data) => {
         setActiveData(data);
@@ -189,7 +189,11 @@ export default function TabContent({ data }) {
                     </SimpleGrid>
                 </TabsPanel>
             </Tabs>
-            <ModalDetailKarya disclosure={disclosure} dataActive={activeData} />
+            <ModalDetailKarya
+                disclosure={disclosure}
+                dataActive={activeData}
+                setOriginalData={setDataOriginal}
+            />
         </>
     );
 }

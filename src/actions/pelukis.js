@@ -38,6 +38,7 @@ export const getAllKaryaCurrentPelukis = async () => {
         return karyaPelukis.Karya.map((item) => {
             return {
                 ...item,
+                harga: parseInt(item.harga),
                 panjang: item.panjang + "",
                 lebar: item.lebar + "",
                 id_karya: item.id,

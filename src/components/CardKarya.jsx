@@ -22,20 +22,20 @@ function Status({ status }) {
     } else if (status === "TERKURASI") {
         return (
             <Text className="absolute bg-tanArt-yellow ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default">
-                TERKURASI
+                Terkurasi
             </Text>
         );
     } else if (status === "SELESAI") {
         return (
             <Text className="absolute bg-tanArt-green ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default">
-                SELESAI
+                Selesai
             </Text>
         );
     } else if (status === "TERJUAL") {
         return (
             <>
                 <Text className="absolute inset-0 text-centerS flex justify-center items-center font-bold text-white z-20 text-3xl cursor-default">
-                    TERJUAL
+                    Terjual
                 </Text>
                 <Overlay
                     color="#000"
@@ -50,7 +50,12 @@ function Status({ status }) {
 }
 let STATUS_DEF = ["PENDING", "TERKURASI", "SELESAI", "TERJUAL"];
 
-export default function CardKarya({ data, index, clickHandler }) {
+export default function CardKarya({
+    data,
+    index,
+    clickHandler,
+    statusSection = null,
+}) {
     return (
         <Card
             className="p-3 shadow border min-w-[150px] w-full max-w-[300px] min-h-[200px] h-full max-h-96 flex flex-col items-center hover:bg-slate-100 transition-all cursor-pointer"
@@ -66,7 +71,11 @@ export default function CardKarya({ data, index, clickHandler }) {
                     loading={index < 6 ? "eager" : "lazy"}
                     alt="thumbnail"
                 />
-                <Status status={data?.status} />
+                {statusSection ? (
+                    statusSection
+                ) : (
+                    <Status status={data?.status} />
+                )}
             </CardSection>
             <Group gap="xs" className="my-1 self-start">
                 <Avatar
