@@ -120,6 +120,7 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                     {mode === TYPE.KURATOR ? "Kurator" : "Pelukis"}
                 </Text>
                 <TextInput
+                    data-cy="input-email"
                     label={
                         <Text fw="bold" size="xs" span>
                             Email
@@ -149,6 +150,7 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                         <Text
                             size="xs"
                             className=" cursor-default text-success-200"
+                            data-cy="info-message"
                         >
                             Email Anda sudah terdaftar, silahkan melanjutkan ke
                             tahap akhir
@@ -165,6 +167,7 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                         <Text
                             size="xs"
                             className=" cursor-default text-error-200"
+                            data-cy="error-message"
                         >
                             {error}
                         </Text>
@@ -175,6 +178,7 @@ function StepFirst({ handleNextStep, handleUpdateData, mode }) {
                     className=" self-end"
                     disabled={!allowNextStep}
                     onClick={handleNextClick}
+                    data-cy="btn-next"
                 >
                     Selanjutnya
                 </Button>
@@ -301,6 +305,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                                         Nama Lengkap
                                     </Text>
                                 }
+                                data-cy="input-nama-lengkap"
                                 name="nama_lengkap"
                                 key={form.key("nama_lengkap")}
                                 withAsterisk
@@ -312,6 +317,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                                         Username
                                     </Text>
                                 }
+                                data-cy="input-username"
                                 name="username"
                                 key={form.key("username")}
                                 withAsterisk
@@ -324,6 +330,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                                             Tempat Lahir
                                         </Text>
                                     }
+                                    data-cy="input-tempat-lhr"
                                     name="tempat_lhr"
                                     key={form.key("tempat_lhr")}
                                     withAsterisk
@@ -335,6 +342,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                                             Tanggal lahir
                                         </Text>
                                     }
+                                    data-cy="input-tgl-lhr"
                                     valueFormat="DD MMMM YYYY"
                                     maxDate={new Date()}
                                     name="tgl_lhr"
@@ -351,6 +359,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                                         Kata Sandi
                                     </Text>
                                 }
+                                data-cy="input-password"
                                 name="password"
                                 key={form.key("password")}
                                 withAsterisk
@@ -362,6 +371,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                                         Konfirmasi Kata Sandi
                                     </Text>
                                 }
+                                data-cy="input-confirm-password"
                                 name="confirm-password"
                                 key={form.key("confirm-password")}
                                 withAsterisk
@@ -377,6 +387,7 @@ function StepSecond({ handleNextStep, handleUpdateData, dataStepper }) {
                                     <Text
                                         size="xs"
                                         className=" cursor-default text-error-200"
+                                        data-cy="error-msg"
                                     >
                                         {error}
                                     </Text>
@@ -474,6 +485,7 @@ function StepThird({ handleNextStep, dataStepper, mode }) {
                         name="deskripsi"
                         rows={4}
                         placeholder="Beritahu kami mengenai pengalaman Anda"
+                        data-cy="input-deskripsi"
                         withAsterisk
                         {...form.getInputProps("deskripsi")}
                         key={form.key("deskripsi")}
@@ -483,6 +495,7 @@ function StepThird({ handleNextStep, dataStepper, mode }) {
                         className=" self-end"
                         type="submit"
                         loading={isLoading}
+                        data-cy="btn-submit"
                     >
                         Kirim
                     </Button>

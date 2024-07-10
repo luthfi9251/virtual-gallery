@@ -54,7 +54,7 @@ export default function AvatarNavbar({
         >
             <MenuTarget>
                 {isMobile ? (
-                    <Box>
+                    <Box data-cy="btn-profile">
                         <FaChevronRight
                             style={{ width: rem(14), height: rem(14) }}
                             stroke={1.5}
@@ -73,6 +73,7 @@ export default function AvatarNavbar({
                         }
                         className="border cursor-pointer"
                         alt="it's me"
+                        data-cy="btn-profile"
                     />
                 )}
             </MenuTarget>
@@ -82,17 +83,29 @@ export default function AvatarNavbar({
                     <MenuLabel>Dashboard</MenuLabel>
                 ) : null}
                 {isAdmin && (
-                    <MenuItem component={Link} href="/a/dashboard">
+                    <MenuItem
+                        data-cy="link-to-dadmin"
+                        component={Link}
+                        href="/a/dashboard"
+                    >
                         Dashboard Admin
                     </MenuItem>
                 )}
                 {isPelukis && (
-                    <MenuItem component={Link} href="/p/dashboard">
+                    <MenuItem
+                        data-cy="link-to-dpelukis"
+                        component={Link}
+                        href="/p/dashboard"
+                    >
                         Dashboard Pelukis
                     </MenuItem>
                 )}
                 {isKurator && (
-                    <MenuItem component={Link} href="/k/kurasi-karya">
+                    <MenuItem
+                        data-cy="link-to-dkurator"
+                        component={Link}
+                        href="/k/kurasi-karya"
+                    >
                         Dashboard Kurator
                     </MenuItem>
                 )}
@@ -118,6 +131,7 @@ export default function AvatarNavbar({
                         <UnstyledButton
                             type="submit"
                             className="w-full text-sm"
+                            data-cy="btn-logout"
                         >
                             Keluar
                         </UnstyledButton>

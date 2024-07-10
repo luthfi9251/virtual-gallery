@@ -7,6 +7,7 @@ import {
     InputWrapper,
     Textarea,
     Text,
+    ScrollAreaAutosize,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useMemo, useState } from "react";
@@ -68,11 +69,17 @@ export default function DataTableComponent({ records }) {
                 enableSorting: true,
                 Cell: ({ renderedCellValue }) =>
                     renderedCellValue ? (
-                        <span className=" bg-green-300 rounded p-1 cursor-default">
+                        <span
+                            data-cy="status-verifikasi"
+                            className=" bg-green-300 rounded p-1 cursor-default"
+                        >
                             Terverifikasi
                         </span>
                     ) : (
-                        <span className=" bg-yellow-300 rounded p-1 cursor-default">
+                        <span
+                            data-cy="status-verifikasi"
+                            className=" bg-yellow-300 rounded p-1 cursor-default"
+                        >
                             Belum Verifikasi
                         </span>
                     ),
@@ -83,6 +90,7 @@ export default function DataTableComponent({ records }) {
                 Cell: ({ row }) => (
                     <Button
                         size="xs"
+                        data-cy="btn-verifikasi"
                         onClick={() => {
                             setSelectedData(row.original);
                             open();
@@ -133,7 +141,9 @@ export default function DataTableComponent({ records }) {
             <Text size="xs" suppressHydrationWarning>
                 Terakhir Diperbarui : {updateAt}
             </Text>
-            <MRT_Table table={table} />
+            <ScrollAreaAutosize>
+                <MRT_Table table={table} />
+            </ScrollAreaAutosize>
             <MRT_TablePagination table={table} />
             <Modal
                 opened={opened}
@@ -162,6 +172,7 @@ export default function DataTableComponent({ records }) {
                     </InputWrapper>
                     <Button
                         loading={mutation.isPending}
+                        data-cy="btn-confirm-verifikasi"
                         onClick={() => {
                             mutation.mutate();
                             close();

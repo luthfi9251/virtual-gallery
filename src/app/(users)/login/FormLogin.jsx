@@ -81,6 +81,7 @@ export default function FormLogin({ loginHandler }) {
                             Email
                         </Text>
                     }
+                    data-cy="input-email"
                     name="email"
                     placeholder="Masukkan Email"
                     key={formLogin.key("email")}
@@ -93,6 +94,7 @@ export default function FormLogin({ loginHandler }) {
                             Kata Sandi
                         </Text>
                     }
+                    data-cy="input-password"
                     name="password"
                     placeholder="Masukkan Kata Sandi"
                     key={formLogin.key("password")}
@@ -105,7 +107,10 @@ export default function FormLogin({ loginHandler }) {
                 </Link>
 
                 {error && (
-                    <Group className="bg-red-100 rounded-md py-2 px-2 border-red-300 border-2">
+                    <Group
+                        className="bg-red-100 rounded-md py-2 px-2 border-red-300 border-2"
+                        data-cy="error-message"
+                    >
                         <CrossIcon w={20} h={20} />
                         <Text size="xs" color="red" className=" cursor-default">
                             Email atau sandi Anda salah. Silakan coba lagi{" "}
@@ -117,6 +122,7 @@ export default function FormLogin({ loginHandler }) {
                     loading={loading}
                     color="myColor"
                     radius="md"
+                    data-cy="btn-login"
                     className="hover:bg-white hover:text-tanArtBlue-600 hover:border-tanArtBlue-600 transition-all"
                 >
                     Masuk
@@ -131,6 +137,7 @@ export default function FormLogin({ loginHandler }) {
                                 "register"
                             )}`}
                             className=" text-tanArtBlue-600 font-bold"
+                            data-cy="link-to-register"
                         >
                             Daftar
                         </Link>

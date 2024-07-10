@@ -101,6 +101,7 @@ export default function FormRegister() {
                     name="nama_lengkap"
                     placeholder="Masukkan Nama lengkap"
                     key={form.key("nama_lengkap")}
+                    data-cy="input-nama-lengkap"
                     withAsterisk
                     {...form.getInputProps("nama_lengkap")}
                 />
@@ -113,6 +114,7 @@ export default function FormRegister() {
                     name="email"
                     placeholder="Masukkan Email"
                     key={form.key("email")}
+                    data-cy="input-email"
                     withAsterisk
                     {...form.getInputProps("email")}
                 />
@@ -125,6 +127,7 @@ export default function FormRegister() {
                     name="username"
                     placeholder="Masukkan Username"
                     key={form.key("username")}
+                    data-cy="input-username"
                     withAsterisk
                     {...form.getInputProps("username")}
                 />
@@ -138,6 +141,7 @@ export default function FormRegister() {
                         name="tempat_lhr"
                         placeholder="Masukkan Tempat Lahir"
                         key={form.key("tempat_lhr")}
+                        data-cy="input-tempat-lhr"
                         withAsterisk
                         {...form.getInputProps("tempat_lhr")}
                     />
@@ -152,6 +156,7 @@ export default function FormRegister() {
                         maxDate={new Date()}
                         name="tgl_lhr"
                         key={form.key("tgl_lhr")}
+                        data-cy="input-tgl-lhr"
                         withAsterisk
                         {...form.getInputProps("tgl_lhr")}
                     />
@@ -164,6 +169,7 @@ export default function FormRegister() {
                     }
                     placeholder="Masukkan Kata Sandi"
                     name="password"
+                    data-cy="input-password"
                     key={form.key("password")}
                     withAsterisk
                     {...form.getInputProps("password")}
@@ -176,12 +182,16 @@ export default function FormRegister() {
                     }
                     placeholder="Ulangi Kata Sandi"
                     name="confirm-password"
+                    data-cy="input-confirm-password"
                     key={form.key("confirm-password")}
                     withAsterisk
                     {...form.getInputProps("confirm-password")}
                 />
                 {error && (
-                    <Group className=" bg-error-50 rounded-md py-2 px-2 border-error-100 border-2">
+                    <Group
+                        className=" bg-error-50 rounded-md py-2 px-2 border-error-100 border-2"
+                        data-cy="error-message"
+                    >
                         <CrossIcon w={20} h={20} />
                         <Text
                             size="xs"
@@ -192,7 +202,7 @@ export default function FormRegister() {
                     </Group>
                 )}
 
-                <Button type="submit" loading={loading}>
+                <Button type="submit" loading={loading} data-cy="btn-register">
                     Daftar
                 </Button>
                 <Text size="sm" className="text-center">
@@ -204,6 +214,7 @@ export default function FormRegister() {
                                 "login"
                             )}`}
                             className=" text-tanArtBlue-600 font-bold"
+                            data-cy="link-to-login"
                         >
                             Masuk
                         </Link>

@@ -105,6 +105,7 @@ export default function Sidebar({ children, navData }) {
                                             h="3rem"
                                             my="3"
                                             active={pathname == item1.href}
+                                            data-cy={`nav-parent-${item1.label}`}
                                             component={Link}
                                             href={item1.href}
                                             label={item1.label}
@@ -122,6 +123,7 @@ export default function Sidebar({ children, navData }) {
                                                               key={index2}
                                                               my="3"
                                                               href={item2.href}
+                                                              data-cy={`nav-to-${item2.label}`}
                                                               label={
                                                                   item2.label
                                                               }
