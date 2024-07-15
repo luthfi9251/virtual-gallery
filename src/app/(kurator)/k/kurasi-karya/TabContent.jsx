@@ -73,12 +73,14 @@ export default function TabContent({ data, mode }) {
                 <TabsList grow={isMobile}>
                     <TabsTab
                         value="butuh_kurasi"
+                        data-cy="tab-butuh_kurasi"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
                         Butuh Kurasi
                     </TabsTab>
                     <TabsTab
                         value="sudah_kurasi"
+                        data-cy="tab-sudah_kurasi"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
                         Selesai Kurasi

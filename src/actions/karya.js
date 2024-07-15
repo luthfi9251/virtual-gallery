@@ -139,6 +139,7 @@ export const getAllKaryaNotYetCurratedByCurrentUser = async () => {
 export const getAllKaryaAlreadyCurrated = async () => {
     try {
         let session = await auth();
+
         let kuratorKarya = await prisma.Kurator.findUnique({
             where: {
                 id: session.user.Kurator.id,

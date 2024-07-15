@@ -53,6 +53,7 @@ const FormHarga = forwardRef(
             <form
                 className="grow"
                 onSubmit={formHarga.onSubmit(handleSubmitForm)}
+                data-cy="form-tentukan_harga"
             >
                 <Stack className="h-full">
                     <NumberInput
@@ -63,6 +64,7 @@ const FormHarga = forwardRef(
                             </Text>
                         }
                         name="harga"
+                        data-cy="input-harga"
                         leftSection={"Rp. "}
                         thousandSeparator=" "
                         withAsterisk
@@ -79,6 +81,7 @@ const FormHarga = forwardRef(
                         <Button
                             variant="outline"
                             className="flex-1"
+                            data-cy="btn-batal"
                             onClick={() => showFormHandler(false)}
                         >
                             Batal
@@ -86,6 +89,7 @@ const FormHarga = forwardRef(
                         <Button
                             className="flex-1"
                             type="submit"
+                            data-cy="btn-submit"
                             loading={isLoading}
                         >
                             Simpan
@@ -116,8 +120,12 @@ const TabKaryaInformation = ({ information }) => {
             className="grow flex flex-col overflow-y-auto"
         >
             <TabsList grow>
-                <TabsTab value="informasi">Informasi</TabsTab>
-                <TabsTab value="review">Review</TabsTab>
+                <TabsTab value="informasi" data-cy="tab-informasi">
+                    Informasi
+                </TabsTab>
+                <TabsTab value="review" data-cy="tab-review">
+                    Review
+                </TabsTab>
             </TabsList>
 
             <TabsPanel
@@ -291,7 +299,10 @@ export default function ModalDetailKarya({
                         />
                         {!showHargaForm &&
                             dataActive?.status === "TERKURASI" && (
-                                <Button onClick={() => setShowHargaForm(true)}>
+                                <Button
+                                    onClick={() => setShowHargaForm(true)}
+                                    data-cy="btn-tentukan_harga"
+                                >
                                     Tentukan Harga
                                 </Button>
                             )}

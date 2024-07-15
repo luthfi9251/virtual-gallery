@@ -52,30 +52,35 @@ export default function TabContent({ data }) {
                 <TabsList grow={isMobile}>
                     <TabsTab
                         value="all"
+                        data-cy="tab-all"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
                         Semua
                     </TabsTab>
                     <TabsTab
                         value="pending"
+                        data-cy="tab-pending"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
                         Menunggu Kurasi
                     </TabsTab>
                     <TabsTab
                         value="terkurasi"
+                        data-cy="tab-terkurasi"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
                         Sudah Kurasi
                     </TabsTab>
                     <TabsTab
                         value="selesai"
+                        data-cy="tab-selesai"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
                         Siap Pamer
                     </TabsTab>
                     <TabsTab
                         value="terjual"
+                        data-cy="tab-terjual"
                         className="hover:bg-tanArtBlue-600 hover:text-white"
                     >
                         Terjual

@@ -15,26 +15,38 @@ import myImageLoader, { karyaImageLoader } from "@/loader/imageLoader";
 function Status({ status }) {
     if (status === "DIKURASI") {
         return (
-            <Text className="absolute bg-tanArt-greyLight ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default">
+            <Text
+                data-cy="text-status"
+                className="absolute bg-tanArt-greyLight ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default"
+            >
                 Pending
             </Text>
         );
     } else if (status === "TERKURASI") {
         return (
-            <Text className="absolute bg-tanArt-yellow ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default">
+            <Text
+                data-cy="text-status"
+                className="absolute bg-tanArt-yellow ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default"
+            >
                 Terkurasi
             </Text>
         );
     } else if (status === "SELESAI") {
         return (
-            <Text className="absolute bg-tanArt-green ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default">
+            <Text
+                data-cy="text-status"
+                className="absolute bg-tanArt-green ronded top-1 right-1 text-xs rounded-xl w-[80px] py-1 text-center font-semibold text-white cursor-default"
+            >
                 Selesai
             </Text>
         );
     } else if (status === "TERJUAL") {
         return (
             <>
-                <Text className="absolute inset-0 text-centerS flex justify-center items-center font-bold text-white z-20 text-3xl cursor-default">
+                <Text
+                    data-cy="text-status"
+                    className="absolute inset-0 text-centerS flex justify-center items-center font-bold text-white z-20 text-3xl cursor-default"
+                >
                     Terjual
                 </Text>
                 <Overlay
@@ -60,6 +72,7 @@ export default function CardKarya({
         <Card
             className="p-3 shadow border min-w-[150px] w-full max-w-[300px] min-h-[200px] h-full max-h-96 flex flex-col items-center hover:bg-slate-100 transition-all cursor-pointer"
             onClick={() => clickHandler(data)}
+            data-cy="card-karya"
         >
             <CardSection className=" rounded aspect-[4/5] w-full max-h-[230px] m-0 p-10 relative bg-tanArt-greyDark">
                 <Image
@@ -92,12 +105,20 @@ export default function CardKarya({
                     size="xs"
                     alt="Image"
                 />
-                <Text className="max-w-[170px] line-clamp-1 font-light text-[10px] text-tanArt-grey">
+                <Text
+                    data-cy="text-nama_lengkap"
+                    className="max-w-[170px] line-clamp-1 font-light text-[10px] text-tanArt-grey"
+                >
                     {data?.nama_lengkap}
                 </Text>
             </Group>
             <Stack gap={5} className=" grow self-start" justify="space-between">
-                <Text className=" font-medium line-clamp-1">{data?.judul}</Text>
+                <Text
+                    className=" font-medium line-clamp-1"
+                    data-cy="text-judul"
+                >
+                    {data?.judul}
+                </Text>
                 <Text className="grow text-[10px] line-clamp-3">
                     {data?.deskripsi}
                 </Text>

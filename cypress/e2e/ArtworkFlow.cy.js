@@ -1,0 +1,108 @@
+describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
+    before(() => {
+        //prepare user account
+        cy.exec("npx prisma migrate reset --skip-generate --force");
+        cy.fixture("users/kurator1.json").then((data) => {
+            cy.accountApply(data, "kurator");
+            cy.accountVerification(data.nama_lengkap, "kurator");
+        });
+        // cy.fixture("users/kurator2.json").then((data) => {
+        //     cy.accountApply(data, "kurator");
+        //     cy.accountVerification(data.nama_lengkap, "kurator");
+        // });
+        // cy.fixture("users/kurator3.json").then((data) => {
+        //     cy.accountApply(data, "kurator");
+        //     cy.accountVerification(data.nama_lengkap, "kurator");
+        // });
+        cy.fixture("users/pelukis1.json").then((data) => {
+            cy.accountApply(data, "pelukis");
+            cy.accountVerification(data.nama_lengkap, "pelukis");
+        });
+        // cy.fixture("users/pelukis2.json").then((data) => {
+        //     cy.accountApply(data, "pelukis");
+        //     cy.accountVerification(data.nama_lengkap, "pelukis");
+        // });
+        // cy.fixture("users/pelukis3.json").then((data) => {
+        //     cy.accountApply(data, "pelukis");
+        //     cy.accountVerification(data.nama_lengkap, "pelukis");
+        // });
+    });
+
+    it("should be able to upload an artwork from pelukis account", () => {
+        cy.fixture("users/pelukis1.json").then((data) => {
+            cy.login(data.email, data.password);
+        });
+        cy.visit("/p/dashboard");
+        cy.contains("a", "Karya").click();
+        cy.get('[href="/p/karya"]').click();
+        cy.get('[data-cy="btn-unggah"]').click();
+        cy.location("pathname").should("equal", "/p/karya/unggah");
+        cy.fixture("lukisan/lukisan1.jpg", null).as("lukisan1");
+        cy.get('input[type="file"]').selectFile("@lukisan1", { force: true });
+        cy.fixture("lukisan/lukisan1.json").then((data) => {
+            cy.get('[data-cy="input-judul"]').type(data.judul);
+            cy.get('[data-cy="input-deskripsi"]').type(data.deskripsi);
+            cy.get('[data-cy="input-aliran"]').type(data.aliran);
+            cy.get('[data-cy="input-media"]').type(data.media);
+            cy.get('[data-cy="input-teknik"]').type(data.teknik);
+            cy.get('[data-cy="input-panjang"]').type(data.panjang);
+            cy.get('[data-cy="input-lebar"]').type(data.lebar);
+            cy.get('[data-cy="btn-submit"]').click();
+            cy.contains("Berhasil").should("exist");
+            cy.location("pathname").should("equal", "/p/karya");
+            cy.contains('[data-cy="card-karya"]', data.judul).should("exist");
+        });
+    });
+
+    it.only("should be able to curate art work with kurator account", () => {
+        //add adwork first
+        cy.addArtwork(
+            "users/pelukis1.json",
+            "lukisan/lukisan2.json",
+            "lukisan/lukisan1.jpg"
+        );
+
+        cy.fixture("users/kurator1.json").then((data) => {
+            cy.login(data.email, data.password);
+        });
+        cy.visit("/k/kurasi-karya");
+        cy.fixture("lukisan/lukisan2").then((data) => {
+            cy.contains('[data-cy="card-karya"]', data.judul).as("card-target");
+            cy.get("@card-target").should("exist");
+            cy.get("@card-target").click();
+        });
+        cy.get('[data-cy="btn-kurasi"]').click();
+        cy.get('[data-cy="form-kurasi"]').should("exist");
+        cy.fixture("komentar/komentar1.json").then((data) => {
+            cy.get('[data-cy="input-komentar"]').type(data.komentar);
+            cy.get('[data-cy="input-harga_min"]').type(data.harga_min);
+            cy.get('[data-cy="input-harga_maks"]').type(data.harga_maks);
+            cy.get('[data-cy="btn-submit"]').click();
+            cy.contains("Berhasil Kurasi!").should("exist");
+        });
+        cy.get("@card-target").should("not.exist");
+        cy.get('[data-cy="tab-sudah_kurasi"]').click();
+        cy.fixture("lukisan/lukisan2").then((data) => {
+            cy.contains('[data-cy="card-karya"]', data.judul).click({
+                force: true,
+            });
+        });
+        cy.get('[data-cy="btn-kurasi"]').should("not.exist");
+        cy.contains("button", "Review").click();
+        cy.fixture("komentar/komentar1.json").then((data) => {
+            cy.fixture("users/kurator1.json").then((user) => {
+                cy.get('[data-cy="text-nama_lengkap"]').should(
+                    "contain.text",
+                    user.nama_lengkap
+                );
+                cy.get('[data-cy="text-komentar"]').should(
+                    "contain.text",
+                    data.komentar
+                );
+            });
+        });
+    });
+
+    it("should be able to determine price only with one curated review");
+    it("should be able to curated artwork maximal 3 reviews");
+});

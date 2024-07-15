@@ -24,6 +24,7 @@ export default async function Home() {
             <Group grow preventGrowOverflow={false} className="my-4 md:my-7">
                 <TextInput placeholder="Cari" leftSection={<CiSearch />} />
                 <Button
+                    data-cy="btn-unggah"
                     className="max-w-28 justify-self-end"
                     component={Link}
                     href="/p/karya/unggah"

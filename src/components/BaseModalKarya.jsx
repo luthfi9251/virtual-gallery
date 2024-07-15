@@ -25,11 +25,17 @@ import { monthAndyearFormatter, formatToRupiah } from "@/lib/formatter";
 
 export const KuratorComment = ({ userInfo, kurasiData }) => {
     return (
-        <div className="flex gap-2 shadow-lg border p-2 rounded">
+        <div
+            className="flex gap-2 shadow-lg border p-2 rounded"
+            data-cy="card-komen"
+        >
             <AvatarProfileSmall size="md" />
             <Stack gap="xs">
                 <Group>
-                    <Text className="text-sm font-medium">
+                    <Text
+                        className="text-sm font-medium"
+                        data-cy="text-nama_lengkap"
+                    >
                         {userInfo.nama_lengkap}
                     </Text>
                     <div className="h-2 w-2 rounded-[50%] bg-black"> </div>
@@ -38,12 +44,15 @@ export const KuratorComment = ({ userInfo, kurasiData }) => {
                         {monthAndyearFormatter(userInfo.verified_at)}
                     </Text>
                 </Group>
-                <Text className="text-xs font-light">
+                <Text className="text-xs font-light" data-cy="text-komentar">
                     {kurasiData.komentar}
                 </Text>
                 <Stack gap={0} className="cursor-default">
                     <Text className=" font-medium text-xs">Nilai</Text>
-                    <Text className=" font-medium text-xs p-1 border border-black  rounded self-start ">
+                    <Text
+                        className=" font-medium text-xs p-1 border border-black  rounded self-start "
+                        data-cy="text-range_harga"
+                    >
                         {formatToRupiah(kurasiData.harga_min)} -{" "}
                         {formatToRupiah(kurasiData.harga_maks)}
                     </Text>

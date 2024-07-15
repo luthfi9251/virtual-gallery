@@ -215,6 +215,7 @@ export default function Page() {
                     <Button
                         variant="outline"
                         onClick={() => openRef.current?.()}
+                        data-cy="btn-upload-file"
                     >
                         Pilih File
                     </Button>
@@ -241,6 +242,7 @@ export default function Page() {
                                             Judul
                                         </Text>
                                     }
+                                    data-cy="input-judul"
                                     withAsterisk
                                     radius="md"
                                     description="Sebaiknya judul tidak lebih dari 5 kata"
@@ -257,6 +259,7 @@ export default function Page() {
                                         </Text>
                                     }
                                     description="Berikan deskripsi karya anda secara lengkap"
+                                    data-cy="input-deskripsi"
                                     rows={2}
                                     withAsterisk
                                     {...form.getInputProps("deskripsi")}
@@ -272,6 +275,7 @@ export default function Page() {
                                         </Text>
                                     }
                                     withAsterisk
+                                    data-cy="input-aliran"
                                     radius="md"
                                     description="Aliran lukisan yang digunakan"
                                     {...form.getInputProps("aliran")}
@@ -287,6 +291,7 @@ export default function Page() {
                                         </Text>
                                     }
                                     withAsterisk
+                                    data-cy="input-media"
                                     radius="md"
                                     description="Media yang digunakan"
                                     {...form.getInputProps("media")}
@@ -302,6 +307,7 @@ export default function Page() {
                                         </Text>
                                     }
                                     withAsterisk
+                                    data-cy="input-teknik"
                                     radius="md"
                                     description="Teknik yang digunakan"
                                     {...form.getInputProps("teknik")}
@@ -325,6 +331,7 @@ export default function Page() {
                                         }
                                         radius="md"
                                         withAsterisk
+                                        data-cy="input-panjang"
                                         allowDecimal
                                         decimalScale={2}
                                         {...form.getInputProps("panjang")}
@@ -342,6 +349,7 @@ export default function Page() {
                                         allowDecimal
                                         radius="md"
                                         withAsterisk
+                                        data-cy="input-lebar"
                                         decimalScale={2}
                                         {...form.getInputProps("lebar")}
                                     />
@@ -349,6 +357,7 @@ export default function Page() {
                                 <Button
                                     type="submit"
                                     className=" md:self-end"
+                                    data-cy="btn-submit"
                                     loading={isLoading}
                                 >
                                     Unggah

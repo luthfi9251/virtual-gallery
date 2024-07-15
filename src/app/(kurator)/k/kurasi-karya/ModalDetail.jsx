@@ -49,6 +49,7 @@ const FormKurasi = forwardRef(({ showFormHandler, handleSubmitForm }, ref) => {
             className="grow"
             ref={ref}
             onSubmit={formKurasi.onSubmit(handleSubmitForm)}
+            data-cy="form-kurasi"
         >
             <Stack className="h-full">
                 <Textarea
@@ -59,6 +60,7 @@ const FormKurasi = forwardRef(({ showFormHandler, handleSubmitForm }, ref) => {
                         </Text>
                     }
                     name="komentar"
+                    data-cy="input-komentar"
                     withAsterisk
                     rows={4}
                     key={formKurasi.key("komentar")}
@@ -73,6 +75,7 @@ const FormKurasi = forwardRef(({ showFormHandler, handleSubmitForm }, ref) => {
                             </Text>
                         }
                         name="harga_min"
+                        data-cy="input-harga_min"
                         leftSection={"Rp. "}
                         thousandSeparator=" "
                         withAsterisk
@@ -88,6 +91,7 @@ const FormKurasi = forwardRef(({ showFormHandler, handleSubmitForm }, ref) => {
                             </Text>
                         }
                         name="harga_maks"
+                        data-cy="input-harga_maks"
                         thousandSeparator=" "
                         leftSection={"Rp. "}
                         withAsterisk
@@ -98,13 +102,18 @@ const FormKurasi = forwardRef(({ showFormHandler, handleSubmitForm }, ref) => {
                 </SimpleGrid>
                 <Group cols={2} className="my-5 self-end w-full">
                     <Button
+                        data-cy="btn-batal"
                         variant="outline"
                         className="flex-1"
                         onClick={() => showFormHandler(false)}
                     >
                         Batal
                     </Button>
-                    <Button className="flex-1" type="submit">
+                    <Button
+                        className="flex-1"
+                        type="submit"
+                        data-cy="btn-submit"
+                    >
                         Simpan
                     </Button>
                 </Group>
@@ -133,8 +142,12 @@ const TabKaryaInformation = ({ information }) => {
             className="grow flex flex-col overflow-y-auto"
         >
             <TabsList grow>
-                <TabsTab value="informasi">Informasi</TabsTab>
-                <TabsTab value="review">Review</TabsTab>
+                <TabsTab value="informasi" data-cy="tab-informasi">
+                    Informasi
+                </TabsTab>
+                <TabsTab value="review" data-cy="tab-review">
+                    Review
+                </TabsTab>
             </TabsList>
 
             <TabsPanel
@@ -223,7 +236,9 @@ export default function ModalDetailKarya({
             imageSrc={dataActive?.lukisan_url}
         >
             <Stack className="w-full h-full" gap={5}>
-                <Title order={2}>{dataActive?.judul}</Title>
+                <Title order={2} data-cy="test-judul">
+                    {dataActive?.judul}
+                </Title>
                 <Group>
                     <AvatarProfileSmall
                         size="xs"
@@ -254,7 +269,10 @@ export default function ModalDetailKarya({
                             }}
                         />
                         {mode === "kurasi" && (
-                            <Button onClick={() => setShowKurasiForm(true)}>
+                            <Button
+                                onClick={() => setShowKurasiForm(true)}
+                                data-cy="btn-kurasi"
+                            >
                                 Kurasi
                             </Button>
                         )}
