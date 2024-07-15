@@ -120,9 +120,62 @@ Cypress.Commands.add("addArtwork", (pelukisAccount, artworkData, picture) => {
             cy.get('[data-cy="input-panjang"]').type(data.panjang);
             cy.get('[data-cy="input-lebar"]').type(data.lebar);
             cy.get('[data-cy="btn-submit"]').click();
-            cy.contains("Berhasil").should("exist");
+            cy.contains("Berhasil", { timeout: 10000 }).should("exist");
             cy.location("pathname").should("equal", "/p/karya");
             cy.contains('[data-cy="card-karya"]', data.judul).should("exist");
         });
     });
 });
+
+Cypress.Commands.add(
+    "curateArt",
+    (kuratorAccount, lukisanData, komentarData) => {
+        cy.fixture(kuratorAccount).then((data) => {
+            cy.login(data.email, data.password);
+        });
+        cy.visit("/k/kurasi-karya");
+        cy.wait(500);
+        cy.fixture(lukisanData).then((data) => {
+            cy.get('[data-cy="card-karya"]')
+                .contains(data.judul)
+                .as("card-target");
+            cy.get("@card-target").should("exist");
+            cy.get("@card-target").click({ force: true });
+        });
+        cy.get('[data-cy="btn-kurasi"]', { timeout: 10000 }).should("exist");
+        cy.get('[data-cy="btn-kurasi"]').click();
+        cy.get('[data-cy="form-kurasi"]').should("exist");
+        cy.fixture(komentarData).then((data) => {
+            cy.get('[data-cy="input-komentar"]').type(data.komentar);
+            cy.get('[data-cy="input-harga_min"]').type(data.harga_min);
+            cy.get('[data-cy="input-harga_maks"]').type(data.harga_maks);
+            cy.get('[data-cy="btn-submit"]').click();
+            cy.contains("Berhasil Kurasi!").should("exist");
+        });
+        cy.fixture(lukisanData).then((data) => {
+            cy.contains('[data-cy="card-karya"]', data.judul).should(
+                "not.exist"
+            );
+        });
+        cy.get('[data-cy="tab-sudah_kurasi"]').click();
+        cy.fixture(lukisanData).then((data) => {
+            cy.contains('[data-cy="card-karya"]', data.judul).click({
+                force: true,
+            });
+        });
+        cy.get('[data-cy="btn-kurasi"]').should("not.exist");
+        cy.contains("button", "Review").click();
+        cy.fixture(komentarData).then((data) => {
+            cy.fixture(kuratorAccount).then((user) => {
+                cy.get('[data-cy="text-nama_lengkap"]').should(
+                    "contain.text",
+                    user.nama_lengkap
+                );
+                cy.get('[data-cy="text-komentar"]').should(
+                    "contain.text",
+                    data.komentar
+                );
+            });
+        });
+    }
+);
