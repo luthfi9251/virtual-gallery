@@ -26,7 +26,7 @@
 
 Cypress.Commands.add("login", (email, pass) => {
     cy.visit("/login");
-    cy.wait(500);
+    cy.wait(1000);
     cy.get('input[data-cy="input-email"]').type(email);
     cy.get('input[data-cy="input-password"]').type(pass);
     cy.get('button[data-cy="btn-login"]').click();
@@ -110,21 +110,26 @@ Cypress.Commands.add("addArtwork", (pelukisAccount, artworkData, picture) => {
     cy.fixture(pelukisAccount).then((data) => {
         cy.login(data.email, data.password);
         cy.visit("/p/karya/unggah");
-        cy.fixture(picture, null).as("lukisan");
-        cy.get('input[type="file"]').selectFile("@lukisan", { force: true });
-        cy.fixture(artworkData).then((data) => {
-            cy.get('[data-cy="input-judul"]').type(data.judul);
-            cy.get('[data-cy="input-deskripsi"]').type(data.deskripsi);
-            cy.get('[data-cy="input-aliran"]').type(data.aliran);
-            cy.get('[data-cy="input-media"]').type(data.media);
-            cy.get('[data-cy="input-teknik"]').type(data.teknik);
-            cy.get('[data-cy="input-panjang"]').type(data.panjang);
-            cy.get('[data-cy="input-lebar"]').type(data.lebar);
-            cy.get('[data-cy="btn-submit"]').click();
-            cy.contains("Berhasil", { timeout: 10000 }).should("exist");
-            cy.location("pathname").should("equal", "/p/karya");
-            cy.contains('[data-cy="card-karya"]', data.judul).should("exist");
-        });
+        cy.wait(500);
+    });
+    cy.get('div[role="presentation"]').selectFile(picture, {
+        force: true,
+        action: "drag-drop",
+    });
+
+    cy.get('img[alt="preview"]', { timeout: 10000 }).should("exist");
+    cy.fixture(artworkData).then((data) => {
+        cy.get('[data-cy="input-judul"]').type(data.judul);
+        cy.get('[data-cy="input-deskripsi"]').type(data.deskripsi);
+        cy.get('[data-cy="input-aliran"]').type(data.aliran);
+        cy.get('[data-cy="input-media"]').type(data.media);
+        cy.get('[data-cy="input-teknik"]').type(data.teknik);
+        cy.get('[data-cy="input-panjang"]').type(data.panjang);
+        cy.get('[data-cy="input-lebar"]').type(data.lebar);
+        cy.get('[data-cy="btn-submit"]').click();
+        cy.contains("Berhasil", { timeout: 20000 }).should("exist");
+        cy.location("pathname").should("equal", "/p/karya");
+        cy.contains('[data-cy="card-karya"]', data.judul).should("exist");
     });
 });
 

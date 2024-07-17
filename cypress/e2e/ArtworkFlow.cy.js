@@ -27,6 +27,7 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
             cy.accountApply(data, "pelukis");
             cy.accountVerification(data.nama_lengkap, "pelukis");
         });
+
         // cy.fixture("users/pelukis3.json").then((data) => {
         //     cy.accountApply(data, "pelukis");
         //     cy.accountVerification(data.nama_lengkap, "pelukis");
@@ -44,6 +45,7 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
         cy.location("pathname").should("equal", "/p/karya/unggah");
         cy.fixture("lukisan/lukisan1.jpg", null).as("lukisan1");
         cy.get('input[type="file"]').selectFile("@lukisan1", { force: true });
+        cy.get('img[alt="preview"]').should("exist");
         cy.fixture("lukisan/lukisan1.json").then((data) => {
             cy.get('[data-cy="input-judul"]').type(data.judul);
             cy.get('[data-cy="input-deskripsi"]').type(data.deskripsi);
@@ -53,7 +55,7 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
             cy.get('[data-cy="input-panjang"]').type(data.panjang);
             cy.get('[data-cy="input-lebar"]').type(data.lebar);
             cy.get('[data-cy="btn-submit"]').click();
-            cy.contains("Berhasil").should("exist");
+            cy.contains("Berhasil", { timeout: 10000 }).should("exist");
             cy.location("pathname").should("equal", "/p/karya");
             cy.contains('[data-cy="card-karya"]', data.judul).should("exist");
         });
@@ -64,7 +66,7 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
         cy.addArtwork(
             "users/pelukis1.json",
             "lukisan/lukisan2.json",
-            "lukisan/lukisan1.jpg"
+            "cypress/fixtures/lukisan/lukisan1.jpg"
         );
 
         cy.fixture("users/kurator1.json").then((data) => {
@@ -112,7 +114,7 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
         cy.addArtwork(
             "users/pelukis2.json",
             "lukisan/lukisan3.json",
-            "lukisan/lukisan1.jpg"
+            "cypress/fixtures/lukisan/lukisan1.jpg"
         );
 
         cy.curateArt(
