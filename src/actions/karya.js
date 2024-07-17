@@ -112,8 +112,84 @@ export const getAllKaryaNotYetCurratedByCurrentUser = async () => {
         });
         // console.log(karyaUncurrated);
         return karyaUncurrated.map((item) => {
-            return {
-                id: item.id,
+            if (item._count.KurasiKarya < 3) {
+                return {
+                    id: item.id,
+                    judul: item.judul,
+                    deskripsi: item.deskripsi,
+                    aliran: item.aliran,
+                    media: item.media,
+                    teknik: item.teknik,
+                    harga: parseInt(item.harga),
+                    created_at: item.created_at,
+                    status: item.status,
+                    lukisan_url: item.lukisan_url,
+                    panjang: item.panjang + "",
+                    lebar: item.lebar + "",
+                    kurasi_count: item._count.KurasiKarya,
+                    id_karya: item.id,
+                    nama_lengkap: item.Seniman.User.nama_lengkap,
+                    foto_profil: item.Seniman.User.foto_profil,
+                };
+            }
+        });
+    } catch (err) {
+        throw err;
+    }
+};
+
+export const getAllKaryaAlreadyCurrated = async () => {
+    try {
+        let session = await auth();
+
+        if (!session.user) {
+            return [];
+        }
+
+        let karya = await prisma.Karya.findMany({
+            where: {},
+            select: {
+                id: true,
+                judul: true,
+                deskripsi: true,
+                aliran: true,
+                media: true,
+                teknik: true,
+                harga: true,
+                created_at: true,
+                panjang: true,
+                lebar: true,
+                status: true,
+                lukisan_url: true,
+                _count: {
+                    select: {
+                        KurasiKarya: true,
+                    },
+                },
+                KurasiKarya: {
+                    select: {
+                        Kurator: {
+                            select: {
+                                id: true,
+                            },
+                        },
+                    },
+                },
+                Seniman: {
+                    select: {
+                        User: {
+                            select: {
+                                nama_lengkap: true,
+                                foto_profil: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        let result = karya.map((item) => {
+            let data = {
                 judul: item.judul,
                 deskripsi: item.deskripsi,
                 aliran: item.aliran,
@@ -130,79 +206,20 @@ export const getAllKaryaNotYetCurratedByCurrentUser = async () => {
                 nama_lengkap: item.Seniman.User.nama_lengkap,
                 foto_profil: item.Seniman.User.foto_profil,
             };
-        });
-    } catch (err) {
-        throw err;
-    }
-};
 
-export const getAllKaryaAlreadyCurrated = async () => {
-    try {
-        let session = await auth();
+            if (item._count.KurasiKarya === 3) {
+                return data;
+            }
 
-        let kuratorKarya = await prisma.Kurator.findUnique({
-            where: {
-                id: session.user.Kurator.id,
-            },
-            select: {
-                id: true,
-                KurasiKarya: {
-                    select: {
-                        id: true,
-                        Karya: {
-                            select: {
-                                id: true,
-                                judul: true,
-                                deskripsi: true,
-                                aliran: true,
-                                media: true,
-                                teknik: true,
-                                harga: true,
-                                created_at: true,
-                                panjang: true,
-                                lebar: true,
-                                status: true,
-                                lukisan_url: true,
-                                _count: {
-                                    select: {
-                                        KurasiKarya: true,
-                                    },
-                                },
-                                Seniman: {
-                                    select: {
-                                        User: {
-                                            select: {
-                                                nama_lengkap: true,
-                                                foto_profil: true,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
+            if (
+                item.KurasiKarya.some(
+                    (kurasi) => kurasi.Kurator.id === session.user.Kurator.id
+                )
+            ) {
+                return data;
+            }
         });
-        let result = kuratorKarya.KurasiKarya.map((item) => {
-            return {
-                judul: item.Karya.judul,
-                deskripsi: item.Karya.deskripsi,
-                aliran: item.Karya.aliran,
-                media: item.Karya.media,
-                teknik: item.Karya.teknik,
-                harga: parseInt(item.Karya.harga),
-                created_at: item.Karya.created_at,
-                status: item.Karya.status,
-                lukisan_url: item.Karya.lukisan_url,
-                panjang: item.Karya.panjang + "",
-                lebar: item.Karya.lebar + "",
-                kurasi_count: item.Karya._count.KurasiKarya,
-                id_karya: item.Karya.id,
-                nama_lengkap: item.Karya.Seniman.User.nama_lengkap,
-                foto_profil: item.Karya.Seniman.User.foto_profil,
-            };
-        });
+        console.log({ result });
         return result;
     } catch (err) {
         console.log(err);

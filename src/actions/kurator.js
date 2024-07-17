@@ -26,6 +26,12 @@ export const kurasiKarya = async (data) => {
             },
         });
 
+        if (findKarya._count.KurasiKarya === 3) {
+            throw new Error(
+                "Karya hanya dapat dikurasi oleh maksimal 3 kurator!"
+            );
+        }
+
         let addKurasiKarya = await prisma.KurasiKarya.create({
             data: {
                 Kurator: {

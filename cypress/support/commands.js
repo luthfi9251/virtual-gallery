@@ -83,7 +83,8 @@ Cypress.Commands.add(
         cy.get(
             type === "pelukis"
                 ? '[href="/a/dashboard/verifikasi-pelukis"]'
-                : '[href="/a/dashboard/verifikasi-kurator"]'
+                : '[href="/a/dashboard/verifikasi-kurator"]',
+            { timeout: 10000 }
         ).click();
         cy.location("pathname").should(
             "equal",

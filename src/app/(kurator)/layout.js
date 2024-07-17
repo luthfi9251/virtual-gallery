@@ -18,7 +18,6 @@ export const metadata = {
 };
 
 async function RootLayout(props) {
-    console.log({ props });
     const session = props.session;
     return (
         <html lang="en">

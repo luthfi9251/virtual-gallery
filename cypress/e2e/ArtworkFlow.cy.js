@@ -14,6 +14,11 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
             cy.accountApply(data, "kurator");
             cy.accountVerification(data.nama_lengkap, "kurator");
         });
+        cy.fixture("users/kurator4.json").then((data) => {
+            cy.accountApply(data, "kurator");
+            cy.accountVerification(data.nama_lengkap, "kurator");
+        });
+
         cy.fixture("users/pelukis1.json").then((data) => {
             cy.accountApply(data, "pelukis");
             cy.accountVerification(data.nama_lengkap, "pelukis");
@@ -103,7 +108,7 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
         });
     });
 
-    it.only("should be able to show three reviews in a artwork", () => {
+    it("should be able to add maximum three reviews in a artwork", () => {
         cy.addArtwork(
             "users/pelukis2.json",
             "lukisan/lukisan3.json",
@@ -125,7 +130,27 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
             "lukisan/lukisan3.json",
             "komentar/komentar3.json"
         );
+        //add 4th kurator review
+        cy.fixture("users/kurator4.json").then((data) => {
+            cy.login(data.email, data.password);
+        });
+        cy.visit("/k/kurasi-karya");
+        cy.wait(500);
+        cy.fixture("lukisan/lukisan3.json").then((data) => {
+            cy.contains('[data-cy="card-karya"]', data.judul).should(
+                "not.exist"
+            );
 
+            cy.get('[data-cy="tab-sudah_kurasi"]').click();
+            cy.get('[data-cy="card-karya"]').contains(data.judul).click({
+                force: true,
+            });
+        });
+        cy.get('[data-cy="btn-kurasi"]', { timeout: 10000 }).should(
+            "not.exist"
+        );
+
+        //assert 3 comment should show up
         cy.fixture("users/pelukis2.json").then((data) => {
             cy.login(data.email, data.password);
         });
