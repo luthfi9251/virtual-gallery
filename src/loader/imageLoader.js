@@ -7,7 +7,8 @@ function classifiedImageSize(width) {
         return "square300";
     }
 }
-const IMAGE_SERVICE_URL = "http://imageservice.luthficode.my.id/img";
+// const IMAGE_SERVICE_URL = "http://imageservice.luthficode.my.id/img";
+const IMAGE_SERVICE_URL = process.env.NEXT_PUBLIC_IMAGE_SERVICE_URL;
 
 export default function myImageLoader({ src, width, quality }) {
     let classifiedFolder = classifiedImageSize(width);

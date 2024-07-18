@@ -255,6 +255,11 @@ export default function ModalDetailKarya({
             })
             .catch((err) => {
                 console.error(err);
+                notifications.show({
+                    title: "Gagal Update Harga!",
+                    message: `Terjadi kesalahan saat update harga!`,
+                    color: "red",
+                });
             })
             .finally(() => setIsLoadingUpdateHarga(false));
     };

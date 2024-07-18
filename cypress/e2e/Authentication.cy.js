@@ -9,6 +9,7 @@ describe("Authentication", () => {
     });
 
     it("should success login with right credentials", () => {
+        cy.wait(500);
         cy.get('input[data-cy="input-email"]').type("admin@admin.com");
         cy.get('input[data-cy="input-password"]').type("passwordadmin");
         cy.get('button[data-cy="btn-login"]').click();
@@ -16,6 +17,7 @@ describe("Authentication", () => {
     });
 
     it("should failed login with wrong credentials and show error element", () => {
+        cy.wait(500);
         cy.get('input[data-cy="input-email"]').type("admin@admin.com");
         cy.get('input[data-cy="input-password"]').type("passwordadmin123");
         cy.get('button[data-cy="btn-login"]').click();

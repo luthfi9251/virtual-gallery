@@ -76,23 +76,12 @@ Cypress.Commands.add(
     "accountVerification",
     (nama_lengkap, type = "kurator") => {
         cy.login("admin@admin.com", "passwordadmin");
-        cy.visit("/a/dashboard");
-        cy.location("pathname").should("equal", "/a/dashboard");
-        cy.wait(500);
-        cy.contains("a", "Verfikasi Akun").click();
-        cy.get(
-            type === "pelukis"
-                ? '[href="/a/dashboard/verifikasi-pelukis"]'
-                : '[href="/a/dashboard/verifikasi-kurator"]',
-            { timeout: 10000 }
-        ).click();
-        cy.location("pathname").should(
-            "equal",
+        cy.visit(
             type === "pelukis"
                 ? "/a/dashboard/verifikasi-pelukis"
                 : "/a/dashboard/verifikasi-kurator"
         );
-
+        cy.wait(1000);
         cy.contains("tr", nama_lengkap).within(($row) => {
             cy.get('[data-cy="btn-verifikasi"]').click();
         });

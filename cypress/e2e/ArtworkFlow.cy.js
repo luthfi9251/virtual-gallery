@@ -28,10 +28,10 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
             cy.accountVerification(data.nama_lengkap, "pelukis");
         });
 
-        // cy.fixture("users/pelukis3.json").then((data) => {
-        //     cy.accountApply(data, "pelukis");
-        //     cy.accountVerification(data.nama_lengkap, "pelukis");
-        // });
+        cy.fixture("users/pelukis3.json").then((data) => {
+            cy.accountApply(data, "pelukis");
+            cy.accountVerification(data.nama_lengkap, "pelukis");
+        });
     });
 
     it("should be able to upload an artwork from pelukis account", () => {
@@ -205,5 +205,56 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
             });
         });
     });
-    it("should be able to determine price only with one curated review");
+    it("should be able to determine price only with one curated review", () => {
+        cy.addArtwork(
+            "users/pelukis3.json",
+            "lukisan/lukisan4.json",
+            "cypress/fixtures/lukisan/lukisan1.jpg"
+        );
+
+        cy.curateArt(
+            "users/kurator1.json",
+            "lukisan/lukisan4.json",
+            "komentar/komentar1.json"
+        );
+        cy.fixture("users/pelukis3.json").then((data) => {
+            cy.login(data.email, data.password);
+        });
+        cy.visit("/p/dashboard");
+        cy.contains("a", "Karya").click();
+        cy.get('[href="/p/karya"]').click();
+
+        cy.fixture("lukisan/lukisan4").then((data) => {
+            cy.contains('[data-cy="card-karya"]', data.judul).click({
+                force: true,
+            });
+        });
+
+        cy.contains("button", "Review").click();
+
+        cy.fixture("komentar/komentar1.json").then((data) => {
+            cy.fixture("users/kurator1.json").then((user) => {
+                cy.get('[data-cy="text-nama_lengkap"]').should(
+                    "contain.text",
+                    user.nama_lengkap
+                );
+                cy.get('[data-cy="text-komentar"]').should(
+                    "contain.text",
+                    data.komentar
+                );
+            });
+        });
+
+        cy.get('[data-cy="btn-tentukan_harga"]').click({ force: true });
+        cy.get('[data-cy="form-tentukan_harga"]').should("exist");
+        cy.get('[data-cy="input-harga"]').type("50000", { force: true });
+        cy.get('[data-cy="btn-submit"]').click({ force: true });
+        cy.contains("Berhasil", { timeout: 20000 }).should("exist");
+
+        cy.fixture("lukisan/lukisan4").then((data) => {
+            cy.contains('[data-cy="card-karya"]', data.judul)
+                .get('[data-cy="text-status"]')
+                .should("contain", "Selesai");
+        });
+    });
 });
