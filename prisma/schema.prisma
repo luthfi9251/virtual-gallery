@@ -44,6 +44,7 @@ model Seniman {
   updated_at  DateTime  @updatedAt
   User        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   Karya       Karya[]
+  Pameran     Pameran[]
 }
 
 model Kurator {
@@ -59,22 +60,23 @@ model Kurator {
 }
 
 model Karya {
-  id          String        @id @default(uuid())
-  judul       String
-  deskripsi   String        @db.Text
-  lukisan_url String
-  aliran      String
-  media       String
-  teknik      String
-  harga       Decimal?
-  panjang     Decimal?
-  lebar       Decimal?
-  status      StatusKarya   @default(DIKURASI)
-  Seniman     Seniman       @relation(fields: [seniman_id], references: [id])
-  seniman_id  String
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
-  KurasiKarya KurasiKarya[]
+  id           String         @id @default(uuid())
+  judul        String
+  deskripsi    String         @db.Text
+  lukisan_url  String
+  aliran       String
+  media        String
+  teknik       String
+  harga        Decimal?
+  panjang      Decimal?
+  lebar        Decimal?
+  status       StatusKarya    @default(DIKURASI)
+  Seniman      Seniman        @relation(fields: [seniman_id], references: [id])
+  seniman_id   String
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  KurasiKarya  KurasiKarya[]
+  KaryaPameran KaryaPameran[]
 }
 
 enum StatusKarya {
@@ -97,4 +99,41 @@ model KurasiKarya {
   updated_at DateTime @updatedAt
 
   @@unique([kurator_id, karya_id], name: "kurasiKaryaIdentifier")
+}
+
+model Pameran {
+  id           String         @id @default(uuid())
+  nama_pameran String
+  deskripsi    String         @db.Text
+  banner_url   String
+  sampul_url   String
+  tgl_mulai    DateTime
+  tgl_selesai  DateTime
+  status       StatusPameran
+  created_mode CreateMode     @default(INDIVIDUAL)
+  Seniman      Seniman?       @relation(fields: [seniman_id], references: [id])
+  seniman_id   String?
+  slug         String         @unique
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  KaryaPameran KaryaPameran[]
+}
+
+enum CreateMode {
+  INDIVIDUAL
+  GROUP
+}
+
+enum StatusPameran {
+  SCHEDULED
+  OPEN
+  CLOSE
+}
+
+model KaryaPameran {
+  id         Int     @id @default(autoincrement())
+  Pameran    Pameran @relation(fields: [pameran_id], references: [id])
+  Karya      Karya   @relation(fields: [karya_id], references: [id])
+  pameran_id String
+  karya_id   String
 }

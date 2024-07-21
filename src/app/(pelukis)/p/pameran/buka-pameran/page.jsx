@@ -5,9 +5,8 @@ import PameranProvider from "./PameranProvider";
 export default async function Page() {
     let karya = await getAllKaryaCurrentPelukis();
 
-    console.log(karya);
     return (
-        <PameranProvider>
+        <PameranProvider karya={karya}>
             <BukaPameran />
         </PameranProvider>
     );

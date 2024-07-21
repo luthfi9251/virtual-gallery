@@ -24,7 +24,8 @@ export default function CardKaryaCheckBox({ data }) {
                     <Image
                         src={data.lukisan_url}
                         loader={karyaImageLoader}
-                        alt="Norway"
+                        quality={30}
+                        alt="card-karya"
                         objectFit="cover"
                         fill
                     />

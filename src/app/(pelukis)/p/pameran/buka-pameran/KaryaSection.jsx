@@ -47,7 +47,7 @@ export default function KaryaSection() {
     }, [activePage, filteredKarya]);
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col p-3">
             <TextInput
                 onChange={(event) => setSearchVal(event.currentTarget.value)}
                 radius="xl"
@@ -69,7 +69,7 @@ export default function KaryaSection() {
                 onChange={setSelectedKarya}
                 className="w-full py-5"
             >
-                <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }}>
+                <SimpleGrid cols={{ base: 2, sm: 4 }}>
                     {showedKaryaPerPage.map((item, i) => {
                         return <CardKaryaCheckBox data={item} key={i} />;
                     })}
