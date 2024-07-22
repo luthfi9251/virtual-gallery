@@ -22,3 +22,11 @@ export const karyaImageLoader = ({ src, width, quality }) => {
         return `${IMAGE_SERVICE_URL}/original/${src}`;
     }
 };
+
+export const pameranSampulLoader = ({ src, quality }) => {
+    if (quality < 50) {
+        return `${IMAGE_SERVICE_URL}/250x334/${src}`;
+    } else {
+        return `${IMAGE_SERVICE_URL}/original/${src}`;
+    }
+};

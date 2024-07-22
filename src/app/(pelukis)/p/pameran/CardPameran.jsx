@@ -10,6 +10,8 @@ import {
     ActionIcon,
 } from "@mantine/core";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import dayjs from "dayjs";
+import { pameranSampulLoader } from "@/loader/imageLoader";
 
 const MenuKarya = () => {
     return (
@@ -34,33 +36,57 @@ const MenuKarya = () => {
     );
 };
 
-export default function CardPameran() {
+let StatusPameran = ({ status }) => {
+    if (status == "OPEN") {
+        return (
+            <Text className="text-xs text-white bg-tanArt-green  self-start p-1 rounded">
+                {status}
+            </Text>
+        );
+    } else if (status == "CLOSE") {
+        return (
+            <Text className="text-xs text-white bg-tanArt-yellow  self-start p-1 rounded">
+                {status}
+            </Text>
+        );
+    } else {
+        return (
+            <Text className="text-xs text-white bg-tanArt-grey  self-start p-1 rounded">
+                {status}
+            </Text>
+        );
+    }
+};
+
+export default function CardPameran({ data }) {
     return (
-        <div className="py-2 md:p-3 rounded w-full flex gap-2 shadow">
+        <div className="py-2 md:p-3 rounded w-full flex gap-2 shadow-md cursor-default">
             <div className="w-1/3  aspect-[5/6] relative rounded overflow-hidden">
                 <Image
                     fill
                     objectFit="cover"
-                    src="/bg-login.jpg"
+                    src={data.sampul_url}
                     className="z-10"
+                    quality={40}
                     alt="foto-sampul-pameran"
+                    loader={pameranSampulLoader}
                 />
             </div>
             <div className="w-2/3  flex flex-col h-full gap-2">
                 <Title order={4} className="text-xl font-semibold relative">
-                    Desired Destiny
+                    {data.nama_pameran}
                     <MenuKarya />
                 </Title>
-                <Text className="text-xs font-light line-clamp-5 grow py-1">
-                    Lukisan ini menggambarkan perjalanan hidup yang dipandu oleh
-                    takdir. Lukisan ini menggambarkan perjalanan hidup yang
-                    dipandu oleh takdir.
+                <Text className="text-xs font-light line-clamp-5 grow py-1 ">
+                    {data.deskripsi}
                 </Text>
-                <Text className="text-xs text-white bg-tanArt-green  self-start p-1 rounded">
-                    Terbuka
-                </Text>
+                <StatusPameran status={data.statusComputed} />
                 <Text className="text-[10px] justify-self-end">
-                    17 Juli 2024 - 16 Agustus 2024
+                    {dayjs(data.tgl_mulai).locale("id").format("DD MMMM YYYY")}{" "}
+                    -{" "}
+                    {dayjs(data.tgl_selesai)
+                        .locale("id")
+                        .format("DD MMMM YYYY")}
                 </Text>
             </div>
         </div>

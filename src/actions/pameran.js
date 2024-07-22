@@ -33,18 +33,18 @@ export const createPameran = async (formData) => {
             bannerBlob.type.split("/")[1]
         );
 
-        let uploadSampul = uploadImageToBackendWithSize(sampulBody, {
+        let uploadBanner = uploadImageToBackendWithSize(bannerBody, {
             width: 1000,
             height: 334,
         });
-        let uploadBody = uploadImageToBackendWithSize(bannerBody, {
+        let uploadSampul = uploadImageToBackendWithSize(sampulBody, {
             width: 250,
             height: 334,
         });
 
-        let [resSampul, resBody] = await Promise.all([
+        let [resSampul, resBanner] = await Promise.all([
             uploadSampul,
-            uploadBody,
+            uploadBanner,
         ]);
 
         const generateSlugPameran =
@@ -56,8 +56,8 @@ export const createPameran = async (formData) => {
             data: {
                 nama_pameran: dataPameran.nama_pameran,
                 deskripsi: dataPameran.deskripsi,
-                banner_url: resBody.resizedPath,
-                sampul_url: resSampul.resizedPath,
+                banner_url: resBanner.filename,
+                sampul_url: resSampul.filename,
                 tgl_mulai: new Date(dataPameran.tanggal[0]).toISOString(),
                 tgl_selesai: new Date(dataPameran.tanggal[1]).toISOString(),
                 slug: generateSlugPameran,
@@ -94,5 +94,74 @@ export const createPameran = async (formData) => {
             }
         }
         return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getPameranBaseOnFilter = async (filter) => {
+    try {
+        let computeStatus = (item) => {
+            let currentDate = new Date();
+            if (item.tgl_selesai < currentDate) {
+                item.statusComputed = "CLOSE";
+            } else if (item.tgl_mulai > currentDate) {
+                item.statusComputed = "SCHEDULED";
+            } else {
+                item.statusComputed = "OPEN";
+            }
+
+            return item;
+        };
+        let SELECT_QUERY = {
+            id: true,
+            nama_pameran: true,
+            deskripsi: true,
+            sampul_url: true,
+            tgl_mulai: true,
+            tgl_selesai: true,
+            status: true,
+            slug: true,
+        };
+        let session = await auth();
+        let pameran = [];
+        if (filter === "SEMUA") {
+            pameran = await prisma.Pameran.findMany({
+                where: {
+                    Seniman: {
+                        id: session.user.Seniman.id,
+                    },
+                },
+                select: SELECT_QUERY,
+            });
+        } else if (filter === "OPEN") {
+            pameran = await prisma.Pameran.findMany({
+                where: {
+                    Seniman: {
+                        id: session.user.Seniman.id,
+                    },
+                    tgl_mulai: {
+                        lte: new Date(),
+                    },
+                    tgl_selesai: {
+                        gte: new Date(),
+                    },
+                },
+                select: SELECT_QUERY,
+            });
+        } else if (filter === "CLOSE") {
+            pameran = await prisma.Pameran.findMany({
+                where: {
+                    Seniman: {
+                        id: session.user.Seniman.id,
+                    },
+                    tgl_selesai: {
+                        lt: new Date(),
+                    },
+                },
+                select: SELECT_QUERY,
+            });
+        }
+        return serverResponseFormat(pameran.map((item) => computeStatus(item)));
+    } catch (err) {
+        console.log(err);
     }
 };

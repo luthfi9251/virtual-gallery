@@ -39,7 +39,7 @@ async function templateSeedPelukisAndKaryaSiapPamer(pelukisId, kuratorId) {
             panjang: 20,
             lebar: 30,
             status: "SELESAI",
-            lukisan_url: "af471a11-703a-40eb-ad1b-64b8de36fc1e.png",
+            lukisan_url: "fecce36d-8854-4d88-991e-cba972d8d465.jpg",
             Seniman: {
                 connect: {
                     id: pelukisId,
