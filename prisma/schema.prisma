@@ -13,6 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Profile {
+  id           Int     @id @default(autoincrement())
+  User         User    @relation(fields: [user_id], references: [id])
+  user_id      String  @unique
+  foto_sampul  String
+  bio          String? @db.Text
+  instagram_id String?
+  x_id         String?
+}
+
 model User {
   id           String   @id @default(uuid())
   username     String   @unique @db.VarChar(20)
@@ -27,6 +37,7 @@ model User {
   updated_at   DateTime @updatedAt
   Seniman      Seniman?
   Kurator      Kurator?
+  Profile      Profile?
 }
 
 enum UserRole {

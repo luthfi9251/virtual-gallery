@@ -4,7 +4,8 @@ import { hashPassword } from "@/lib/bcrypt";
 import { revalidatePath } from "next/cache";
 import { URL_TANART } from "@/variables/url";
 import { uploadImageToBackend } from "./image";
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
+import { serverResponseFormat } from "@/lib/utils";
 
 export const getAllUserAccount = async () => {
     let data = await prisma.User.findMany({
@@ -307,5 +308,27 @@ export const uploadProfilePicture = async (formdata, idUser) => {
     } catch (err) {
         console.log(err);
         throw err;
+    }
+};
+
+export const getUserProfile = async () => {
+    try {
+        let session = await auth();
+        if (!session?.user) {
+            throw "Sesi anda telah habis!";
+        }
+
+        let userProfile = await prisma.User.findUnique({
+            where: {
+                id: session.user.id,
+            },
+            include: {
+                Profile: true,
+            },
+        });
+
+        return userProfile;
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
     }
 };

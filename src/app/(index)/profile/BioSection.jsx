@@ -1,8 +1,9 @@
 import { Title } from "@mantine/core";
+import CardWrapper from "./CardWrapper";
 
 export default function BioSection() {
     return (
-        <div className="w-full rounded-lg shadow-lg p-10">
+        <CardWrapper>
             <Title order={3}>Bio</Title>
             <p className="text-sm font-light mt-3 cursor-default">
                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Modi
@@ -26,6 +27,6 @@ export default function BioSection() {
                 qui fugit quia suscipit deserunt quisquam maiores nulla! Ea,
                 hic?
             </p>
-        </div>
+        </CardWrapper>
     );
 }

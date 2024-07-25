@@ -1,10 +1,13 @@
 import { Title, Text } from "@mantine/core";
+import CardWrapper from "./CardWrapper";
 
 const StatusWrapper = ({ status, color }) => {
     return (
         <div className=" border-[1px] p-2 rounded flex justify-between items-center shadow-md">
             <div>
-                <Text className="font-medium">Pengajuan Akun Pelukis</Text>
+                <Text className="font-medium text-sm">
+                    Pengajuan Akun Pelukis
+                </Text>
                 <Text className="text-xs font-light flex items-center gap-2">
                     22 Juli 2024{" "}
                     <span className="w-1 h-1 rounded-[50%] inline-block bg-black"></span>{" "}
@@ -26,12 +29,12 @@ const StatusWrapper = ({ status, color }) => {
 
 export default function AccountStatus() {
     return (
-        <div className="w-full rounded-lg shadow-lg p-10">
+        <CardWrapper>
             <Title order={3}>Pengajuan Akun</Title>
             <div className="mt-3 space-y-3">
                 <StatusWrapper status="Pending" color="GREY" />
                 <StatusWrapper status="Disetujui" />
             </div>
-        </div>
+        </CardWrapper>
     );
 }

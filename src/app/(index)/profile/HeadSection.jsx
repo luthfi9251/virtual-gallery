@@ -21,15 +21,15 @@ export default function HeadSection() {
                         className="object-cover rounded-[50%] p-2 bg-white shadow-lg"
                     />
                 </div>
-                <div>
-                    <div className="flex items-center gap-3 flex-col md:flex-row">
+                <div className="flex flex-col gap-3 md:block">
+                    <div className="flex items-center md:gap-3 flex-col md:flex-row">
                         <Title>Ahmad Sukri</Title>
                         <span className="w-2 h-2 bg-black rounded-[50%] hidden md:block"></span>
                         <span className="font-light text-sm text-center">
-                            Member sejak Maret 2024
+                            Bergabung sejak Maret 2024
                         </span>
                     </div>
-                    <p className="font-light text-sm text-center md:text-left">
+                    <p className="font-light text-sm text-center md:text-left bg-tanArtBlue-600 rounded-sm md:inline-block p-1 text-white">
                         @ahmadsukri
                     </p>
                     <p className="text-md font-light text-center md:text-left">
