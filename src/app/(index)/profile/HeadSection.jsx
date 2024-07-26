@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { Title, Text } from "@mantine/core";
+import dayjs from "dayjs";
 
-export default function HeadSection() {
+export default function HeadSection({ data }) {
     return (
         <div className="w-full rounded-lg relative shadow-lg">
             <div className="w-full aspect-[3/1] md:aspect-[5/1] relative rounded-lg">
@@ -23,14 +24,15 @@ export default function HeadSection() {
                 </div>
                 <div className="flex flex-col gap-3 md:block">
                     <div className="flex items-center md:gap-3 flex-col md:flex-row">
-                        <Title>Ahmad Sukri</Title>
+                        <Title>{data.nama_lengkap}</Title>
                         <span className="w-2 h-2 bg-black rounded-[50%] hidden md:block"></span>
                         <span className="font-light text-sm text-center">
-                            Bergabung sejak Maret 2024
+                            Bergabung sejak{" "}
+                            {dayjs(data.created_at).format("MMMM YYYY")}
                         </span>
                     </div>
                     <p className="font-light text-sm text-center md:text-left bg-tanArtBlue-600 rounded-sm md:inline-block p-1 text-white">
-                        @ahmadsukri
+                        @{data.username}
                     </p>
                     <p className="text-md font-light text-center md:text-left">
                         Semarang, Jawa Tengah

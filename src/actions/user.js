@@ -322,12 +322,60 @@ export const getUserProfile = async () => {
             where: {
                 id: session.user.id,
             },
-            include: {
-                Profile: true,
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                nama_lengkap: true,
+                foto_profil: true,
+                created_at: true,
+                Profile: {
+                    select: {
+                        foto_sampul: true,
+                        bio: true,
+                        instagram_id: true,
+                        x_id: true,
+                    },
+                },
+                Seniman: {
+                    select: {
+                        is_verified: true,
+                        created_at: true,
+                    },
+                },
+                Kurator: {
+                    select: {
+                        is_verified: true,
+                        created_at: true,
+                    },
+                },
             },
         });
+        let preparedData = (data) => {
+            return {
+                profile: {
+                    fotoProfil: data.foto_profile,
+                    fotoSampul: data.Profile
+                        ? data.profile.foto_sampul
+                        : "DEFAULT",
+                    nama_lengkap: data.nama_lengkap,
+                    username: data.username,
+                    bio: data.Profile ? data.profile.bio : "-",
+                    created_at: data.created_at,
+                },
+                sosial_media: {
+                    instagram_id: data.Profile ? data.instagram_id : "-",
+                    x_id: data.Profile ? data.x_id : "-",
+                    email: data.email,
+                },
+                pengajuan_akun: {
+                    seniman: data.Seniman,
+                    kurator: data.Kurator,
+                },
+            };
+        };
 
-        return userProfile;
+        return preparedData(userProfile);
     } catch (err) {
         return serverResponseFormat(null, true, err.message);
     }
