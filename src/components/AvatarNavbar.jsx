@@ -14,23 +14,15 @@ import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa6";
 import { LogOut } from "./AuthComponent";
 import NextImage from "next/image";
-import myImageLoader from "@/loader/imageLoader";
+import { profileLoaderFotoProfil } from "@/loader/imageLoader";
 
 export const AvatarProfileSmall = ({ src = null, size = "md" }) => {
     return (
         <Avatar
-            src={
-                src
-                    ? myImageLoader({
-                          src: src,
-                          width: 100,
-                          quality: 75,
-                      })
-                    : "/EMPTY_USER_PROFILE.png"
-            }
+            src={src || "/EMPTY_USER_PROFILE.png"}
+            loader={src && profileLoaderFotoProfil}
             className="border cursor-pointer"
             alt="it's me"
-            size={size}
         />
     );
 };
@@ -62,15 +54,8 @@ export default function AvatarNavbar({
                     </Box>
                 ) : (
                     <Avatar
-                        src={
-                            profilePicture
-                                ? myImageLoader({
-                                      src: profilePicture,
-                                      width: 100,
-                                      quality: 75,
-                                  })
-                                : "/EMPTY_USER_PROFILE.png"
-                        }
+                        src={profilePicture || "/EMPTY_USER_PROFILE.png"}
+                        loader={profilePicture && profileLoaderFotoProfil}
                         className="border cursor-pointer"
                         alt="it's me"
                         data-cy="btn-profile"

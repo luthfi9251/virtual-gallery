@@ -1,6 +1,10 @@
 import Image from "next/image";
 import { Title, Text } from "@mantine/core";
 import dayjs from "dayjs";
+import {
+    profileLoaderFotoProfil,
+    profileLoaderFotoSampul,
+} from "@/loader/imageLoader";
 
 export default function HeadSection({ data }) {
     return (
@@ -8,7 +12,8 @@ export default function HeadSection({ data }) {
             <div className="w-full aspect-[3/1] md:aspect-[5/1] relative rounded-lg">
                 <Image
                     fill
-                    src="/bg-register.jpg"
+                    src={data.fotoSampul || "/default/2.jpg"}
+                    loader={data.fotoSampul && profileLoaderFotoSampul}
                     className="object-cover rounded-lg"
                     loading="eager"
                 />
@@ -18,7 +23,8 @@ export default function HeadSection({ data }) {
                     <Image
                         fill
                         loading="eager"
-                        src="/bg-login.jpg"
+                        src={data.fotoProfil || "/default/1.jpg"}
+                        loader={data.fotoProfil && profileLoaderFotoProfil}
                         className="object-cover rounded-[50%] p-2 bg-white shadow-lg"
                     />
                 </div>

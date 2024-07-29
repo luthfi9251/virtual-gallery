@@ -13,7 +13,7 @@ export default function ContactSection({ data }) {
                     <p>Email</p>
                     <span className="space-x-3">
                         <MdMailOutline className="w-5 h-5 inline-block" />
-                        <span>{data.profile.email}</span>
+                        <span>{data.sosial_media.email}</span>
                     </span>
                 </div>
                 <div className="">

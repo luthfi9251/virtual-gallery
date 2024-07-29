@@ -30,3 +30,10 @@ export const pameranSampulLoader = ({ src, quality }) => {
         return `${IMAGE_SERVICE_URL}/original/${src}`;
     }
 };
+
+export const profileLoaderFotoProfil = ({ src, quality }) => {
+    return `${IMAGE_SERVICE_URL}/200x200/${src}`;
+};
+export const profileLoaderFotoSampul = ({ src, quality }) => {
+    return `${IMAGE_SERVICE_URL}/1200x240/${src}`;
+};

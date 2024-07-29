@@ -17,7 +17,7 @@ model Profile {
   id           Int     @id @default(autoincrement())
   User         User    @relation(fields: [user_id], references: [id])
   user_id      String  @unique
-  foto_sampul  String
+  foto_sampul  String?
   bio          String? @db.Text
   instagram_id String?
   x_id         String?

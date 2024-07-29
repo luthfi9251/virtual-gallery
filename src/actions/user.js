@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { hashPassword } from "@/lib/bcrypt";
 import { revalidatePath } from "next/cache";
 import { URL_TANART } from "@/variables/url";
-import { uploadImageToBackend } from "./image";
+import { uploadImageToBackend, uploadImageToBackendWithSize } from "./image";
 import { auth, signIn } from "@/auth";
 import { serverResponseFormat } from "@/lib/utils";
 
@@ -354,18 +354,18 @@ export const getUserProfile = async () => {
         let preparedData = (data) => {
             return {
                 profile: {
-                    fotoProfil: data.foto_profile,
-                    fotoSampul: data.Profile
-                        ? data.profile.foto_sampul
-                        : "DEFAULT",
+                    fotoProfil: data.foto_profil,
+                    fotoSampul: data.Profile?.foto_sampul,
                     nama_lengkap: data.nama_lengkap,
                     username: data.username,
-                    bio: data.Profile ? data.profile.bio : "-",
+                    bio: data.Profile ? data.Profile.bio : "-",
                     created_at: data.created_at,
                 },
                 sosial_media: {
-                    instagram_id: data.Profile ? data.instagram_id : "-",
-                    x_id: data.Profile ? data.x_id : "-",
+                    instagram_id: data.Profile
+                        ? data.Profile.instagram_id
+                        : "-",
+                    x_id: data.Profile ? data.Profile.x_id : "-",
                     email: data.email,
                 },
                 pengajuan_akun: {
@@ -377,6 +377,147 @@ export const getUserProfile = async () => {
 
         return preparedData(userProfile);
     } catch (err) {
+        console.log(err);
         return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getUserProfileEdit = async () => {
+    try {
+        let session = await auth();
+        if (!session?.user) {
+            throw "Sesi anda telah habis!";
+        }
+
+        let userProfile = await prisma.User.findUnique({
+            where: {
+                id: session.user.id,
+            },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                tgl_lhr: true,
+                tempat_lhr: true,
+                nama_lengkap: true,
+                foto_profil: true,
+                created_at: true,
+                Profile: {
+                    select: {
+                        foto_sampul: true,
+                        bio: true,
+                        instagram_id: true,
+                        x_id: true,
+                    },
+                },
+            },
+        });
+        let preparedData = (data) => {
+            return {
+                profile: {
+                    tgl_lhr: data.tgl_lhr,
+                    tempat_lhr: data.tempat_lhr,
+                    fotoProfil: data.foto_profil,
+                    fotoSampul: data.Profile && data.Profile.foto_sampul,
+                    nama_lengkap: data.nama_lengkap,
+                    username: data.username,
+                    bio: data.Profile ? data.Profile.bio : "",
+                    created_at: data.created_at,
+                },
+                sosial_media: {
+                    instagram_id: data.Profile && data.Profile.instagram_id,
+                    x_id: data.Profile && data.Profile.x_id,
+                    email: data.email,
+                },
+            };
+        };
+
+        return preparedData(userProfile);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const editProfile = async (formData) => {
+    try {
+        let session = await auth();
+        if (!session?.user) {
+            throw "Sesi anda telah habis!";
+        }
+
+        let editQuery = {
+            username: formData.get("username"),
+            email: formData.get("email"),
+            nama_lengkap: formData.get("nama_lengkap"),
+            tgl_lhr: new Date(formData.get("tgl_lhr")).toISOString(),
+            tempat_lhr: formData.get("tempat_lhr"),
+            Profile: {
+                upsert: {
+                    create: {
+                        bio: formData.get("bio"),
+                        instagram_id: formData.get("instagram_id"),
+                        x_id: formData.get("x_id"),
+                    },
+                    update: {
+                        bio: formData.get("bio"),
+                        instagram_id: formData.get("instagram_id"),
+                        x_id: formData.get("x_id"),
+                    },
+                },
+            },
+        };
+
+        const imageUploadBody = (buffer, extension) => {
+            let formData = new FormData();
+            formData.append("image", buffer);
+            formData.append("ext", extension);
+            return formData;
+        };
+
+        if (formData.get("fotoSampul")) {
+            let sampulBody = imageUploadBody(
+                formData.get("fotoSampul"),
+                formData.get("fotoSampul").type.split("/")[1]
+            );
+            let uploadBanner = await uploadImageToBackendWithSize(sampulBody, {
+                width: 1200,
+                height: 240,
+            });
+            editQuery.Profile.upsert.create.foto_sampul = uploadBanner.filename;
+            editQuery.Profile.upsert.update.foto_sampul = uploadBanner.filename;
+        }
+        if (formData.get("fotoProfil")) {
+            let profilBody = imageUploadBody(
+                formData.get("fotoProfil"),
+                formData.get("fotoProfil").type.split("/")[1]
+            );
+            let uploadProfil = await uploadImageToBackendWithSize(profilBody, {
+                width: 200,
+                height: 200,
+            });
+            editQuery.foto_profil = uploadProfil.filename;
+        }
+
+        let editData = await prisma.User.update({
+            where: {
+                id: session.user.id,
+            },
+            data: editQuery,
+        });
+        return editData;
+    } catch (err) {
+        let errMessage = err.message;
+        switch (err.meta.target) {
+            case "User_username_key":
+                errMessage = "Username telah digunakan!";
+                break;
+            case "User_email_key":
+                errMessage = "Email telah digunakan!";
+                break;
+            default:
+                break;
+        }
+        return serverResponseFormat(null, true, errMessage);
     }
 };
