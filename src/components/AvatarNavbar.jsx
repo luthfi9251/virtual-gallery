@@ -12,28 +12,40 @@ import {
 } from "@mantine/core";
 import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa6";
-import { LogOut } from "./AuthComponent";
-import NextImage from "next/image";
+import Image from "next/image";
 import { profileLoaderFotoProfil } from "@/loader/imageLoader";
+import { URL_TANART } from "@/variables/url";
+import { signOutAction } from "@/actions/authAction";
 
 export const AvatarProfileSmall = ({ src = null, size = "md" }) => {
     return (
         <Avatar
-            src={src || "/EMPTY_USER_PROFILE.png"}
-            loader={src && profileLoaderFotoProfil}
+            src={
+                src
+                    ? profileLoaderFotoProfil({
+                          src,
+                      })
+                    : "/EMPTY_USER_PROFILE.png"
+            }
             className="border cursor-pointer"
-            alt="it's me"
+            alt="it's meeee"
         />
     );
 };
 
 export default function AvatarNavbar({
+    namaLengkap,
+    email,
     profilePicture,
     isMobile,
     isAdmin = false,
     isKurator = false,
     isPelukis = false,
 }) {
+    const logOutHandler = async () => {
+        await signOutAction();
+    };
+
     return (
         <Menu
             shadow="md"
@@ -54,16 +66,45 @@ export default function AvatarNavbar({
                     </Box>
                 ) : (
                     <Avatar
-                        src={profilePicture || "/EMPTY_USER_PROFILE.png"}
-                        loader={profilePicture && profileLoaderFotoProfil}
+                        src={
+                            profilePicture
+                                ? profileLoaderFotoProfil({
+                                      src: profilePicture,
+                                  })
+                                : "/EMPTY_USER_PROFILE.png"
+                        }
                         className="border cursor-pointer"
-                        alt="it's me"
+                        alt="foto profil"
                         data-cy="btn-profile"
                     />
                 )}
             </MenuTarget>
 
             <MenuDropdown>
+                <div className="w-full flex flex-col items-center p-2">
+                    <Image
+                        src={profilePicture}
+                        width={150}
+                        height={150}
+                        loader={profileLoaderFotoProfil}
+                        className="rounded-[50%]"
+                    />
+                    <p className="line-clamp-1 font-bold text-lg mt-1">
+                        {namaLengkap}
+                    </p>
+                    <p className="text-xs cursor-default line-clamp-1">
+                        {email}
+                    </p>
+                    <MenuItem
+                        data-cy="link-to-profile"
+                        component={Link}
+                        href={URL_TANART.USER_PROFILE}
+                        className="text-center my-2"
+                    >
+                        Profil
+                    </MenuItem>
+                </div>
+                <MenuDivider />
                 {isAdmin || isPelukis || isKurator ? (
                     <MenuLabel>Dashboard</MenuLabel>
                 ) : null}
@@ -112,15 +153,14 @@ export default function AvatarNavbar({
 
                 <MenuDivider />
                 <MenuItem className="text-red-500" component="div">
-                    <LogOut>
-                        <UnstyledButton
-                            type="submit"
-                            className="w-full text-sm"
-                            data-cy="btn-logout"
-                        >
-                            Keluar
-                        </UnstyledButton>
-                    </LogOut>
+                    <UnstyledButton
+                        type="submit"
+                        className="w-full text-sm"
+                        data-cy="btn-logout"
+                        onClick={logOutHandler}
+                    >
+                        Keluar
+                    </UnstyledButton>
                 </MenuItem>
             </MenuDropdown>
         </Menu>

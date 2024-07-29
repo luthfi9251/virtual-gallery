@@ -103,7 +103,7 @@ export const addUser = async (data) => {
         return addQuery;
     } catch (err) {
         console.log(err);
-        switch (err.meta.target) {
+        switch (err?.meta.target) {
             case "User_username_key":
                 throw new Error("Username telah digunakan!");
             case "User_email_key":
@@ -505,7 +505,8 @@ export const editProfile = async (formData) => {
             },
             data: editQuery,
         });
-        return editData;
+        revalidatePath("/", "layout");
+        return serverResponseFormat("success", false, null);
     } catch (err) {
         let errMessage = err.message;
         switch (err.meta.target) {
