@@ -83,10 +83,10 @@ export default function AvatarNavbar({
             <MenuDropdown>
                 <div className="w-full flex flex-col items-center p-2">
                     <Image
-                        src={profilePicture}
+                        src={profilePicture || "/default/1.jpg"}
                         width={150}
                         height={150}
-                        loader={profileLoaderFotoProfil}
+                        loader={profilePicture && profileLoaderFotoProfil}
                         className="rounded-[50%]"
                     />
                     <p className="line-clamp-1 font-bold text-lg mt-1">

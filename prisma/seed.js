@@ -1,76 +1,149 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { faker } = require("@faker-js/faker");
 
 async function templateSeedPelukisAndKaryaSiapPamer(pelukisId, kuratorId) {
-    // //generate akun pelukis
-    // const PelukisAccount1 = await prisma.user.upsert({
-    //     where: { email: "pelukis1@pelukis.com" },
-    //     update: {},
-    //     create: {
-    //         email: "pelukis1@pelukis.com",
-    //         username: "pelukishandal1",
-    //         nama_lengkap: "Pelukis Handal 1",
-    //         tempat_lhr: "Demak",
-    //         tgl_lhr: new Date().toISOString(),
-    //         role: "USER",
-    //         Seniman: {
-    //             create: {
-    //                 is_verified: true,
-    //                 verified_at: new Date().toISOString(),
-    //                 deskripsi:
-    //                     "saya tidak memiliki pengalamana sebagai pelukis hehehehehhehehhehehhehehehheheh",
-    //             },
-    //         },
-    //         password:
-    //             "$2a$10$7DHdR6aHst478sBQyl8.quRLxEHjuUuWgJGSpb7q/V8Ro6zRGyIFa", //passwordadmin
-    //     },
-    // });
-
     //tambah karya
+    let uploadKarya = await seedKaryaPelukis({ idPelukis: pelukisId });
+
+    //kurasi karya
+    let addKurasiKarya = await seedKurasiKarya({
+        idKurator: kuratorId,
+        idKarya: uploadKarya.id,
+    });
+
+    let upateHargaPelukis = await prisma.Karya.update({
+        where: {
+            id: uploadKarya.id,
+        },
+        data: {
+            harga: 5000000,
+            status: "SELESAI",
+        },
+    });
+
+    return { uploadKarya, addKurasiKarya, upateHargaPelukis };
+}
+
+async function seedPelukisAccount() {
+    const email = faker.internet.email({ provider: "pelukis.com" });
+    const pelukisAccount = await prisma.user.upsert({
+        where: { email },
+        update: {},
+        create: {
+            email,
+            username: faker.internet.userName(),
+            nama_lengkap: faker.person.fullName(),
+            tempat_lhr: faker.location.country(),
+            tgl_lhr: new Date().toISOString(),
+            role: "USER",
+            Seniman: {
+                create: {
+                    is_verified: true,
+                    verified_at: new Date().toISOString(),
+                    deskripsi: faker.lorem.sentences({ min: 7, max: 10 }),
+                },
+            },
+            password:
+                "$2a$10$7DHdR6aHst478sBQyl8.quRLxEHjuUuWgJGSpb7q/V8Ro6zRGyIFa", //passwordadmin
+        },
+        include: {
+            Seniman: {
+                select: {
+                    id: true,
+                },
+            },
+        },
+    });
+
+    return pelukisAccount;
+}
+
+async function seedKuratorAccount() {
+    const email = faker.internet.email({ provider: "kurator.com" });
+    const KuratorAccount1 = await prisma.user.upsert({
+        where: { email },
+        update: {},
+        create: {
+            email,
+            username: faker.internet.userName(),
+            nama_lengkap: faker.person.fullName(),
+            tempat_lhr: faker.location.country(),
+            tgl_lhr: new Date().toISOString(),
+            role: "USER",
+            Kurator: {
+                create: {
+                    is_verified: true,
+                    verified_at: new Date().toISOString(),
+                    deskripsi: faker.lorem.sentences({ min: 7, max: 10 }),
+                },
+            },
+            password:
+                "$2a$10$7DHdR6aHst478sBQyl8.quRLxEHjuUuWgJGSpb7q/V8Ro6zRGyIFa", //passwordadmin
+        },
+        include: {
+            Kurator: {
+                select: {
+                    id: true,
+                },
+            },
+        },
+    });
+    return KuratorAccount1;
+}
+
+async function seedKaryaPelukis({ idPelukis }) {
     let uploadKarya = await prisma.Karya.create({
         data: {
-            judul: "My First Painting",
-            deskripsi:
-                "Sebuah lukisan pertama saya yang menggambarkan keinfahan sungai",
+            judul: faker.lorem.sentence(5),
+            deskripsi: faker.lorem.sentences({ min: 10, max: 20 }),
             aliran: "sesat",
             media: "canvas",
             teknik: "water painting",
             harga: 50000,
             panjang: 20,
             lebar: 30,
-            status: "SELESAI",
-            lukisan_url: "fecce36d-8854-4d88-991e-cba972d8d465.jpg",
+            status: "DIKURASI",
+            lukisan_url: faker.image.urlPicsumPhotos(),
             Seniman: {
                 connect: {
-                    id: pelukisId,
+                    id: idPelukis,
                 },
             },
         },
     });
+    return uploadKarya;
+}
 
-    //kurasi karya
-
-    //buat akun kurator
-
+async function seedKurasiKarya({ idKurator, idKarya }) {
     let addKurasiKarya = await prisma.KurasiKarya.create({
         data: {
             Kurator: {
                 connect: {
-                    id: kuratorId,
+                    id: idKurator,
                 },
             },
             Karya: {
                 connect: {
-                    id: uploadKarya.id,
+                    id: idKarya,
                 },
             },
-            komentar: "lukisan ayng unik dan sangat bagus sekali coyyy",
+            komentar: faker.lorem.sentence(),
             harga_maks: 50000,
             harga_min: 0,
         },
     });
 
-    return { uploadKarya, addKurasiKarya };
+    let updateStatusKarya = await prisma.Karya.update({
+        where: {
+            id: idKarya,
+        },
+        data: {
+            status: "TERKURASI",
+        },
+    });
+
+    return addKurasiKarya;
 }
 
 async function main() {
@@ -117,28 +190,6 @@ async function main() {
             },
         },
     });
-    // const PelukisAccount2 = await prisma.user.upsert({
-    //     where: { email: "pelukis2@pelukis.com" },
-    //     update: {},
-    //     create: {
-    //         email: "pelukis2@pelukis.com",
-    //         username: "pelukishandal2",
-    //         nama_lengkap: "Pelukis Handal 2",
-    //         tempat_lhr: "Demak",
-    //         tgl_lhr: new Date().toISOString(),
-    //         role: "USER",
-    //         Seniman: {
-    //             create: {
-    //                 is_verified: true,
-    //                 verified_at: new Date().toISOString(),
-    //                 deskripsi:
-    //                     "saya tidak memiliki pengalamana sebagai pelukis hehehehehhehehhehehhehehehheheh",
-    //             },
-    //         },
-    //         password:
-    //             "$2a$10$7DHdR6aHst478sBQyl8.quRLxEHjuUuWgJGSpb7q/V8Ro6zRGyIFa", //passwordadmin
-    //     },
-    // });
 
     const KuratorAccount1 = await prisma.user.upsert({
         where: { email: "kurator1@kurator.com" },
@@ -169,64 +220,47 @@ async function main() {
             },
         },
     });
-    // const KuratorAccount2 = await prisma.user.upsert({
-    //     where: { email: "kurator2@kurator.com" },
-    //     update: {},
-    //     create: {
-    //         email: "kurator2@kurator.com",
-    //         username: "kuratorhandal2",
-    //         nama_lengkap: "Kurator Handal 2",
-    //         tempat_lhr: "Demak",
-    //         tgl_lhr: new Date().toISOString(),
-    //         role: "USER",
-    //         Kurator: {
-    //             create: {
-    //                 is_verified: true,
-    //                 verified_at: new Date().toISOString(),
-    //                 deskripsi:
-    //                     "saya tidak memiliki pengalamana sebagai kurator hehehehehhehehhehehhehehehheheh",
-    //             },
-    //         },
-    //         password:
-    //             "$2a$10$7DHdR6aHst478sBQyl8.quRLxEHjuUuWgJGSpb7q/V8Ro6zRGyIFa", //passwordadmin
-    //     },
-    // });
-    // const KuratorAccount3 = await prisma.user.upsert({
-    //     where: { email: "kurator3@kurator.com" },
-    //     update: {},
-    //     create: {
-    //         email: "kurator3@kurator.com",
-    //         username: "kuratorhandal3",
-    //         nama_lengkap: "Kurator Handal 3",
-    //         tempat_lhr: "Demak",
-    //         tgl_lhr: new Date().toISOString(),
-    //         role: "USER",
-    //         Kurator: {
-    //             create: {
-    //                 is_verified: true,
-    //                 verified_at: new Date().toISOString(),
-    //                 deskripsi:
-    //                     "saya tidak memiliki pengalamana sebagai kurator hehehehehhehehhehehhehehehheheh",
-    //             },
-    //         },
-    //         password:
-    //             "$2a$10$7DHdR6aHst478sBQyl8.quRLxEHjuUuWgJGSpb7q/V8Ro6zRGyIFa", //passwordadmin
-    //     },
-    // });
 
-    let tambahKarya = await templateSeedPelukisAndKaryaSiapPamer(
-        PelukisAccount1.Seniman.id,
-        KuratorAccount1.Kurator.id
-    );
+    let pelukisRandom1 = await seedPelukisAccount();
+    let kuratorrRandom1 = await seedKuratorAccount();
+
+    // let tambahKarya1 = await templateSeedPelukisAndKaryaSiapPamer(
+    //     pelukisRandom1.Seniman.id,
+    //     kuratorrRandom1.Kurator.id
+    // );
+    // let tambahKarya2 = await templateSeedPelukisAndKaryaSiapPamer(
+    //     pelukisRandom1.Seniman.id,
+    //     kuratorrRandom1.Kurator.id
+    // );
+    // let tambahKarya3 = await templateSeedPelukisAndKaryaSiapPamer(
+    //     pelukisRandom1.Seniman.id,
+    //     kuratorrRandom1.Kurator.id
+    // );
+
+    const COUNT_KARYA = 8;
+    let promKarya = [];
+    for (let i = 0; i < COUNT_KARYA; i++) {
+        promKarya.push(
+            templateSeedPelukisAndKaryaSiapPamer(
+                pelukisRandom1.Seniman.id,
+                kuratorrRandom1.Kurator.id
+            )
+        );
+    }
+
+    await Promise.all(promKarya);
 
     console.log({
         AdminAccount,
         PelukisAccount1,
-        // PelukisAccount2,
         KuratorAccount1,
-        tambahKarya,
         // KuratorAccount2,
         // KuratorAccount3,
+    });
+
+    console.log({
+        pelukisRandom1,
+        kuratorrRandom1,
     });
 }
 main()

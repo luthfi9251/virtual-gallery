@@ -11,11 +11,18 @@ function classifiedImageSize(width) {
 const IMAGE_SERVICE_URL = process.env.NEXT_PUBLIC_IMAGE_SERVICE_URL;
 
 export default function myImageLoader({ src, width, quality }) {
+    if (src.includes("picsum.photos")) {
+        return src;
+    }
     let classifiedFolder = classifiedImageSize(width);
     return `${IMAGE_SERVICE_URL}/${classifiedFolder}/${src}`;
 }
 
 export const karyaImageLoader = ({ src, width, quality }) => {
+    if (src.includes("picsum.photos")) {
+        return src;
+    }
+
     if (quality < 50) {
         return `${IMAGE_SERVICE_URL}/thumbnailBase/${src}`;
     } else {
@@ -24,6 +31,9 @@ export const karyaImageLoader = ({ src, width, quality }) => {
 };
 
 export const pameranSampulLoader = ({ src, quality }) => {
+    if (src.includes("picsum.photos")) {
+        return src;
+    }
     if (quality < 50) {
         return `${IMAGE_SERVICE_URL}/250x334/${src}`;
     } else {
@@ -32,8 +42,14 @@ export const pameranSampulLoader = ({ src, quality }) => {
 };
 
 export const profileLoaderFotoProfil = ({ src, quality }) => {
+    if (src.includes("picsum.photos")) {
+        return src;
+    }
     return `${IMAGE_SERVICE_URL}/200x200/${src}`;
 };
 export const profileLoaderFotoSampul = ({ src, quality }) => {
+    if (src.includes("picsum.photos")) {
+        return src;
+    }
     return `${IMAGE_SERVICE_URL}/1200x240/${src}`;
 };

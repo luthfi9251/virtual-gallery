@@ -8,6 +8,16 @@ const nextConfig = {
                 port: "4001",
                 pathname: "/img/**",
             },
+            {
+                protocol: "http",
+                hostname: "imageservice.luthficode.my.id",
+                pathname: "/img/**",
+            },
+            {
+                protocol: "https",
+                hostname: "picsum.photos",
+                pathname: "/**",
+            },
         ],
     },
 };

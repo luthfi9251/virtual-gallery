@@ -86,7 +86,7 @@ export default function Navbar({ children, session }) {
                             className="grow"
                         >
                             <NavItem title="Home" href="/" />
-                            <NavItem title="Pameran" href="/" />
+                            <NavItem title="Pameran" href="/pameran" />
                         </Group>
                         {/* <AvatarNavbar /> */}
                         <Box visibleFrom="sm">
