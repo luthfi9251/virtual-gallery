@@ -14,8 +14,8 @@ export const createPameran = async (formData) => {
         }
         let dataPameran = JSON.parse(formData.get("dataPameran"));
         let karyaList = JSON.parse(formData.get("karyaList"));
-        let sampulBlob = formData.get("heroBlob");
-        let bannerBlob = formData.get("sampulBlob");
+        let sampulBlob = formData.get("sampulBlob");
+        let bannerBlob = formData.get("bannerBlob");
 
         const imageUploadBody = (buffer, extension) => {
             let formData = new FormData();
@@ -163,5 +163,149 @@ export const getPameranBaseOnFilter = async (filter) => {
         return serverResponseFormat(pameran.map((item) => computeStatus(item)));
     } catch (err) {
         console.log(err);
+    }
+};
+
+export const getPameranOpen = async () => {
+    try {
+        let SELECT_QUERY = {
+            id: true,
+            nama_pameran: true,
+            banner_url: true,
+            tgl_mulai: true,
+            tgl_selesai: true,
+            status: true,
+            slug: true,
+            Seniman: {
+                select: {
+                    User: {
+                        select: {
+                            id: true,
+                            nama_lengkap: true,
+                            foto_profil: true,
+                        },
+                    },
+                },
+            },
+        };
+
+        let pameran = await prisma.Pameran.findMany({
+            where: {
+                tgl_mulai: {
+                    lte: new Date(),
+                },
+                tgl_selesai: {
+                    gte: new Date(),
+                },
+            },
+            select: SELECT_QUERY,
+        });
+        return serverResponseFormat(
+            pameran.map((item) => {
+                return {
+                    nama_pameran: item.nama_pameran,
+                    banner_url: item.banner_url,
+                    tgl_mulai: item.tgl_mulai,
+                    tgl_selesai: item.tgl_selesai,
+                    status: item.status,
+                    slug: item.slug,
+                    id_user: item.Seniman.User.id,
+                    nama_lengkap: item.Seniman.User.nama_lengkap,
+                    foto_profil: item.Seniman.User.foto_profil,
+                };
+            })
+        );
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getPameranBySlug = async (slug) => {
+    try {
+        let SELECT_QUERY = {
+            id: true,
+            nama_pameran: true,
+            deskripsi: true,
+            sampul_url: true,
+            banner_url: true,
+            tgl_mulai: true,
+            tgl_selesai: true,
+            status: true,
+            slug: true,
+            Seniman: {
+                select: {
+                    User: {
+                        select: {
+                            id: true,
+                            username: true,
+                            created_at: true,
+                            nama_lengkap: true,
+                            foto_profil: true,
+                            Profile: {
+                                select: {
+                                    bio: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            KaryaPameran: {
+                select: {
+                    Karya: {
+                        select: {
+                            id: true,
+                            lukisan_url: true,
+                            judul: true,
+                            deskripsi: true,
+                            created_at: true,
+                            aliran: true,
+                        },
+                    },
+                },
+            },
+        };
+
+        let pameran = await prisma.Pameran.findUnique({
+            where: {
+                slug,
+            },
+            select: SELECT_QUERY,
+        });
+        if (!pameran) {
+            throw "Pameran Tidak ditemukan!";
+        }
+        return serverResponseFormat({
+            nama_pameran: pameran.nama_pameran,
+            sampul_url: pameran.sampul_url,
+            banner_url: pameran.banner_url,
+            deskripsi: pameran.deskripsi,
+            tgl_mulai: pameran.tgl_mulai,
+            tgl_selesai: pameran.tgl_selesai,
+            status: pameran.status,
+            slug: pameran.slug,
+            user: {
+                id_user: pameran.Seniman.User.id,
+                nama_lengkap: pameran.Seniman.User.nama_lengkap,
+                foto_profil: pameran.Seniman.User.foto_profil,
+                username: pameran.Seniman.User.username,
+                bio: pameran.Seniman.User.Profile?.bio || "Tidak ada Biografi",
+                created_at: pameran.Seniman.User.created_at,
+            },
+            karya: pameran.KaryaPameran.map((item) => {
+                return {
+                    id_karya: item.Karya.id,
+                    lukisan_url: item.Karya.lukisan_url,
+                    judul: item.Karya.judul,
+                    deskripsi: item.Karya.deskripsi,
+                    created_at: item.Karya.created_at,
+                    aliran: item.Karya.aliran,
+                };
+            }),
+        });
+    } catch (err) {
+        console.log({ err });
+        return serverResponseFormat(null, true, err.message);
     }
 };

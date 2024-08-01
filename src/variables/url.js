@@ -6,4 +6,5 @@ export const URL_TANART = {
     PELUKIS_BUKA_PAMERAN: "/p/pameran/buka-pameran",
     USER_PROFILE: "/profile",
     USER_PROFILE_EDIT: "/profile/edit",
+    PAMERAN_VIEW: (slug) => `/pameran/${slug}`,
 };

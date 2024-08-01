@@ -32,8 +32,12 @@ export default function BukaPameran() {
         loading,
     } = useContext(PameranContext);
     const form = usePameranFormContext();
-    const sampulModalDisclosure = useDisclosure(false);
+
+    //BAnner itu landscape atas
+    //sampul foto profil dari pamerannya
+
     const heroModalDisclosure = useDisclosure(false);
+    const sampulModalDisclosure = useDisclosure(false);
 
     const handleOnCropSampul = (canvas) => {
         setPameranData((prev) => {
@@ -61,7 +65,7 @@ export default function BukaPameran() {
     return (
         <div className="w-full flex justify-center">
             <Stack className="w-full max-w-[1100px] rounded md:p-3 shadow-lg gap-5">
-                <div className=" group relative w-full  aspect-[3/1]">
+                <div className=" group relative w-full  aspect-[5/2]">
                     <div className=" backdrop-blur-md group-hover:opacity-100 flex transition-all opacity-0 absolute top-0 z-20 inset-0  justify-center items-center">
                         <Button onClick={heroModalDisclosure[1].open}>
                             Ubah Gambar
@@ -78,7 +82,7 @@ export default function BukaPameran() {
                         opened={heroModalDisclosure[0]}
                         close={heroModalDisclosure[1].close}
                         stencilProps={{
-                            aspectRatio: 3 / 1,
+                            aspectRatio: 5 / 2,
                         }}
                         handleOnCrop={handleOnCropHero}
                     />

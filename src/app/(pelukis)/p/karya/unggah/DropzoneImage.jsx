@@ -2,10 +2,11 @@
 import { SimpleGrid, Text, Stack, Button } from "@mantine/core";
 import { forwardRef } from "react";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import clsx from "clsx";
 import UploadIcon from "@/components/icons/UploadIcon";
 
 export const DropzoneImage = forwardRef(
-    ({ setImage, setAspect, setExt, setFile }, ref) => {
+    ({ setImage, setAspect, setExt, setFile, className }, ref) => {
         const getHeightAndWidthFromDataUrl = (dataURL) =>
             new Promise((resolve) => {
                 const img = new Image();
@@ -20,7 +21,10 @@ export const DropzoneImage = forwardRef(
 
         return (
             <Dropzone
-                className="grow flex items-center justify-center w-full lg:w-auto max-w-[1080]"
+                className={clsx(
+                    "grow flex items-center justify-center w-full lg:w-auto max-w-[1080]",
+                    className
+                )}
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
                 openRef={ref}

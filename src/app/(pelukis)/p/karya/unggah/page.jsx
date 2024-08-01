@@ -28,6 +28,7 @@ import ModalCropperUnggah from "./ModalCropperUnggah";
 import { notifications } from "@mantine/notifications";
 import { unggahKaryaPelukis } from "@/actions/karya";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 function ImagePreview({ aspect, imageURL, openCropper }) {
     if (aspect === "1/1") {
@@ -194,24 +195,25 @@ export default function Page() {
         <>
             <div className="p-4 h-full md:h-[calc(100vh-100px)] w-full flex flex-col md:flex-row gap-3">
                 <div className="md:flex-1 h-[600px] md:h-full overflow-hidden flex items-center justify-center flex-col gap-2 relative">
-                    {imageURLPreview ? (
+                    {imageURLPreview && (
                         <ImagePreview
                             aspect={imageAspectRatio}
                             imageURL={imageURLPreview}
                             openCropper={open}
-                        />
-                    ) : (
-                        <DropzoneImage
-                            ref={openRef}
-                            setImage={(url) => {
-                                setImageURL(url);
-                                setImageURLPreview(url);
-                            }}
-                            setAspect={setImageAspectRatio}
-                            setExt={setImageExt}
-                            setFile={setImageBlob}
+                            className={imageURLPreview ? "block" : "hidden"}
                         />
                     )}
+                    <DropzoneImage
+                        ref={openRef}
+                        setImage={(url) => {
+                            setImageURL(url);
+                            setImageURLPreview(url);
+                        }}
+                        setAspect={setImageAspectRatio}
+                        setExt={setImageExt}
+                        setFile={setImageBlob}
+                        className={imageURLPreview ? "hidden" : "block"}
+                    />
                     <Button
                         variant="outline"
                         onClick={() => openRef.current?.()}

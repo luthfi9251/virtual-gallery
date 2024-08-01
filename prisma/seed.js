@@ -2,29 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { faker } = require("@faker-js/faker");
 
-async function templateSeedPelukisAndKaryaSiapPamer(pelukisId, kuratorId) {
-    //tambah karya
-    let uploadKarya = await seedKaryaPelukis({ idPelukis: pelukisId });
-
-    //kurasi karya
-    let addKurasiKarya = await seedKurasiKarya({
-        idKurator: kuratorId,
-        idKarya: uploadKarya.id,
-    });
-
-    let upateHargaPelukis = await prisma.Karya.update({
-        where: {
-            id: uploadKarya.id,
-        },
-        data: {
-            harga: 5000000,
-            status: "SELESAI",
-        },
-    });
-
-    return { uploadKarya, addKurasiKarya, upateHargaPelukis };
-}
-
 async function seedPelukisAccount() {
     const email = faker.internet.email({ provider: "pelukis.com" });
     const pelukisAccount = await prisma.user.upsert({
@@ -93,6 +70,11 @@ async function seedKuratorAccount() {
 }
 
 async function seedKaryaPelukis({ idPelukis }) {
+    let KARYA_SIZE = [
+        { width: 600, height: 600 },
+        { width: 600, height: 400 },
+        { width: 600, height: 750 },
+    ];
     let uploadKarya = await prisma.Karya.create({
         data: {
             judul: faker.lorem.sentence(5),
@@ -104,7 +86,9 @@ async function seedKaryaPelukis({ idPelukis }) {
             panjang: 20,
             lebar: 30,
             status: "DIKURASI",
-            lukisan_url: faker.image.urlPicsumPhotos(),
+            lukisan_url: faker.image.urlPicsumPhotos(
+                faker.helpers.arrayElement(KARYA_SIZE)
+            ),
             Seniman: {
                 connect: {
                     id: idPelukis,
@@ -144,6 +128,89 @@ async function seedKurasiKarya({ idKurator, idKarya }) {
     });
 
     return addKurasiKarya;
+}
+
+async function seedPameranPelukis({ idPelukis, idsKarya }) {
+    const NAMA_PAMERAN = faker.lorem.words({ min: 2, max: 7 });
+    const TODAY = new Date();
+    const generateSlugPameran =
+        faker.helpers.slugify(NAMA_PAMERAN) + "-" + idPelukis.slice(-6);
+    let bukaPameran = await prisma.Pameran.create({
+        data: {
+            nama_pameran: NAMA_PAMERAN,
+            deskripsi: faker.lorem.sentences({ min: 10, max: 20 }),
+            banner_url: faker.image.urlPicsumPhotos(),
+            sampul_url: faker.image.urlPicsumPhotos(),
+            tgl_mulai: new Date().toISOString(),
+            tgl_selesai: new Date(
+                TODAY.setDate(TODAY.getDate() + 6)
+            ).toISOString(),
+            slug: generateSlugPameran,
+            status: "OPEN",
+            Seniman: {
+                connect: {
+                    id: idPelukis,
+                },
+            },
+            KaryaPameran: {
+                create: idsKarya.map((item) => {
+                    return {
+                        Karya: {
+                            connect: {
+                                id: item,
+                            },
+                        },
+                    };
+                }),
+            },
+        },
+    });
+    return bukaPameran;
+}
+
+async function templateSeedPelukisAndKaryaSiapPamer(pelukisId, kuratorId) {
+    //tambah karya
+    let uploadKarya = await seedKaryaPelukis({ idPelukis: pelukisId });
+
+    //kurasi karya
+    let addKurasiKarya = await seedKurasiKarya({
+        idKurator: kuratorId,
+        idKarya: uploadKarya.id,
+    });
+
+    let upateHargaPelukis = await prisma.Karya.update({
+        where: {
+            id: uploadKarya.id,
+        },
+        data: {
+            harga: 5000000,
+            status: "SELESAI",
+        },
+    });
+
+    return { uploadKarya, addKurasiKarya, upateHargaPelukis };
+}
+
+async function templateSeedPameranPelukisComplete(count) {
+    let pelukisRandom1 = await seedPelukisAccount();
+    let kuratorrRandom1 = await seedKuratorAccount();
+    const COUNT_KARYA = 5;
+    let promKarya = [];
+    for (let i = 0; i < COUNT_KARYA; i++) {
+        promKarya.push(
+            templateSeedPelukisAndKaryaSiapPamer(
+                pelukisRandom1.Seniman.id,
+                kuratorrRandom1.Kurator.id
+            )
+        );
+    }
+    let karyaList = await Promise.all(promKarya);
+    let seedPameran = await seedPameranPelukis({
+        idPelukis: pelukisRandom1.Seniman.id,
+        idsKarya: karyaList.map((item) => item.uploadKarya.id),
+    });
+
+    return seedPameran;
 }
 
 async function main() {
@@ -248,7 +315,14 @@ async function main() {
         );
     }
 
-    await Promise.all(promKarya);
+    let karyaList = await Promise.all(promKarya);
+    let seedPameran = await seedPameranPelukis({
+        idPelukis: pelukisRandom1.Seniman.id,
+        idsKarya: karyaList.map((item) => item.uploadKarya.id),
+    });
+
+    let pelukisRandom2 = await templateSeedPameranPelukisComplete();
+    let pelukisRandom3 = await templateSeedPameranPelukisComplete();
 
     console.log({
         AdminAccount,
@@ -261,6 +335,7 @@ async function main() {
     console.log({
         pelukisRandom1,
         kuratorrRandom1,
+        seedPameran,
     });
 }
 main()

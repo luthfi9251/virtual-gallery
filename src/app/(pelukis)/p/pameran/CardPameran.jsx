@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import dayjs from "dayjs";
-import { pameranSampulLoader } from "@/loader/imageLoader";
+import { pameranBannerLoader } from "@/loader/imageLoader";
 
 const MenuKarya = () => {
     return (
@@ -65,11 +65,11 @@ export default function CardPameran({ data }) {
                 <Image
                     fill
                     objectFit="cover"
-                    src={data.sampul_url}
+                    src={data.banner_url}
                     className="z-10"
                     quality={40}
                     alt="foto-sampul-pameran"
-                    loader={pameranSampulLoader}
+                    loader={pameranBannerLoader}
                 />
             </div>
             <div className="w-2/3  flex flex-col h-full gap-2">

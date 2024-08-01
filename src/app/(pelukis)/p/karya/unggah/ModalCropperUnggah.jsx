@@ -12,6 +12,7 @@ import {
 import { useMemo, forwardRef, useState, useRef } from "react";
 import { FixedCropper, ImageRestriction } from "react-advanced-cropper";
 import { PiCornersOut, PiRectangleDashed } from "react-icons/pi";
+import clsx from "clsx";
 import { BsCheck } from "react-icons/bs";
 
 const MenuSelectAspect = forwardRef((props, ref) => {
@@ -54,7 +55,7 @@ const MenuSelectAspect = forwardRef((props, ref) => {
 
 export default function ModalCropperUnggah(props) {
     const cropperRef = useRef(null);
-    const { opened, onClose, image, setImage, aspect, setAspect, setBlob } =
+    const { opened, onClose, image, setImage, aspect, setAspect, setBlob, className } =
         props;
     const [localAspect, setLocalAspect] = useState(aspect);
     const aspectNumber = useMemo(() => {

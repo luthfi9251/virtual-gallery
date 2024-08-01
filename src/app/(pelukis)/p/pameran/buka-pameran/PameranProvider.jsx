@@ -50,7 +50,7 @@ export default function PameranProvider({ children, karya }) {
         const form = new FormData();
         form.append("dataPameran", JSON.stringify(data));
         form.append("karyaList", JSON.stringify(selectedKarya));
-        form.append("heroBlob", heroBlob);
+        form.append("bannerBlob", heroBlob);
         form.append("sampulBlob", sampulBlob);
 
         createPameran(form)

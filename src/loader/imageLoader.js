@@ -41,6 +41,17 @@ export const pameranSampulLoader = ({ src, quality }) => {
     }
 };
 
+export const pameranBannerLoader = ({ src, quality }) => {
+    if (src.includes("picsum.photos")) {
+        return src;
+    }
+    if (quality < 50) {
+        return `${IMAGE_SERVICE_URL}/1000x334/${src}`;
+    } else {
+        return `${IMAGE_SERVICE_URL}/original/${src}`;
+    }
+};
+
 export const profileLoaderFotoProfil = ({ src, quality }) => {
     if (src.includes("picsum.photos")) {
         return src;

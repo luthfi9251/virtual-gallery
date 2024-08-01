@@ -5,7 +5,7 @@ import { comparePassword } from "@/lib/bcrypt";
 import { ROLE } from "./variables/page";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    debug: true,
+    debug: false,
     pages: {
         signIn: "/login",
     },
@@ -53,26 +53,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     Kurator: true,
                 },
             });
-            session.user.id = token.id;
-            session.user.username = findUser.username;
-            session.user.email = findUser.email;
-            session.user.nama_lengkap = findUser.nama_lengkap;
-            session.user.role = findUser.role;
-            session.user.Seniman = findUser.Seniman;
-            session.user.Kurator = findUser.Kurator;
-            session.user.foto_profil = findUser.foto_profil;
-            let userAccess = [];
 
-            if (findUser.Seniman?.is_verified) {
-                userAccess.push(ROLE.PELUKIS);
-            }
-            if (findUser.Kurator?.is_verified) {
-                userAccess.push(ROLE.KURATOR);
-            }
-            userAccess.push(findUser.role);
-            session.user.accessRole = userAccess;
+            if (findUser) {
+                session.user.id = token.id;
+                session.user.username = findUser.username;
+                session.user.email = findUser.email;
+                session.user.nama_lengkap = findUser.nama_lengkap;
+                session.user.role = findUser.role;
+                session.user.Seniman = findUser.Seniman;
+                session.user.Kurator = findUser.Kurator;
+                session.user.foto_profil = findUser.foto_profil;
+                let userAccess = [];
 
-            return session;
+                if (findUser.Seniman?.is_verified) {
+                    userAccess.push(ROLE.PELUKIS);
+                }
+                if (findUser.Kurator?.is_verified) {
+                    userAccess.push(ROLE.KURATOR);
+                }
+                userAccess.push(findUser.role);
+                session.user.accessRole = userAccess;
+                return session;
+            } else {
+                throw "Unauthenticated User";
+            }
         },
     },
 });

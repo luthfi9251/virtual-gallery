@@ -83,7 +83,7 @@ export default function AvatarNavbar({
             <MenuDropdown>
                 <div className="w-full flex flex-col items-center p-2">
                     <Image
-                        src={profilePicture || "/default/1.jpg"}
+                        src={profilePicture || "/EMPTY_USER_PROFILE.png"}
                         width={150}
                         height={150}
                         loader={profilePicture && profileLoaderFotoProfil}
