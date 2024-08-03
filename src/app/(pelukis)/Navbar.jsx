@@ -21,7 +21,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Avatar } from "@mantine/core";
 import AvatarNavbar from "@/components/AvatarNavbar";
 import { useMemo } from "react";
-import myImageLoader from "@/loader/imageLoader";
+import myImageLoader, { profileLoaderFotoProfil } from "@/loader/imageLoader";
 
 function NavItem({ href, title }) {
     return (
@@ -94,6 +94,8 @@ export default function Navbar({ children, session }) {
                         <Box visibleFrom="sm">
                             {session?.user ? (
                                 <AvatarNavbar
+                                    namaLengkap={session?.user.nama_lengkap}
+                                    email={session?.user.email}
                                     profilePicture={imageUrl}
                                     isMobile={false}
                                     isAdmin={roleAccess.admin}
@@ -124,10 +126,8 @@ export default function Navbar({ children, session }) {
                                 <Avatar
                                     src={
                                         imageUrl
-                                            ? myImageLoader({
+                                            ? profileLoaderFotoProfil({
                                                   src: imageUrl,
-                                                  width: 100,
-                                                  quality: 75,
                                               })
                                             : "/EMPTY_USER_PROFILE.png"
                                     }
@@ -152,6 +152,8 @@ export default function Navbar({ children, session }) {
                                     </Text>
                                 </div>
                                 <AvatarNavbar
+                                    namaLengkap={session?.user.nama_lengkap}
+                                    email={session?.user.email}
                                     profilePicture={imageUrl}
                                     isMobile={true}
                                     isAdmin={roleAccess.admin}

@@ -1,8 +1,7 @@
 "use client";
 import { createContext, useState } from "react";
-import DUMMY from "./DUMMY";
 import { isNotEmpty, createFormContext } from "@mantine/form";
-import { createPameran } from "@/actions/pameran";
+import { updatePameranById } from "@/actions/pameran";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
 import { URL_TANART } from "@/variables/url";
@@ -11,15 +10,16 @@ export const PameranContext = createContext(null);
 const [FormProvider, useFormContext, useForm] = createFormContext();
 export const usePameranFormContext = useFormContext;
 
-export default function PameranProvider({ children, karya }) {
+export default function PameranProvider({ children, karya, data }) {
+    let idPameran = data.id;
     let router = useRouter();
     const form = useForm({
         name: "info-pameran",
         mode: "uncontrolled",
         initialValues: {
-            nama_pameran: "",
-            deskripsi: "",
-            tanggal: [null, null],
+            nama_pameran: data.nama_pameran,
+            deskripsi: data.deskripsi,
+            tanggal: [new Date(data.tgl_mulai), new Date(data.tgl_selesai)],
         },
         validate: {
             nama_pameran: isNotEmpty("Tidak Boleh Kosong!"),
@@ -32,13 +32,15 @@ export default function PameranProvider({ children, karya }) {
     });
     const [pameranData, setPameranData] = useState({
         image: {
-            sampul: null,
-            hero: null,
+            sampul: data.sampul_url,
+            hero: data.banner_url,
         },
         // dataKarya: DUMMY.data,
         dataKarya: karya,
     });
-    const [selectedKarya, setSelectedKarya] = useState([]);
+    const [selectedKarya, setSelectedKarya] = useState(
+        data.KaryaPameran.map((item) => item.Karya.id)
+    );
     const [error, setError] = useState(null);
     const [heroBlob, setHeroBlob] = useState(null);
     const [sampulBlob, setSampulBlob] = useState(null);
@@ -48,8 +50,6 @@ export default function PameranProvider({ children, karya }) {
         setError(null);
         setLoading(true);
         if (selectedKarya.length === 0) setError("Anda belum memilih karya!");
-        if (!sampulBlob) setError("Anda belum memilih GAmbar Sampul");
-        if (!heroBlob) setError("Anda belum memilih Gambar Banner");
 
         const form = new FormData();
         form.append("dataPameran", JSON.stringify(data));
@@ -57,12 +57,12 @@ export default function PameranProvider({ children, karya }) {
         form.append("bannerBlob", heroBlob);
         form.append("sampulBlob", sampulBlob);
 
-        createPameran(form)
+        updatePameranById(idPameran, form)
             .then((res) => {
                 if (res.isError) throw new Error(res.error);
                 notifications.show({
                     title: "Berhasil",
-                    message: "Berhasil membuka pameran!",
+                    message: "Berhasil mengedit pameran!",
                 });
                 router.push(URL_TANART.PELUKIS_PAMERAN);
             })
@@ -86,7 +86,9 @@ export default function PameranProvider({ children, karya }) {
                 selectedKarya,
                 setSelectedKarya,
                 error,
+                heroBlob,
                 setHeroBlob,
+                sampulBlob,
                 setSampulBlob,
                 loading,
             }}

@@ -12,7 +12,7 @@ import {
     TabsTab,
     ScrollArea,
     ScrollAreaAutosize,
-    Button,
+    Loader,
     ActionIcon,
 } from "@mantine/core";
 import { useFullscreen } from "@mantine/hooks";
@@ -101,6 +101,7 @@ export default function BaseModalKarya({
     disclosure,
     children,
     imageSrc = null,
+    isLoading = false,
 }) {
     let [opened, { open, close }] = disclosure;
     const { ref, toggle, fullscreen } = useFullscreen();
@@ -116,34 +117,40 @@ export default function BaseModalKarya({
             }}
         >
             <div className="h-full md:overflow-visible overflow-y-auto">
-                <div className="h-full w-full p-1 md:overflow-visible md:flex-1 md:flex items-start flex-col md:flex-row gap-4">
-                    <div className="h-[400px] md:h-full w-full relative">
-                        <Image
-                            ref={ref}
-                            src={imageSrc}
-                            loader={karyaImageLoader}
-                            quality={100}
-                            fill
-                            loading="eager"
-                            alt="preview"
-                            className="object-contain rounded bg-slate-100"
-                        />
-                        <ActionIcon
-                            variant="filled"
-                            aria-label="Settings"
-                            className="absolute bottom-1 right-1"
-                            onClick={toggle}
-                        >
-                            <SlSizeFullscreen
-                                style={{ width: "70%", height: "70%" }}
-                                stroke={1.5}
+                {isLoading ? (
+                    <div className="w-full h-full flex justify-center items-center">
+                        <Loader color="blue" />
+                    </div>
+                ) : (
+                    <div className="h-full w-full p-1 md:overflow-visible md:flex-1 md:flex items-start flex-col md:flex-row gap-4">
+                        <div className="h-[400px] md:h-full w-full relative">
+                            <Image
+                                ref={ref}
+                                src={imageSrc}
+                                loader={karyaImageLoader}
+                                quality={100}
+                                fill
+                                loading="eager"
+                                alt="preview"
+                                className="object-contain rounded bg-slate-100"
                             />
-                        </ActionIcon>
+                            <ActionIcon
+                                variant="filled"
+                                aria-label="Settings"
+                                className="absolute bottom-1 right-1"
+                                onClick={toggle}
+                            >
+                                <SlSizeFullscreen
+                                    style={{ width: "70%", height: "70%" }}
+                                    stroke={1.5}
+                                />
+                            </ActionIcon>
+                        </div>
+                        <div className="mt-4 md:mt-0 md:h-full w-full">
+                            {children}
+                        </div>
                     </div>
-                    <div className="mt-4 md:mt-0 md:h-full w-full">
-                        {children}
-                    </div>
-                </div>
+                )}
             </div>
         </Modal>
     );

@@ -11,9 +11,11 @@ import {
 } from "@mantine/core";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import dayjs from "dayjs";
-import { pameranBannerLoader } from "@/loader/imageLoader";
+import Link from "next/link";
+import { pameranSampulLoader } from "@/loader/imageLoader";
+import { URL_TANART } from "@/variables/url";
 
-const MenuKarya = () => {
+const MenuKarya = ({ idPameran }) => {
     return (
         <Menu shadow="md" width={200} position="bottom-end">
             <MenuTarget>
@@ -29,8 +31,12 @@ const MenuKarya = () => {
             </MenuTarget>
 
             <MenuDropdown>
-                <MenuItem>Ubah</MenuItem>
-                <MenuItem>Hapus</MenuItem>
+                <MenuItem
+                    component={Link}
+                    href={URL_TANART.PELUKIS_PAMERAN_EDIT(idPameran)}
+                >
+                    Ubah
+                </MenuItem>
             </MenuDropdown>
         </Menu>
     );
@@ -65,17 +71,17 @@ export default function CardPameran({ data }) {
                 <Image
                     fill
                     objectFit="cover"
-                    src={data.banner_url}
+                    src={data.sampul_url}
                     className="z-10"
                     quality={40}
                     alt="foto-sampul-pameran"
-                    loader={pameranBannerLoader}
+                    loader={pameranSampulLoader}
                 />
             </div>
             <div className="w-2/3  flex flex-col h-full gap-2">
                 <Title order={4} className="text-xl font-semibold relative">
                     {data.nama_pameran}
-                    <MenuKarya />
+                    <MenuKarya idPameran={data.id} />
                 </Title>
                 <Text className="text-xs font-light line-clamp-5 grow py-1 ">
                     {data.deskripsi}

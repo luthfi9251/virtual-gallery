@@ -16,6 +16,7 @@ import {
     TextInput,
     NumberInput,
     Textarea,
+    NumberFormatter,
 } from "@mantine/core";
 import { kurasiKarya, getAllKurasiKaryaComment } from "@/actions/kurator";
 import { useState, useMemo, forwardRef, useRef } from "react";
@@ -174,7 +175,16 @@ const TabKaryaInformation = ({ information }) => {
                     <Stack gap="xs">
                         <Text className="text-sm font-semibold">Harga</Text>
                         <Text className="text-sm">
-                            {information.harga || "Belum ditentukan"}
+                            {information.harga ? (
+                                <NumberFormatter
+                                    prefix="Rp. "
+                                    value={information.harga}
+                                    thousandSeparator="."
+                                    decimalSeparator=","
+                                />
+                            ) : (
+                                "Belum ditentukan"
+                            )}
                         </Text>
                     </Stack>
                     <Stack gap="xs">

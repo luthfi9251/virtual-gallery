@@ -5,6 +5,8 @@ import { uploadImageToBackendWithSize } from "./image";
 import { generateSlug } from "@/lib/utils";
 import { serverResponseFormat } from "@/lib/utils";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { revalidatePath } from "next/cache";
+import { URL_TANART } from "@/variables/url";
 
 export const createPameran = async (formData) => {
     try {
@@ -306,6 +308,175 @@ export const getPameranBySlug = async (slug) => {
         });
     } catch (err) {
         console.log({ err });
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getPameranById = async (idPameran) => {
+    try {
+        let SELECT_QUERY = {
+            id: true,
+            nama_pameran: true,
+            deskripsi: true,
+            sampul_url: true,
+            banner_url: true,
+            tgl_mulai: true,
+            tgl_selesai: true,
+            status: true,
+            slug: true,
+            Seniman: {
+                select: {
+                    User: {
+                        select: {
+                            id: true,
+                        },
+                    },
+                },
+            },
+            KaryaPameran: {
+                select: {
+                    Karya: {
+                        select: {
+                            id: true,
+                        },
+                    },
+                },
+            },
+        };
+
+        let pameran = await prisma.Pameran.findUnique({
+            where: {
+                id: idPameran,
+            },
+            select: SELECT_QUERY,
+        });
+        if (!pameran) {
+            throw "Pameran Tidak ditemukan!";
+        }
+        return serverResponseFormat(pameran);
+    } catch (err) {
+        console.log({ err });
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const updatePameranById = async (idPameran, formData) => {
+    try {
+        let session = await auth();
+        if (!session.user?.Seniman) {
+            throw new Error("Anda tidak memiliki akses!");
+        }
+        let dataPameran = JSON.parse(formData.get("dataPameran"));
+        let karyaList = JSON.parse(formData.get("karyaList"));
+        let sampulBlob = formData.get("sampulBlob");
+        let bannerBlob = formData.get("bannerBlob");
+
+        const imageUploadBody = (buffer, extension) => {
+            let formData = new FormData();
+            formData.append("image", buffer);
+            formData.append("ext", extension);
+            return formData;
+        };
+
+        let resSampul;
+        let resBanner;
+
+        if (sampulBlob !== "null") {
+            let sampulBody = imageUploadBody(
+                sampulBlob,
+                sampulBlob.type.split("/")[1]
+            );
+            resSampul = await uploadImageToBackendWithSize(sampulBody, {
+                width: 250,
+                height: 334,
+            });
+        }
+
+        if (bannerBlob !== "null") {
+            let bannerBody = imageUploadBody(
+                bannerBlob,
+                bannerBlob.type.split("/")[1]
+            );
+            resBanner = await uploadImageToBackendWithSize(bannerBody, {
+                width: 1000,
+                height: 334,
+            });
+        }
+
+        const generateSlugPameran =
+            generateSlug(dataPameran.nama_pameran) +
+            "-" +
+            session.user.Seniman.id.slice(-6);
+
+        let DELETE_RELATED_QUERY = {
+            KaryaPameran: {
+                deleteMany: {},
+            },
+        };
+
+        let UPDATE_QUERY = {
+            nama_pameran: dataPameran.nama_pameran,
+            deskripsi: dataPameran.deskripsi,
+            tgl_mulai: new Date(dataPameran.tanggal[0]).toISOString(),
+            tgl_selesai: new Date(dataPameran.tanggal[1]).toISOString(),
+            slug: generateSlugPameran,
+            Seniman: {
+                connect: {
+                    id: session.user.Seniman.id,
+                },
+            },
+            KaryaPameran: {
+                create: karyaList.map((item) => {
+                    return {
+                        Karya: {
+                            connect: {
+                                id: item,
+                            },
+                        },
+                    };
+                }),
+            },
+        };
+
+        if (resSampul) {
+            UPDATE_QUERY.sampul_url = resSampul.filename;
+        }
+        if (resBanner) {
+            UPDATE_QUERY.banner_url = resBanner.filename;
+        }
+
+        let deleteKaryaPameran = prisma.Pameran.update({
+            where: {
+                id: idPameran,
+            },
+            data: DELETE_RELATED_QUERY,
+        });
+
+        let updatePameran = prisma.Pameran.update({
+            where: {
+                id: idPameran,
+            },
+            data: UPDATE_QUERY,
+        });
+
+        let transaction = await prisma.$transaction([
+            deleteKaryaPameran,
+            updatePameran,
+        ]);
+        // console.log(bukaPameran);
+        revalidatePath(URL_TANART.PELUKIS_PAMERAN_EDIT(idPameran));
+        return serverResponseFormat("success");
+    } catch (err) {
+        console.log(err);
+        if (err instanceof PrismaClientKnownRequestError) {
+            if (err.meta.target === "Pameran_slug_key") {
+                return serverResponseFormat(
+                    null,
+                    true,
+                    "Anda telah memiliki pameran dengan nama yang sama!"
+                );
+            }
+        }
         return serverResponseFormat(null, true, err.message);
     }
 };

@@ -4,6 +4,7 @@ import { uploadImageToBackend } from "./image";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { URL_TANART } from "@/variables/url";
+import { serverResponseFormat } from "@/lib/utils";
 
 export const unggahKaryaPelukis = async (formData) => {
     try {
@@ -73,6 +74,11 @@ export const getAllKaryaNotYetCurratedByCurrentUser = async () => {
 
         let karyaIds = kurator_karya.KurasiKarya.map((item) => item.Karya.id);
         let karyaUncurrated = await prisma.Karya.findMany({
+            orderBy: {
+                KurasiKarya: {
+                    _count: "asc",
+                },
+            },
             where: {
                 id: {
                     not: {
@@ -276,5 +282,43 @@ export const updateKaryaSetharga = async (idKarya, harga) => {
     } catch (err) {
         console.log(err);
         throw err;
+    }
+};
+
+export const getKaryaByID = async (idKarya) => {
+    try {
+        let karya = await prisma.Karya.findUnique({
+            where: {
+                id: idKarya,
+            },
+            include: {
+                Seniman: {
+                    select: {
+                        User: {
+                            select: {
+                                id: true,
+                                nama_lengkap: true,
+                                foto_profil: true,
+                            },
+                        },
+                        id: true,
+                    },
+                },
+            },
+        });
+
+        let mappedResponse = {
+            ...karya,
+            harga: parseInt(karya.harga),
+            id_seniman: karya.Seniman.id,
+            id_user: karya.Seniman.User.id,
+            nama_lengkap: karya.Seniman.User.nama_lengkap,
+            foto_profil: karya.Seniman.User.foto_profil,
+        };
+
+        return serverResponseFormat(mappedResponse, false, null);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
     }
 };

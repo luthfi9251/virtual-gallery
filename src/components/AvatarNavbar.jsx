@@ -9,6 +9,7 @@ import {
     Box,
     Avatar,
     rem,
+    Button,
 } from "@mantine/core";
 import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa6";
@@ -99,7 +100,7 @@ export default function AvatarNavbar({
                         data-cy="link-to-profile"
                         component={Link}
                         href={URL_TANART.USER_PROFILE}
-                        className="text-center my-2"
+                        className="text-center my-2 bg-tanArtBlue-600 text-white hover:bg-tanArtBlue-900"
                     >
                         Profil
                     </MenuItem>

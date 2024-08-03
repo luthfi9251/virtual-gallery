@@ -258,6 +258,10 @@ async function main() {
         },
     });
 
+    for (let i = 0; i < 3; i++) {
+        await seedKaryaPelukis({ idPelukis: PelukisAccount1.Seniman.id });
+    }
+
     const KuratorAccount1 = await prisma.user.upsert({
         where: { email: "kurator1@kurator.com" },
         update: {},

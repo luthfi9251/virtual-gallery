@@ -4,14 +4,15 @@ import { SimpleGrid, Stack, Text, Group, Modal } from "@mantine/core";
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import ModalDetailKarya from "./ModalDetailKarya";
+import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
 
-function CardKarya({ src, data }) {
-    const pathname = usePathname();
+function CardKarya({ src, data, openModal }) {
     return (
-        <Link
-            href={`${pathname}?karyaId=${data.id_karya}`}
-            scroll={false}
+        <div
             className="w-full shadow rounded-lg overflow-hidden relative group"
+            onClick={() => openModal(data.id_karya)}
         >
             <Image
                 width={400}
@@ -40,15 +41,21 @@ function CardKarya({ src, data }) {
                 </Group>
             </Stack>
             <div className="absolute inset-0 top-0 opacity-0 transition-all cursor-pointer group-hover:bg-black group-hover:opacity-20"></div>
-        </Link>
+        </div>
     );
 }
 
 export default function CardKaryaWrapper({ karya }) {
     // karya = DUMMY_ARRAY;
     // const COLUMN = 4;
+    const [selectedKarya, setSelectedKarya] = useState(null);
     const params = useSearchParams();
-    const karyaId = params.get("karyaId");
+    const disclosure = useDisclosure();
+
+    let handleOpenModal = (karyaId) => {
+        setSelectedKarya(karyaId);
+        disclosure[1].open();
+    };
 
     let calculatedKarya = useMemo(() => {
         let resultColumn = [[], [], [], []];
@@ -67,12 +74,14 @@ export default function CardKaryaWrapper({ karya }) {
                                     key={idx}
                                     src={item2.lukisan_url}
                                     data={item2}
+                                    openModal={handleOpenModal}
                                 />
                             ))}
                         </Stack>
                     );
                 })}
             </SimpleGrid>
+            <ModalDetailKarya disclosure={disclosure} karyaId={selectedKarya} />
         </>
     );
 }
