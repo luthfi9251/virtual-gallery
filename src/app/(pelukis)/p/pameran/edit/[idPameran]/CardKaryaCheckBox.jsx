@@ -19,7 +19,13 @@ export default function CardKaryaCheckBox({ data }) {
             radius="md"
             className="w-full hover:scale-105 hover:z-10 transition-all"
         >
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
+            <Card
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                withBorder
+                className="h-full"
+            >
                 <CardSection className="relative aspect-square">
                     <Image
                         src={data.lukisan_url}

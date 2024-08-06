@@ -21,23 +21,26 @@ model Profile {
   bio          String? @db.Text
   instagram_id String?
   x_id         String?
+  no_whatsapp  String?
 }
 
 model User {
-  id           String   @id @default(uuid())
-  username     String   @unique @db.VarChar(20)
-  email        String   @unique @db.VarChar(100)
-  password     String   @db.VarChar(100)
-  nama_lengkap String   @db.VarChar(100)
-  tgl_lhr      DateTime
-  tempat_lhr   String   @db.VarChar(100)
-  foto_profil  String?
-  role         UserRole @default(USER)
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
-  Seniman      Seniman?
-  Kurator      Kurator?
-  Profile      Profile?
+  id                      String            @id @default(uuid())
+  username                String            @unique @db.VarChar(20)
+  email                   String            @unique @db.VarChar(100)
+  password                String            @db.VarChar(100)
+  nama_lengkap            String            @db.VarChar(100)
+  tgl_lhr                 DateTime
+  tempat_lhr              String            @db.VarChar(100)
+  foto_profil             String?
+  role                    UserRole          @default(USER)
+  created_at              DateTime          @default(now())
+  updated_at              DateTime          @updatedAt
+  Seniman                 Seniman?
+  Kurator                 Kurator?
+  Profile                 Profile?
+  checkoutHistoryBuyer    CheckoutHistory[] @relation("checkout_buyer_id")
+  checkoutHistoryValidate CheckoutHistory[] @relation("checkout_validate_id")
 }
 
 enum UserRole {
@@ -71,23 +74,24 @@ model Kurator {
 }
 
 model Karya {
-  id           String         @id @default(uuid())
-  judul        String
-  deskripsi    String         @db.Text
-  lukisan_url  String
-  aliran       String
-  media        String
-  teknik       String
-  harga        Decimal?
-  panjang      Decimal?
-  lebar        Decimal?
-  status       StatusKarya    @default(DIKURASI)
-  Seniman      Seniman        @relation(fields: [seniman_id], references: [id])
-  seniman_id   String
-  created_at   DateTime       @default(now())
-  updated_at   DateTime       @updatedAt
-  KurasiKarya  KurasiKarya[]
-  KaryaPameran KaryaPameran[]
+  id              String            @id @default(uuid())
+  judul           String
+  deskripsi       String            @db.Text
+  lukisan_url     String
+  aliran          String
+  media           String
+  teknik          String
+  harga           Decimal?
+  panjang         Decimal?
+  lebar           Decimal?
+  status          StatusKarya       @default(DIKURASI)
+  Seniman         Seniman           @relation(fields: [seniman_id], references: [id])
+  seniman_id      String
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  KurasiKarya     KurasiKarya[]
+  KaryaPameran    KaryaPameran[]
+  checkoutHistory CheckoutHistory[]
 }
 
 enum StatusKarya {
@@ -113,21 +117,23 @@ model KurasiKarya {
 }
 
 model Pameran {
-  id           String         @id @default(uuid())
-  nama_pameran String
-  deskripsi    String         @db.Text
-  banner_url   String
-  sampul_url   String
-  tgl_mulai    DateTime
-  tgl_selesai  DateTime
-  status       StatusPameran
-  created_mode CreateMode     @default(INDIVIDUAL)
-  Seniman      Seniman?       @relation(fields: [seniman_id], references: [id])
-  seniman_id   String?
-  slug         String         @unique
-  created_at   DateTime       @default(now())
-  updated_at   DateTime       @updatedAt
-  KaryaPameran KaryaPameran[]
+  id              String            @id @default(uuid())
+  nama_pameran    String
+  deskripsi       String            @db.Text
+  banner_url      String
+  sampul_url      String
+  tgl_mulai       DateTime
+  tgl_selesai     DateTime
+  status          StatusPameran
+  created_mode    CreateMode        @default(INDIVIDUAL)
+  Seniman         Seniman?          @relation(fields: [seniman_id], references: [id])
+  seniman_id      String?
+  slug            String            @unique
+  views           Int               @default(0)
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  KaryaPameran    KaryaPameran[]
+  checkoutHistory CheckoutHistory[]
 }
 
 enum CreateMode {
@@ -147,4 +153,31 @@ model KaryaPameran {
   Karya      Karya   @relation(fields: [karya_id], references: [id])
   pameran_id String
   karya_id   String
+}
+
+model CheckoutHistory {
+  id         Int     @id @default(autoincrement())
+  Pameran    Pameran @relation(fields: [pameran_id], references: [id])
+  Karya      Karya   @relation(fields: [karya_id], references: [id])
+  pameran_id String
+  karya_id   String
+
+  expiredDate DateTime
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  Buyer          User           @relation("checkout_buyer_id", fields: [buyer_id], references: [id])
+  ValidateBy     User?          @relation("checkout_validate_id", fields: [validate_by_id], references: [id])
+  proof_url      String?        @db.Text
+  status         StatusCheckout @default(PENDING)
+  buyer_id       String
+  validate_by_id String?
+}
+
+enum StatusCheckout {
+  SUCCESS
+  CANCELED
+  PENDING
+  VALIDATING
+  EXPIRED
 }

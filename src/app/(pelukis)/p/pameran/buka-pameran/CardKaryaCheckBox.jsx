@@ -19,7 +19,7 @@ export default function CardKaryaCheckBox({ data }) {
             radius="md"
             className="w-full hover:scale-105 hover:z-10 transition-all"
         >
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
+            <Card shadow="sm" padding="lg" radius="md" className="h-full">
                 <CardSection className="relative aspect-square">
                     <Image
                         src={data.lukisan_url}
@@ -36,7 +36,7 @@ export default function CardKaryaCheckBox({ data }) {
                     <Text fw={500}>{data.judul}</Text>
                 </Group>
 
-                <Text size="sm" c="dimmed" className="line-clamp-2">
+                <Text size="sm" c="dimmed" className="line-clamp-2 h-full">
                     {data.deskripsi}
                 </Text>
             </Card>

@@ -11,6 +11,16 @@ import { profileLoaderFotoProfil } from "@/loader/imageLoader";
 
 export default async function Page(props) {
     let dataPameran = await getPameranBySlug(props.params.slug);
+
+    if (dataPameran.isError) {
+        return (
+            <div className=" w-full flex justify-center h-full">
+                <div className="w-full max-w-[1300px] flex flex-col p-1 md:p-2 items-center justify-center h-full">
+                    <p>Maaf, Pameran telah ditutup!</p>
+                </div>
+            </div>
+        );
+    }
     dataPameran = dataPameran.data;
     return (
         <div className=" w-full flex justify-center">
@@ -40,7 +50,10 @@ export default async function Page(props) {
                     </div>
                 </div>
                 <InformationSection dataPameran={dataPameran} />
-                <KaryaSection listKarya={dataPameran.karya} />
+                <KaryaSection
+                    listKarya={dataPameran.karya}
+                    idPameran={dataPameran.id_pameran}
+                />
                 <div className=" flex flex-col lg:flex-row items-center bg-tanArtBlue-600 p-3 lg:py-0 lg:px-5 mt-[75px] lg:mt-[150px]">
                     <Image
                         width={300}

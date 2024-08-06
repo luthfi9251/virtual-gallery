@@ -7,6 +7,7 @@ import { serverResponseFormat } from "@/lib/utils";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { revalidatePath } from "next/cache";
 import { URL_TANART } from "@/variables/url";
+import dayjs from "dayjs";
 
 export const createPameran = async (formData) => {
     try {
@@ -18,6 +19,10 @@ export const createPameran = async (formData) => {
         let karyaList = JSON.parse(formData.get("karyaList"));
         let sampulBlob = formData.get("sampulBlob");
         let bannerBlob = formData.get("bannerBlob");
+
+        if (karyaList.length == 0) {
+            throw new Error("Anda belum memilih karya!");
+        }
 
         const imageUploadBody = (buffer, extension) => {
             let formData = new FormData();
@@ -103,7 +108,8 @@ export const getPameranBaseOnFilter = async (filter) => {
     try {
         let computeStatus = (item) => {
             let currentDate = new Date();
-            if (item.tgl_selesai < currentDate) {
+            let addOneDay = dayjs(item.tgl_selesai).add(1, "day").toDate();
+            if (addOneDay < currentDate) {
                 item.statusComputed = "CLOSE";
             } else if (item.tgl_mulai > currentDate) {
                 item.statusComputed = "SCHEDULED";
@@ -144,7 +150,7 @@ export const getPameranBaseOnFilter = async (filter) => {
                         lte: new Date(),
                     },
                     tgl_selesai: {
-                        gte: new Date(),
+                        gte: dayjs(new Date()).subtract(1, "day").toDate(),
                     },
                 },
                 select: SELECT_QUERY,
@@ -156,7 +162,7 @@ export const getPameranBaseOnFilter = async (filter) => {
                         id: session.user.Seniman.id,
                     },
                     tgl_selesai: {
-                        lt: new Date(),
+                        lt: dayjs(new Date()).subtract(1, "day").toDate(),
                     },
                 },
                 select: SELECT_QUERY,
@@ -197,7 +203,7 @@ export const getPameranOpen = async () => {
                     lte: new Date(),
                 },
                 tgl_selesai: {
-                    gte: new Date(),
+                    gte: dayjs(new Date()).subtract(1, "day").toDate(),
                 },
             },
             select: SELECT_QUERY,
@@ -278,34 +284,42 @@ export const getPameranBySlug = async (slug) => {
         if (!pameran) {
             throw "Pameran Tidak ditemukan!";
         }
-        return serverResponseFormat({
-            nama_pameran: pameran.nama_pameran,
-            sampul_url: pameran.sampul_url,
-            banner_url: pameran.banner_url,
-            deskripsi: pameran.deskripsi,
-            tgl_mulai: pameran.tgl_mulai,
-            tgl_selesai: pameran.tgl_selesai,
-            status: pameran.status,
-            slug: pameran.slug,
-            user: {
-                id_user: pameran.Seniman.User.id,
-                nama_lengkap: pameran.Seniman.User.nama_lengkap,
-                foto_profil: pameran.Seniman.User.foto_profil,
-                username: pameran.Seniman.User.username,
-                bio: pameran.Seniman.User.Profile?.bio || "Tidak ada Biografi",
-                created_at: pameran.Seniman.User.created_at,
-            },
-            karya: pameran.KaryaPameran.map((item) => {
-                return {
-                    id_karya: item.Karya.id,
-                    lukisan_url: item.Karya.lukisan_url,
-                    judul: item.Karya.judul,
-                    deskripsi: item.Karya.deskripsi,
-                    created_at: item.Karya.created_at,
-                    aliran: item.Karya.aliran,
-                };
-            }),
-        });
+        let check = checkIsPameranOpen(pameran.tgl_mulai, pameran.tgl_selesai);
+        if (check) {
+            return serverResponseFormat({
+                id_pameran: pameran.id,
+                nama_pameran: pameran.nama_pameran,
+                sampul_url: pameran.sampul_url,
+                banner_url: pameran.banner_url,
+                deskripsi: pameran.deskripsi,
+                tgl_mulai: pameran.tgl_mulai,
+                tgl_selesai: pameran.tgl_selesai,
+                status: pameran.status,
+                slug: pameran.slug,
+                user: {
+                    id_user: pameran.Seniman.User.id,
+                    nama_lengkap: pameran.Seniman.User.nama_lengkap,
+                    foto_profil: pameran.Seniman.User.foto_profil,
+                    username: pameran.Seniman.User.username,
+                    bio:
+                        pameran.Seniman.User.Profile?.bio ||
+                        "Tidak ada Biografi",
+                    created_at: pameran.Seniman.User.created_at,
+                },
+                karya: pameran.KaryaPameran.map((item) => {
+                    return {
+                        id_karya: item.Karya.id,
+                        lukisan_url: item.Karya.lukisan_url,
+                        judul: item.Karya.judul,
+                        deskripsi: item.Karya.deskripsi,
+                        created_at: item.Karya.created_at,
+                        aliran: item.Karya.aliran,
+                    };
+                }),
+            });
+        } else {
+            throw "Pameran Telah ditutup!";
+        }
     } catch (err) {
         console.log({ err });
         return serverResponseFormat(null, true, err.message);
@@ -370,6 +384,10 @@ export const updatePameranById = async (idPameran, formData) => {
         let karyaList = JSON.parse(formData.get("karyaList"));
         let sampulBlob = formData.get("sampulBlob");
         let bannerBlob = formData.get("bannerBlob");
+
+        if (karyaList.length == 0) {
+            throw new Error("Anda belum memilih karya!");
+        }
 
         const imageUploadBody = (buffer, extension) => {
             let formData = new FormData();
@@ -479,4 +497,19 @@ export const updatePameranById = async (idPameran, formData) => {
         }
         return serverResponseFormat(null, true, err.message);
     }
+};
+
+const checkIsPameranOpen = (tglMulai, tglSelesai) => {
+    let today = new Date();
+    let mulaiDate = new Date(tglMulai);
+    let selesaiDate = new Date(tglSelesai);
+    let addOneDayToSelesaiDate = dayjs(selesaiDate).add(1, "day").toDate();
+
+    if (mulaiDate <= today) {
+        if (addOneDayToSelesaiDate >= today) {
+            return true;
+        }
+    }
+
+    return false;
 };

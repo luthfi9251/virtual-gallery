@@ -62,6 +62,37 @@ export const KuratorComment = ({ userInfo, kurasiData }) => {
     );
 };
 
+export const KuratorCommentV2 = ({ userInfo, kurasiData }) => {
+    return (
+        <div className="flex gap-2 border-b-2 p-3" data-cy="card-komen">
+            <AvatarProfileSmall size="md" />
+            <Stack gap="xs" className="w-full">
+                <Group>
+                    <Text
+                        className="text-md font-semibold"
+                        data-cy="text-nama_lengkap"
+                    >
+                        {userInfo.nama_lengkap}
+                    </Text>
+                </Group>
+                <Text className="text-xs font-light" data-cy="text-komentar">
+                    {kurasiData.komentar}
+                </Text>
+                <Stack gap={0} className="cursor-default md:self-end md:px-3">
+                    <Text className=" font-medium text-xs">Range Harga</Text>
+                    <Text
+                        className=" font-extrabold text-md p-1 rounded self-start "
+                        data-cy="text-range_harga"
+                    >
+                        {formatToRupiah(kurasiData.harga_min)} -{" "}
+                        {formatToRupiah(kurasiData.harga_maks)}
+                    </Text>
+                </Stack>
+            </Stack>
+        </div>
+    );
+};
+
 // export default function BaseModalKarya({
 //     disclosure,
 //     children,

@@ -13,7 +13,7 @@ import Link from "next/link";
 import { URL_TANART } from "@/variables/url";
 
 export default function CardPameran({ dataPameran, isMostViewed = false }) {
-    console.log(dataPameran);
+    // console.log(dataPameran);
     return (
         <div className="shadow flex flex-col rounded-xl overflow-hidden">
             <Image

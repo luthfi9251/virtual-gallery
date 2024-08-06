@@ -10,8 +10,8 @@ export default async function SemuaPameranSection() {
             <div className="bg-gray-400 w-full h-[2px] my-5"></div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {!dataPameran.isError
-                    ? dataPameran.data.map((item) => (
-                          <CardPameran dataPameran={item} />
+                    ? dataPameran.data.map((item, i) => (
+                          <CardPameran dataPameran={item} key={i} />
                       ))
                     : "Terjadi Kesalahan"}
             </div>

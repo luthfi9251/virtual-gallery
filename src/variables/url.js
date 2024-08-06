@@ -8,5 +8,7 @@ export const URL_TANART = {
     PELUKIS_PAMERAN_EDIT: (idPameran) => `/p/pameran/edit/${idPameran}`,
     USER_PROFILE: "/profile",
     USER_PROFILE_EDIT: "/profile/edit",
+    USER_CHECKOUT: (pameranId, karyaId) =>
+        `/checkout/${pameranId}?karya=${karyaId}`,
     PAMERAN_VIEW: (slug) => `/pameran/${slug}`,
 };

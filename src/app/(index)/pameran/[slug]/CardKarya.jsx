@@ -45,7 +45,7 @@ function CardKarya({ src, data, openModal }) {
     );
 }
 
-export default function CardKaryaWrapper({ karya }) {
+export default function CardKaryaWrapper({ karya, idPameran }) {
     // karya = DUMMY_ARRAY;
     // const COLUMN = 4;
     const [selectedKarya, setSelectedKarya] = useState(null);
@@ -81,7 +81,11 @@ export default function CardKaryaWrapper({ karya }) {
                     );
                 })}
             </SimpleGrid>
-            <ModalDetailKarya disclosure={disclosure} karyaId={selectedKarya} />
+            <ModalDetailKarya
+                disclosure={disclosure}
+                karyaId={selectedKarya}
+                idPameran={idPameran}
+            />
         </>
     );
 }
