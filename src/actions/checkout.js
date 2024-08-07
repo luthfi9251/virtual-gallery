@@ -264,7 +264,20 @@ export const getDataBayarPage = async (chekoutId) => {
             include: {
                 Buyer: true,
                 Karya: true,
-                Pameran: true,
+                Pameran: {
+                    select: {
+                        nama_pameran: true,
+                        Seniman: {
+                            select: {
+                                User: {
+                                    select: {
+                                        nama_lengkap: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             },
         });
 
