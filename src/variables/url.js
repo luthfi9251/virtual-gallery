@@ -10,5 +10,7 @@ export const URL_TANART = {
     USER_PROFILE_EDIT: "/profile/edit",
     USER_CHECKOUT: (pameranId, karyaId) =>
         `/checkout/${pameranId}?karya=${karyaId}`,
+    USER_STATUS_PEMBAYARAN: "/status-pembayaran",
+    USER_BAYAR: (idInvoice) => `/status-pembayaran/bayar?invoice=${idInvoice}`,
     PAMERAN_VIEW: (slug) => `/pameran/${slug}`,
 };

@@ -47,7 +47,7 @@ export default function ModalDetailKarya({ disclosure, karyaId, idPameran }) {
             imageSrc={data?.lukisan_url}
             isLoading={isLoading}
         >
-            <Stack gap="xs" className="h-full">
+            <Stack gap="xs" className="h-full md:overflow-y-auto">
                 <ActionIcon
                     variant="transparent"
                     radius="lg"
@@ -70,7 +70,7 @@ export default function ModalDetailKarya({ disclosure, karyaId, idPameran }) {
                     <>
                         <KaryaInformationSection data={data} />
                         <SimpleGrid cols={{ base: 1, md: 2 }}>
-                            <p className="font-medium text-lg md:text-2xl xl:text-4xl">
+                            <p className="font-medium text-lg md:text-2xl xl:text-3xl">
                                 <span className="block font-light text-base">
                                     Harga
                                 </span>
@@ -112,7 +112,7 @@ function KaryaInformationSection({ data }) {
     return (
         <>
             <Spoiler
-                maxHeight={100}
+                maxHeight={40}
                 className="font-light text-sm xl:text-md"
                 showLabel={<p className="text-xs">Show More</p>}
                 hideLabel={<p className="text-xs">Hide</p>}
@@ -163,11 +163,13 @@ function KurasiKuratorSection({ data }) {
                 {kuratorQuery.data?.length == 0 && <p>Tidak ada kurasi</p>}
                 {kuratorQuery.data?.map((item, key) => {
                     return (
-                        <KuratorCommentV2
-                            key={key}
-                            userInfo={item.userInfo}
-                            kurasiData={item.kurasiData}
-                        />
+                        <>
+                            <KuratorCommentV2
+                                key={key}
+                                userInfo={item.userInfo}
+                                kurasiData={item.kurasiData}
+                            />
+                        </>
                     );
                 })}
             </div>

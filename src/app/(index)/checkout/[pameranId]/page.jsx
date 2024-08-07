@@ -24,6 +24,7 @@ export default async function Page(props) {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-2 py-2 mt-3">
                         <Stack className="lg:col-span-2" gap="xl">
                             <Title order={4}>Alur Pembelian Karya</Title>
+                            <div className="w-full h-[100px] bg-blue-200"></div>
                             <div>
                                 <Title order={4}>Order</Title>
                                 <KaryaDisplaySection

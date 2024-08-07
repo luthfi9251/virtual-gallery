@@ -4,6 +4,8 @@ import { isNotEmpty, createFormContext, isEmail } from "@mantine/form";
 import { editProfile } from "@/actions/user";
 import { notifications } from "@mantine/notifications";
 import { checkoutKarya } from "@/actions/checkout";
+import { useRouter } from "next/navigation";
+import { URL_TANART } from "@/variables/url";
 
 export const CheckoutContext = createContext(null);
 const [FormProvider, useFormContext, useForm] = createFormContext();
@@ -16,6 +18,7 @@ export default function CheckoutProvider({
     idPameran,
     profileData,
 }) {
+    const router = useRouter();
     const form = useForm({
         name: "checkout",
         mode: "controlled",
@@ -57,6 +60,7 @@ export default function CheckoutProvider({
                     icon: null,
                     color: "teal",
                 });
+                router.replace(URL_TANART.USER_STATUS_PEMBAYARAN, {});
             })
             .catch((err) => {
                 notifications.update({

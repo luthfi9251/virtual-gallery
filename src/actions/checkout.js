@@ -2,7 +2,9 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { serverResponseFormat } from "@/lib/utils";
+import { URL_TANART } from "@/variables/url";
 import dayjs from "dayjs";
+import { revalidatePath } from "next/cache";
 
 export const getCheckoutPageData = async (pameranId, karyaId) => {
     try {
@@ -166,10 +168,134 @@ export const checkoutKarya = async (data) => {
         });
 
         await Promise.all([createCheckoutOrder, updateProfile]);
-
+        revalidatePath(URL_TANART.USER_STATUS_PEMBAYARAN);
         return serverResponseFormat("Order Berhasil", false, null);
     } catch (err) {
         console.log(err.message);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getStatusPembayaranAll = async () => {
+    /**
+     *  Endpoint akan digunakan untuk menampilkan status pembayaran user naumun pada tabel
+     *  Hal yang akan terjadi:
+     * 1. Update status menjaddi Expired jika gagal membayar sesuai expired date
+     *
+     * algoritma
+     * 1. Get semua data checkout user
+     * 2. Check semua record yang ada dan bandingkan waktu dengan waktu expired
+     * 3. Jika ada data yang EXPIRED, maka data tersebut akan diupdate pada database
+     * 4. Kembalikan data yang telah dicompute
+     *
+     *
+     */
+    try {
+        let session = await auth();
+        if (!session.user) {
+            throw new Error("Sesi anda telah habis!");
+        }
+
+        // Step 1
+        let checkoutData = await prisma.CheckoutHistory.findMany({
+            orderBy: {
+                created_at: "desc",
+            },
+            where: {
+                Buyer: {
+                    id: session.user.id,
+                },
+            },
+            include: {
+                Buyer: true,
+                Karya: true,
+                Pameran: true,
+            },
+        });
+
+        // Step 2
+        let updateTagId = [];
+        let responseData = [];
+        let todayDate = dayjs();
+        if (checkoutData) {
+            checkoutData.forEach((item) => {
+                let currDateData = dayjs(item.expiredDate);
+                if (
+                    todayDate.isAfter(currDateData) &&
+                    item.status === "PENDING"
+                ) {
+                    updateTagId.push(item.id);
+                    item.status = "EXPIRED";
+                }
+                responseData.push(item);
+            });
+        }
+
+        // Step 3
+        let updateExpired = await prisma.CheckoutHistory.updateMany({
+            where: {
+                id: {
+                    in: updateTagId,
+                },
+            },
+            data: {
+                status: "EXPIRED",
+            },
+        });
+        return serverResponseFormat(responseData, false, null);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getDataBayarPage = async (chekoutId) => {
+    try {
+        let session = await auth();
+        if (!session.user) {
+            throw new Error("Sesi anda telah habis!");
+        }
+
+        // Step 1
+        let checkoutData = await prisma.CheckoutHistory.findUnique({
+            where: {
+                id: parseInt(chekoutId),
+            },
+            include: {
+                Buyer: true,
+                Karya: true,
+                Pameran: true,
+            },
+        });
+
+        // Step 2
+        let shouldUpdate = false;
+
+        if (checkoutData) {
+            let todayDate = dayjs();
+            let currDateData = dayjs(checkoutData.expiredDate);
+
+            if (checkoutData.status === "PENDING") {
+                if (todayDate.isBefore(currDateData)) {
+                    return serverResponseFormat(checkoutData, false, null);
+                } else {
+                    // Step 3
+                    await prisma.CheckoutHistory.update({
+                        where: {
+                            id: parseInt(chekoutId),
+                        },
+                        data: {
+                            status: "EXPIRED",
+                        },
+                    });
+                }
+            }
+        }
+        throw new Error(
+            "Tidak dapat melakukan pembayaran karena Invoice sudah tidak berlaku!"
+        );
+    } catch (err) {
+        console.log(err);
         return serverResponseFormat(null, true, err.message);
     }
 };

@@ -136,6 +136,13 @@ export default function AvatarNavbar({
                         Dashboard Kurator
                     </MenuItem>
                 )}
+                <MenuItem
+                    data-cy="link-to-status-pembayaran"
+                    component={Link}
+                    href={URL_TANART.USER_STATUS_PEMBAYARAN}
+                >
+                    Status Pembayaran
+                </MenuItem>
 
                 {isAdmin || isPelukis || isKurator ? <MenuDivider /> : null}
                 <MenuLabel>Jadi Kontributor</MenuLabel>
