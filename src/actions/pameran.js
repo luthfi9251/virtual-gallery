@@ -229,6 +229,65 @@ export const getPameranOpen = async () => {
     }
 };
 
+export const getMostViewedPameranOpen = async () => {
+    try {
+        let SELECT_QUERY = {
+            id: true,
+            nama_pameran: true,
+            banner_url: true,
+            tgl_mulai: true,
+            tgl_selesai: true,
+            status: true,
+            slug: true,
+            Seniman: {
+                select: {
+                    User: {
+                        select: {
+                            id: true,
+                            nama_lengkap: true,
+                            foto_profil: true,
+                        },
+                    },
+                },
+            },
+        };
+
+        let pameran = await prisma.Pameran.findMany({
+            orderBy: {
+                views: "desc",
+            },
+            take: 4,
+            where: {
+                tgl_mulai: {
+                    lte: new Date(),
+                },
+                tgl_selesai: {
+                    gte: dayjs(new Date()).subtract(1, "day").toDate(),
+                },
+            },
+            select: SELECT_QUERY,
+        });
+        return serverResponseFormat(
+            pameran.map((item) => {
+                return {
+                    nama_pameran: item.nama_pameran,
+                    banner_url: item.banner_url,
+                    tgl_mulai: item.tgl_mulai,
+                    tgl_selesai: item.tgl_selesai,
+                    status: item.status,
+                    slug: item.slug,
+                    id_user: item.Seniman.User.id,
+                    nama_lengkap: item.Seniman.User.nama_lengkap,
+                    foto_profil: item.Seniman.User.foto_profil,
+                };
+            })
+        );
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
 export const getPameranBySlug = async (slug) => {
     try {
         let SELECT_QUERY = {
@@ -275,12 +334,21 @@ export const getPameranBySlug = async (slug) => {
             },
         };
 
-        let pameran = await prisma.Pameran.findUnique({
+        let pameran = prisma.Pameran.findUnique({
             where: {
                 slug,
             },
             select: SELECT_QUERY,
         });
+
+        let incrementView = prisma.Pameran.update({
+            where: { slug },
+            data: { views: { increment: 1 } },
+        });
+
+        let promAll = await Promise.all([pameran, incrementView]);
+        pameran = promAll[0];
+
         if (!pameran) {
             throw "Pameran Tidak ditemukan!";
         }

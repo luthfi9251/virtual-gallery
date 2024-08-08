@@ -5,6 +5,9 @@ import { serverResponseFormat } from "@/lib/utils";
 import { URL_TANART } from "@/variables/url";
 import dayjs from "dayjs";
 import { revalidatePath } from "next/cache";
+import { v4 as uuidv4 } from "uuid";
+import fs from "fs";
+import path from "path";
 
 export const getCheckoutPageData = async (pameranId, karyaId) => {
     try {
@@ -210,6 +213,7 @@ export const getStatusPembayaranAll = async () => {
                 Buyer: true,
                 Karya: true,
                 Pameran: true,
+                PaymentDetails: true,
             },
         });
 
@@ -219,6 +223,7 @@ export const getStatusPembayaranAll = async () => {
         let todayDate = dayjs();
         if (checkoutData) {
             checkoutData.forEach((item) => {
+                item.Karya.harga = parseInt(item.Karya.harga);
                 let currDateData = dayjs(item.expiredDate);
                 if (
                     todayDate.isAfter(currDateData) &&
@@ -282,7 +287,6 @@ export const getDataBayarPage = async (chekoutId) => {
         });
 
         // Step 2
-        let shouldUpdate = false;
 
         if (checkoutData) {
             let todayDate = dayjs();
@@ -307,6 +311,244 @@ export const getDataBayarPage = async (chekoutId) => {
         throw new Error(
             "Tidak dapat melakukan pembayaran karena Invoice sudah tidak berlaku!"
         );
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const bayarTagihanCheckout = async (formData) => {
+    try {
+        /**
+         * Pada pembayaran akan diberi tambahan waktu sebesar 5 menit dari expired time
+         *
+         * 1. Cek expired time + 5 menit
+         * 2. Insert database
+         *
+         */
+
+        let session = await auth();
+        if (!session.user) {
+            throw new Error("Sesi anda telah habis!");
+        }
+
+        let checkoutId = formData.get("checkoutId");
+
+        // Step 1
+        let checkoutData = await prisma.CheckoutHistory.findUnique({
+            where: {
+                id: parseInt(checkoutId),
+            },
+            select: {
+                id: true,
+                expiredDate: true,
+                status: true,
+            },
+        });
+
+        if (checkoutData) {
+            let todayDate = dayjs();
+            let expDateExtended = dayjs(checkoutData.expiredDate).add(
+                5,
+                "minute"
+            );
+
+            if (checkoutData.status === "PENDING") {
+                if (todayDate.isBefore(expDateExtended)) {
+                    let buktiSavedPath = await saveBuktiTransfer(
+                        formData.get("bukti_transfer")
+                    );
+
+                    //bayuar disini
+
+                    await prisma.CheckoutHistory.update({
+                        where: {
+                            id: parseInt(checkoutId),
+                        },
+                        data: {
+                            status: "VALIDATING",
+                            PaymentDetails: {
+                                create: {
+                                    nama_pemilik_rekening: formData.get(
+                                        "nama_pemilik_rekening"
+                                    ),
+                                    bank_pengirim:
+                                        formData.get("bank_pengirim"),
+                                    bank_tujuan: formData.get("bank_tujuan"),
+                                    bukti_transfer_url: buktiSavedPath,
+                                },
+                            },
+                        },
+                    });
+                    revalidatePath(URL_TANART.USER_STATUS_PEMBAYARAN);
+                    return serverResponseFormat(
+                        "Berhasil menyimpan",
+                        false,
+                        null
+                    );
+                } else {
+                    await prisma.CheckoutHistory.update({
+                        where: {
+                            id: parseInt(checkoutId),
+                        },
+                        data: {
+                            status: "EXPIRED",
+                        },
+                    });
+                    throw new Error(
+                        "Waktu anda telah habis, silahkan hubungi Admin"
+                    );
+                }
+            }
+
+            throw new Error("Pembayaran anda sudah tidak pada status Pending!");
+        }
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+const saveBuktiTransfer = async (file) => {
+    try {
+        // Generate nama file baru dengan UUID dan ekstensi asli
+        let arrayBuffer = await file.arrayBuffer();
+        let buffer = new Uint8Array(arrayBuffer);
+
+        const newFileName = `${uuidv4()}${path.extname(file.name)}`;
+        const destination = path.join(
+            process.cwd(),
+            "public",
+            "bukti_transfer",
+            newFileName
+        );
+
+        // Pindahkan file ke lokasi baru
+        fs.writeFileSync(destination, buffer, "base64");
+
+        return "/api/bukti_transfer/" + newFileName;
+    } catch (error) {
+        console.error("Error saving file:", error);
+        return null;
+    }
+};
+
+export const getAllCheckoutHistoryData = async () => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+
+        let allCheckoutHistory = await prisma.PaymentDetails.findMany({
+            orderBy: {
+                created_at: "desc",
+            },
+            include: {
+                Checkout: {
+                    select: {
+                        id: true,
+                        status: true,
+                        updated_at: true,
+                        rejectionReason: true,
+                        Buyer: {
+                            select: {
+                                nama_lengkap: true,
+                                username: true,
+                                Profile: {
+                                    select: {
+                                        no_whatsapp: true,
+                                    },
+                                },
+                            },
+                        },
+                        Pameran: {
+                            select: {
+                                nama_pameran: true,
+                            },
+                        },
+                        Karya: {
+                            select: {
+                                judul: true,
+                                harga: true,
+                                Seniman: {
+                                    select: {
+                                        User: {
+                                            select: {
+                                                nama_lengkap: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        let mappedData = allCheckoutHistory.map((item) => {
+            return {
+                no_invoice: item.Checkout.id,
+                nama_pembeli: item.Checkout.Buyer.nama_lengkap,
+                judul_karya: item.Checkout.Karya.judul,
+                tgl_bayar: dayjs(item.created_at)
+                    .locale("id")
+                    .format("DD/MM/YYYY HH:mm:ss"),
+                status: item.Checkout.status,
+                verified_at: dayjs(item.Checkout.updated_at)
+                    .locale("id")
+                    .format("DD/MM/YYYY HH:mm:ss"),
+                rejectionReason: item.Checkout.rejectionReason,
+                dataPayment: {
+                    id: item.id,
+                    nama_pemilik_rekening: item.nama_pemilik_rekening,
+                    bank_pengirim: item.bank_pengirim,
+                    bank_tujuan: item.bank_tujuan,
+                    bukti_transfer_url: item.bukti_transfer_url,
+                    no_whatsapp: item.Checkout.Buyer.Profile?.no_whatsapp,
+                    username: item.Checkout.Buyer.username,
+                },
+                dataCheckout: {
+                    id: item.Checkout.id,
+                    status: item.Checkout.status,
+                },
+                dataOrder: {
+                    judul_karya: item.Checkout.Karya.judul,
+                    harga: parseInt(item.Checkout.Karya.harga),
+                    nama_pameran: item.Checkout.Pameran.nama_pameran,
+                    nama_seniman: item.Checkout.Karya.Seniman.User.nama_lengkap,
+                },
+            };
+        });
+        return serverResponseFormat(mappedData, false, null);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const validasiPembayaran = async (
+    chekoutId,
+    isApproved,
+    rejectionReaseon = null
+) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+
+        let updateCheckout = await prisma.CheckoutHistory.update({
+            where: {
+                id: parseInt(chekoutId),
+            },
+            data: {
+                status: isApproved ? "SUCCESS" : "REJECTED",
+                rejectionReason: isApproved ? null : rejectionReaseon,
+            },
+        });
+        revalidatePath(URL_TANART.ADMIN_VALIDASI_PEMBAYARAN);
+        return serverResponseFormat("Success update checkout", false, null);
     } catch (err) {
         console.log(err);
         return serverResponseFormat(null, true, err.message);

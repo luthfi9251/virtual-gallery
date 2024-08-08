@@ -7,10 +7,10 @@ import { FaRegEdit } from "react-icons/fa";
 import { getUserProfile } from "@/actions/user";
 import Link from "next/link";
 import { URL_TANART } from "@/variables/url";
+import withAuth from "@/hoc/withAuthCheck";
 
-export default async function Page() {
+async function Page() {
     let data = await getUserProfile();
-    console.log(data);
     return (
         <div className="w-full flex justify-center">
             <div className="w-full max-w-[1200px] flex flex-col gap-5">
@@ -30,3 +30,5 @@ export default async function Page() {
         </div>
     );
 }
+
+export default withAuth(Page);

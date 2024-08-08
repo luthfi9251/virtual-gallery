@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import ModalDetailKarya from "./ModalDetailKarya";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
+import { karyaImageLoader } from "@/loader/imageLoader";
 
 function CardKarya({ src, data, openModal }) {
     return (
@@ -18,6 +19,7 @@ function CardKarya({ src, data, openModal }) {
                 width={400}
                 height={600}
                 src={src}
+                loader={karyaImageLoader}
                 className="w-full"
                 alt={data.judul}
                 loading="eager"

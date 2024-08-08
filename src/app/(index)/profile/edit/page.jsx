@@ -6,8 +6,9 @@ import ProfileProvider from "./ProfileProvider";
 import { getUserProfileEdit } from "@/actions/user";
 import { URL_TANART } from "@/variables/url";
 import Link from "next/link";
+import withAuth from "@/hoc/withAuthCheck";
 
-export default async function Page() {
+async function Page() {
     let data = await getUserProfileEdit();
     return (
         <ProfileProvider profileData={data}>
@@ -31,3 +32,5 @@ export default async function Page() {
         </ProfileProvider>
     );
 }
+
+export default withAuth(Page);

@@ -15,6 +15,7 @@ import KaryaDisplaySection from "./KaryaDisplaySection";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { formatToRupiah } from "@/lib/formatter";
+import DataTransferForm from "./DataTransferForm";
 
 const restructureResponse = (data) => {
     return {
@@ -104,32 +105,7 @@ export default async function Page(props) {
                             Silahkan mengisi data berikut untuk mempermudah
                             proses validasi
                         </p>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-2">
-                            <TextInput
-                                className=""
-                                label="Nama Pemilik Rekening"
-                                withAsterisk
-                            />
-                            <TextInput
-                                className=""
-                                label="Bank Pengirim"
-                                withAsterisk
-                            />
-                            <TextInput
-                                className=""
-                                label="Bank Tujuan"
-                                withAsterisk
-                            />
-                            <FileInput
-                                className=""
-                                label="Bukti Transfer"
-                                placeholder="Upload bukti beupa gambar"
-                                withAsterisk
-                            />
-                        </div>
-                        <div className="mt-3 flex justify-end w-full">
-                            <Button className="w-[200px]">Simpan</Button>
-                        </div>
+                        <DataTransferForm />
                     </div>
                 </Stack>
             </div>

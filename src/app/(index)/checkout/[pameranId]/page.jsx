@@ -5,8 +5,9 @@ import DataPembeliSection from "./DataPembeliSection";
 import CheckoutProvider from "./ChekoutProvider";
 import RingkasanSection from "./RingkasanSection";
 import { getCheckoutPageData } from "@/actions/checkout";
+import withAuth from "@/hoc/withAuthCheck";
 
-export default async function Page(props) {
+async function Page(props) {
     let res = await getCheckoutPageData(
         props.params.pameranId,
         props.searchParams.karya
@@ -45,3 +46,5 @@ export default async function Page(props) {
         </div>
     );
 }
+
+export default withAuth(Page);

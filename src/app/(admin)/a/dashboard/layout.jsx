@@ -5,6 +5,7 @@ import {
     FaPaintbrush,
     FaClipboardList,
     FaUserTie,
+    FaFileInvoiceDollar,
 } from "react-icons/fa6";
 import { FaHome, FaPenFancy } from "react-icons/fa";
 import { MdManageAccounts } from "react-icons/md";
@@ -80,10 +81,28 @@ let NAV_DATA_GROUP = [
             },
         ],
     },
+    {
+        group: "Karya",
+        link: [
+            {
+                label: (
+                    <Text fz="md" fw="500">
+                        Validasi Pembayaran
+                    </Text>
+                ),
+                href: "/a/dashboard/validasi-pembayaran",
+                leftSection: <FaFileInvoiceDollar size="1rem" stroke={1.5} />,
+            },
+        ],
+    },
 ];
 
-async function layout({ children }) {
-    return <Sidebar navData={NAV_DATA_GROUP}>{children}</Sidebar>;
+async function layout({ children, session }) {
+    return (
+        <Sidebar navData={NAV_DATA_GROUP} session={session}>
+            {children}
+        </Sidebar>
+    );
 }
 
 export default withAuthAndRoleCheck(layout, PAGE_CONFIG.ADMIN_DASHBOARD.name);

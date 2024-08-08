@@ -89,6 +89,7 @@ export default function AvatarNavbar({
                         height={150}
                         loader={profilePicture && profileLoaderFotoProfil}
                         className="rounded-[50%]"
+                        alt="profile picture"
                     />
                     <p className="line-clamp-1 font-bold text-lg mt-1">
                         {namaLengkap}

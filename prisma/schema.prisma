@@ -166,18 +166,31 @@ model CheckoutHistory {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  Buyer          User           @relation("checkout_buyer_id", fields: [buyer_id], references: [id])
-  ValidateBy     User?          @relation("checkout_validate_id", fields: [validate_by_id], references: [id])
-  proof_url      String?        @db.Text
-  status         StatusCheckout @default(PENDING)
-  buyer_id       String
-  validate_by_id String?
+  Buyer           User            @relation("checkout_buyer_id", fields: [buyer_id], references: [id])
+  ValidateBy      User?           @relation("checkout_validate_id", fields: [validate_by_id], references: [id])
+  rejectionReason String?         @db.Text
+  status          StatusCheckout  @default(PENDING)
+  buyer_id        String
+  validate_by_id  String?
+  PaymentDetails  PaymentDetails?
 }
 
 enum StatusCheckout {
   SUCCESS
-  CANCELED
+  REJECTED
   PENDING
   VALIDATING
   EXPIRED
+}
+
+model PaymentDetails {
+  id                    Int             @id @default(autoincrement())
+  Checkout              CheckoutHistory @relation(fields: [checkoutHistoryId], references: [id])
+  checkoutHistoryId     Int             @unique
+  nama_pemilik_rekening String
+  bank_pengirim         String
+  bank_tujuan           String
+  bukti_transfer_url    String
+  created_at            DateTime        @default(now())
+  updated_at            DateTime        @updatedAt
 }

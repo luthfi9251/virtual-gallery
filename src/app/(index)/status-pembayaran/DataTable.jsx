@@ -4,13 +4,15 @@ import {
     Stack,
     ScrollAreaAutosize,
     Group,
-    Fieldset,
-    Title,
+    Modal,
+    Text,
     Drawer,
     Checkbox,
     CheckboxGroup,
     Button,
+    TextInput,
 } from "@mantine/core";
+import { FaCircleInfo } from "react-icons/fa6";
 import { useDisclosure } from "@mantine/hooks";
 import FormRegisterUser from "@/components/FormRegisterUser";
 import { useMemo, useState, useOptimistic, startTransition } from "react";
@@ -24,8 +26,12 @@ import {
 import { formatToRupiah } from "@/lib/formatter";
 import Link from "next/link";
 import { URL_TANART } from "@/variables/url";
+import dayjs from "dayjs";
 
 export default function DataTableComponent({ records = [] }) {
+    const [opened, { open, close }] = useDisclosure(false);
+    const [modalData, setModalData] = useState({});
+    const [chekoutModalData, setChekoutModalData] = useState({});
     let columnTable = useMemo(
         () => [
             {
@@ -72,6 +78,12 @@ export default function DataTableComponent({ records = [] }) {
                                 {status}
                             </span>
                         );
+                    } else if (status === "SUCCESS") {
+                        return (
+                            <span className="p-2 bg-green-200 font-medium rounded">
+                                {status}
+                            </span>
+                        );
                     } else {
                         return (
                             <span className="p-2 bg-slate-200 font-medium rounded">
@@ -86,17 +98,34 @@ export default function DataTableComponent({ records = [] }) {
                 header: "Action",
                 size: 60,
                 Cell: ({ row }) => {
-                    return (
-                        <Button
-                            component={Link}
-                            href={URL_TANART.USER_BAYAR(
-                                row.original.no_invoice
-                            )}
-                            disabled={row.original.status !== "PENDING"}
-                        >
-                            Bayar
-                        </Button>
-                    );
+                    const handleOpenModal = () => {
+                        console;
+                        setModalData(row.original.paymentDetails);
+                        setChekoutModalData(row.original);
+                        open();
+                    };
+                    if (row.original.status === "PENDING") {
+                        return (
+                            <Button
+                                component={Link}
+                                href={URL_TANART.USER_BAYAR(
+                                    row.original.no_invoice
+                                )}
+                                disabled={row.original.status !== "PENDING"}
+                            >
+                                Bayar
+                            </Button>
+                        );
+                    } else {
+                        return (
+                            <ActionIcon
+                                onClick={handleOpenModal}
+                                disabled={row.original.status === "EXPIRED"}
+                            >
+                                <FaCircleInfo />
+                            </ActionIcon>
+                        );
+                    }
                 },
             },
         ],
@@ -123,17 +152,76 @@ export default function DataTableComponent({ records = [] }) {
     });
 
     return (
-        <Stack
-            p="sm"
-            className=" shadow-lg rounded-sm border-[1px] overflow-hidden"
-        >
-            <Group justify="space-between">
-                <MRT_GlobalFilterTextInput table={table} />
-            </Group>
-            <ScrollAreaAutosize>
-                <MRT_Table table={table} />
-            </ScrollAreaAutosize>
-            <MRT_TablePagination table={table} />
-        </Stack>
+        <>
+            <Stack
+                p="sm"
+                className=" shadow-lg rounded-sm border-[1px] overflow-hidden"
+            >
+                <Group justify="space-between">
+                    <MRT_GlobalFilterTextInput table={table} />
+                </Group>
+                <ScrollAreaAutosize>
+                    <MRT_Table table={table} />
+                </ScrollAreaAutosize>
+                <MRT_TablePagination table={table} />
+            </Stack>
+            <Modal opened={opened} onClose={close} title="Detail Pembayaran">
+                <div className="flex flex-col gap-2">
+                    <TextInput
+                        disabled
+                        value={modalData?.nama_pemilik_rekening}
+                        label="Nama Pemilik Rekening"
+                    />
+                    <TextInput
+                        disabled
+                        value={modalData?.bank_pengirim}
+                        label="Bank Pengirim"
+                    />
+                    <TextInput
+                        disabled
+                        value={modalData?.bank_tujuan}
+                        label="Bank Tujuan"
+                    />
+                    {["SUCCESS", "REJECTED"].includes(
+                        chekoutModalData?.status
+                    ) && (
+                        <div>
+                            <Text className="text-sm font-medium">
+                                Tanggal Validasi
+                            </Text>
+                            <Text className="text-base font-bold my-2">
+                                {chekoutModalData?.updated_at &&
+                                    dayjs(chekoutModalData?.updated_at)
+                                        .locale("id")
+                                        .format("DD/MM/YYYY HH:mm:ss")}
+                            </Text>
+                        </div>
+                    )}
+                    {["REJECTED"].includes(chekoutModalData?.status) && (
+                        <div>
+                            <Text className="text-sm font-medium">
+                                Alasan Penolakan
+                            </Text>
+                            <Text className="text-base font-bold my-2">
+                                {chekoutModalData?.rejectionReason}
+                            </Text>
+                        </div>
+                    )}
+                    <div>
+                        <Text className="text-sm font-medium">
+                            Bukti Pembayaran
+                        </Text>
+                        <Link
+                            className="text-xs underline"
+                            href={modalData?.bukti_transfer_url || "/"}
+                            target="_blank"
+                            prefetch={false}
+                        >
+                            Lihat Bukti Pembayaran
+                        </Link>
+                    </div>
+                </div>
+            </Modal>
+        </>
     );
 }

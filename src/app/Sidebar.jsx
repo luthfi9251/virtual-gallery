@@ -19,12 +19,25 @@ import Link from "next/link";
 import { useDisclosure } from "@mantine/hooks";
 import { FaChevronRight, FaPaintbrush, FaClipboardList } from "react-icons/fa6";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import Image from "next/image";
+import { profileLoaderFotoProfil } from "@/loader/imageLoader";
+import AvatarNavbar from "@/components/AvatarNavbar";
 
-export default function Sidebar({ children, navData }) {
+export default function Sidebar({ children, navData, session }) {
     const [opened, { toggle, close }] = useDisclosure();
     const pathname = usePathname();
+    const imageUrl = useMemo(
+        () => session?.user?.foto_profil || null,
+        [session]
+    );
+    const roleAccess = useMemo(() => {
+        return {
+            admin: session?.user.role === "ADMIN",
+            pelukis: session?.user.Seniman?.is_verified,
+            kurator: session?.user.Kurator?.is_verified,
+        };
+    }, [session]);
 
     useEffect(() => {
         close();
@@ -50,13 +63,6 @@ export default function Sidebar({ children, navData }) {
                         hiddenFrom="sm"
                         size="sm"
                     />
-                    <Image
-                        src="/tanart-logo.png"
-                        width={100}
-                        height={100}
-                        alt="Logo"
-                    />
-                    <Text>Tan Artspace</Text>
                 </Group>
             </AppShellHeader>
             <AppShellNavbar>
@@ -144,37 +150,49 @@ export default function Sidebar({ children, navData }) {
                     })}
                 </AppShellSection>
                 <AppShellSection p="md">
-                    <UnstyledButton w="100%">
-                        <Group>
-                            <Avatar
-                                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
-                                radius="xl"
-                            />
+                    {session?.user && (
+                        <UnstyledButton w="100%">
+                            <Group>
+                                <Avatar
+                                    src={
+                                        imageUrl
+                                            ? profileLoaderFotoProfil({
+                                                  src: imageUrl,
+                                              })
+                                            : "/EMPTY_USER_PROFILE.png"
+                                    }
+                                    radius="xl"
+                                />
 
-                            <div style={{ flex: 1 }}>
-                                <Text
-                                    size="sm"
-                                    fw={500}
-                                    className=" cursor-default"
-                                >
-                                    Harriette Spoonlicker
-                                </Text>
+                                <div style={{ flex: 1 }}>
+                                    <Text
+                                        size="sm"
+                                        fw={500}
+                                        className=" cursor-default"
+                                    >
+                                        {session?.user.nama_lengkap}
+                                    </Text>
 
-                                <Text
-                                    c="dimmed"
-                                    size="xs"
-                                    className=" cursor-default"
-                                >
-                                    hspoonlicker@outlook.com
-                                </Text>
-                            </div>
-
-                            <FaChevronRight
-                                style={{ width: rem(14), height: rem(14) }}
-                                stroke={1.5}
-                            />
-                        </Group>
-                    </UnstyledButton>
+                                    <Text
+                                        c="dimmed"
+                                        size="xs"
+                                        className=" cursor-default"
+                                    >
+                                        {session?.user.email}
+                                    </Text>
+                                </div>
+                                <AvatarNavbar
+                                    namaLengkap={session?.user.nama_lengkap}
+                                    email={session?.user.email}
+                                    profilePicture={imageUrl}
+                                    isMobile={true}
+                                    isAdmin={roleAccess.admin}
+                                    isKurator={roleAccess.kurator}
+                                    isPelukis={roleAccess.pelukis}
+                                />
+                            </Group>
+                        </UnstyledButton>
+                    )}
                 </AppShellSection>
             </AppShellNavbar>
             <AppShellMain>{children}</AppShellMain>
