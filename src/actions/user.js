@@ -8,6 +8,10 @@ import { auth, signIn } from "@/auth";
 import { serverResponseFormat } from "@/lib/utils";
 
 export const getAllUserAccount = async () => {
+    let session = await auth();
+    if (session.user?.role !== "ADMIN") {
+        throw new Error("Anda tidak memiliki akses");
+    }
     let data = await prisma.User.findMany({
         select: {
             id: true,
@@ -200,6 +204,10 @@ export const adminAddUser = async (dataUser, aksesAkun) => {
 
 export const deleteUser = async (idUser) => {
     try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
         let deleteUser = await prisma.User.delete({
             where: {
                 id: idUser,
@@ -215,6 +223,10 @@ export const deleteUser = async (idUser) => {
 
 export const updateUser = async (data) => {
     try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
         const { nama_lengkap, username, email, tempat_lhr, tgl_lhr, role } =
             data;
         let update = await prisma.User.update({
@@ -258,6 +270,10 @@ export const isEmailUsed = async (email) => {
 
 export const addpelukisOrKuratorFromEmail = async (mode, data) => {
     try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
         const { email, deskripsi } = data;
         let query = {
             data: {

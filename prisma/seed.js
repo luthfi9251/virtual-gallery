@@ -1,6 +1,12 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { faker } = require("@faker-js/faker");
+const bcrypt = require("bcryptjs");
+
+function hashPassword(string) {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(string, salt);
+}
 
 async function seedPelukisAccount() {
     const email = faker.internet.email({ provider: "pelukis.com" });
@@ -214,18 +220,19 @@ async function templateSeedPameranPelukisComplete(count) {
 }
 
 async function main() {
+    const PASSWORD_ADMIN = process.env.SUPER_ADMIN_PASSWORD || "passwordadmin";
+    const EMAIL_ADMIN = process.env.SUPER_ADMIN_EMAIL || "admin@admin.com";
     const AdminAccount = await prisma.user.upsert({
-        where: { email: "admin@admin.com" },
+        where: { email: EMAIL_ADMIN },
         update: {},
         create: {
-            email: "admin@admin.com",
+            email: EMAIL_ADMIN,
             username: "admin",
-            nama_lengkap: "Admin Super",
+            nama_lengkap: "Super Admin",
             tempat_lhr: "Demak",
             tgl_lhr: new Date().toISOString(),
             role: "ADMIN",
-            password:
-                "$2a$10$7DHdR6aHst478sBQyl8.quRLxEHjuUuWgJGSpb7q/V8Ro6zRGyIFa", //passwordadmin
+            password: hashPassword(PASSWORD_ADMIN), //passwordadmin
         },
     });
     const PelukisAccount1 = await prisma.user.upsert({

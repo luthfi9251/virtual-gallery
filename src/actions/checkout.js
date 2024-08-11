@@ -16,9 +16,21 @@ export const getCheckoutPageData = async (pameranId, karyaId) => {
             throw new Error("Sesi anda telah habis!");
         }
 
+        //lakukan pengecekan sebelum bisa checkout
+
         let karyaInformation = await prisma.Karya.findUnique({
             where: {
                 id: karyaId,
+                checkoutHistory: {
+                    none: {
+                        status: {
+                            in: ["SUCCESS", "PENDING", "VALIDATING"],
+                        },
+                    },
+                },
+                status: {
+                    not: "TERJUAL",
+                },
             },
             select: {
                 judul: true,
@@ -56,6 +68,14 @@ export const getCheckoutPageData = async (pameranId, karyaId) => {
                 },
             },
         });
+
+        console.log(karyaInformation);
+
+        if (!karyaInformation) {
+            throw new Error(
+                "Maaf anda tidak dapat melakukan pemelian pada karya ini"
+            );
+        }
 
         let dataResponse = {
             dataKarya: {
@@ -114,6 +134,9 @@ export const checkoutKarya = async (data) => {
                 },
                 Karya: {
                     id: id_karya,
+                },
+                status: {
+                    in: ["SUCCESS", "PENDING", "VALIDATING"],
                 },
             },
             select: {
@@ -545,6 +568,11 @@ export const validasiPembayaran = async (
             data: {
                 status: isApproved ? "SUCCESS" : "REJECTED",
                 rejectionReason: isApproved ? null : rejectionReaseon,
+                Karya: {
+                    update: {
+                        status: isApproved ? "TERJUAL" : "SELESAI",
+                    },
+                },
             },
         });
         revalidatePath(URL_TANART.ADMIN_VALIDASI_PEMBAYARAN);

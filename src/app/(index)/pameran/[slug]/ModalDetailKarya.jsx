@@ -91,6 +91,7 @@ export default function ModalDetailKarya({ disclosure, karyaId, idPameran }) {
                                 </UnstyledButton>
                                 <Button
                                     component={Link}
+                                    disabled={data?.status === "TERJUAL"}
                                     href={URL_TANART.USER_CHECKOUT(
                                         idPameran,
                                         karyaId

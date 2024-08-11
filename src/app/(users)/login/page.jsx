@@ -21,7 +21,7 @@ export default function Page(props) {
         <Container fluid className="md:h-screen" p={0}>
             <Flex
                 direction={{ base: "column", sm: "row" }}
-                h={{ md: "100%" }}
+                h={{ sm: "100%" }}
                 className="gap-10 md:gap-0 md:max-h-full"
             >
                 <BackgroundImage

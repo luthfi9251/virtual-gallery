@@ -6,12 +6,27 @@ import CheckoutProvider from "./ChekoutProvider";
 import RingkasanSection from "./RingkasanSection";
 import { getCheckoutPageData } from "@/actions/checkout";
 import withAuth from "@/hoc/withAuthCheck";
+import Link from "next/link";
+import { URL_TANART } from "@/variables/url";
 
 async function Page(props) {
     let res = await getCheckoutPageData(
         props.params.pameranId,
         props.searchParams.karya
     );
+
+    if (res.isError) {
+        return (
+            <div className=" w-full flex justify-center">
+                <div className="w-full max-w-[1000px] h-screen flex flex-col justify-center p-1 md:p-2">
+                    <p className="text-center font-bold">
+                        Maaf, karya sedang berada pada transaksi lain!
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     let data = res.data;
     return (
         <div className=" w-full flex justify-center">
