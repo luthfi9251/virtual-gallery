@@ -15,12 +15,9 @@ WORKDIR /app
 COPY --from=deps /app ./
 COPY . .
 RUN npx prisma generate
-RUN npx prisma migrate reset --force --skip-generate
+# RUN npx prisma migrate reset --force --skip-generate
 RUN npm run build
 
-FROM base AS runner
-WORKDIR /app
 ENV NODE_ENV production
-COPY --from=builder /app ./
 EXPOSE 3000
 CMD [ "npm", "start" ]
