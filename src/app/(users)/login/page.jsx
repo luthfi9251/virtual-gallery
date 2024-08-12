@@ -24,51 +24,56 @@ export default function Page(props) {
                 h={{ sm: "100%" }}
                 className="gap-10 md:gap-0 md:max-h-full"
             >
-                <BackgroundImage
-                    src={
-                        isRegisterAction ? "/bg-register.jpg" : "/bg-login.jpg"
-                    }
-                    w={{ md: "50%" }}
-                    h={{ base: "auto", md: "100%" }}
-                    className=" rounded-e overflow-hidden md:w-1/2"
+                <Container
+                    fluid
+                    m={0}
+                    className="relative h-full w-full md:w-1/2"
                 >
-                    <Container fluid m={0} className="relative h-full w-full">
-                        <Center className="relative md:absolute inset-0 z-10 p-1 py-10 md:p-4 text-white">
-                            <Stack
-                                className="w-full md:w-5/6"
-                                gap={{ base: "xs", md: "xl" }}
+                    <Center className="relative md:absolute inset-0 z-30 p-1 py-10 md:p-4 text-white">
+                        <Stack
+                            className="w-full md:w-5/6"
+                            gap={{ base: "xs", md: "xl" }}
+                        >
+                            <Text className="relative md:absolute top-0 md:top-10 xl:top-12 flex items-center gap-3 cursor-default">
+                                <span>
+                                    <NextImage
+                                        src="/tanart-logo.png"
+                                        // component={NextImage}
+                                        alt="Logo Tanart"
+                                        width={50}
+                                        height={50}
+                                    />
+                                </span>
+                                Tanart Space
+                            </Text>
+                            <Title
+                                order={1}
+                                className="text-white cursor-default text-4xl lg:text-6xl 2xl:text-8xl"
+                                lh={1}
                             >
-                                <Text className="relative md:absolute top-0 md:top-10 xl:top-12 flex items-center gap-3 cursor-default">
-                                    <span>
-                                        <NextImage
-                                            src="/tanart-logo.png"
-                                            // component={NextImage}
-                                            alt="Logo Tanart"
-                                            width={50}
-                                            height={50}
-                                        />
-                                    </span>
-                                    Tanart Space
-                                </Text>
-                                <Title
-                                    order={1}
-                                    className="text-white cursor-default text-4xl lg:text-6xl 2xl:text-8xl"
-                                    lh={1}
-                                >
-                                    {isRegisterAction
-                                        ? "Daftar untuk Memulai"
-                                        : "Selamat Datang!"}
-                                </Title>
-                                <Text className="cursor-default text-sm md:text-md">
-                                    {isRegisterAction
-                                        ? "Selamat datang di galeri seni kami! Dengan mendaftar, Anda akan mendapatkan akses eksklusif ke koleksi karya seni menakjubkan, pameran virtual, dan berbagai acara seni yang menginspirasi. Jadilah bagian dari komunitas yang mencintai seni dan temukan keindahan yang tak terbatas."
-                                        : "Kami senang melihat Anda kembali! Masuklah ke akun Anda untuk mengakses koleksi seni eksklusif, pameran virtual, dan fitur-fitur menarik lainnya. Jika Anda baru di sini,daftar sekarang untuk mulai menjelajahi dunia seni kami."}
-                                </Text>
-                            </Stack>
-                        </Center>
-                        <div className="bg-black opacity-50 absolute inset-0"></div>
-                    </Container>
-                </BackgroundImage>
+                                {isRegisterAction
+                                    ? "Daftar untuk Memulai"
+                                    : "Selamat Datang!"}
+                            </Title>
+                            <Text className="cursor-default text-sm md:text-md">
+                                {isRegisterAction
+                                    ? "Selamat datang di galeri seni kami! Dengan mendaftar, Anda akan mendapatkan akses eksklusif ke koleksi karya seni menakjubkan, pameran virtual, dan berbagai acara seni yang menginspirasi. Jadilah bagian dari komunitas yang mencintai seni dan temukan keindahan yang tak terbatas."
+                                    : "Kami senang melihat Anda kembali! Masuklah ke akun Anda untuk mengakses koleksi seni eksklusif, pameran virtual, dan fitur-fitur menarik lainnya. Jika Anda baru di sini,daftar sekarang untuk mulai menjelajahi dunia seni kami."}
+                            </Text>
+                        </Stack>
+                    </Center>
+                    <div className="bg-black opacity-50 absolute inset-0 z-20"></div>
+                    <NextImage
+                        src={
+                            isRegisterAction
+                                ? "/bg-register.jpg"
+                                : "/bg-login.jpg"
+                        }
+                        fill
+                        loading="eager"
+                        className="absolute inset-0 z-10"
+                    />
+                </Container>
                 <Container className="md:w-1/2 p-6 flex justify-center">
                     <Center h="100%" className="md:w-2/3 md:max-h-screen">
                         <Stack gap={10}>

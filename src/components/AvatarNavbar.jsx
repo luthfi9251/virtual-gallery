@@ -7,10 +7,11 @@ import {
     MenuDivider,
     UnstyledButton,
     Box,
-    Avatar,
     rem,
+    // Avatar,
     Button,
 } from "@mantine/core";
+import Avatar from "./Avatar";
 import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa6";
 import Image from "next/image";
