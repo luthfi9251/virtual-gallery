@@ -7,6 +7,7 @@ import {
     FaUserTie,
     FaFileInvoiceDollar,
 } from "react-icons/fa6";
+import { BsHouseGearFill } from "react-icons/bs";
 import { FaHome, FaPenFancy } from "react-icons/fa";
 import { MdManageAccounts } from "react-icons/md";
 import withAuthAndRoleCheck from "@/hoc/withAuthAndRoleCheck";
@@ -92,6 +93,20 @@ let NAV_DATA_GROUP = [
                 ),
                 href: "/a/dashboard/validasi-pembayaran",
                 leftSection: <FaFileInvoiceDollar size="1rem" stroke={1.5} />,
+            },
+        ],
+    },
+    {
+        group: "CMS",
+        link: [
+            {
+                label: (
+                    <Text fz="md" fw="500">
+                        Virtual Gallery
+                    </Text>
+                ),
+                href: "/a/dashboard/cms-virtual-gallery",
+                leftSection: <BsHouseGearFill size="1rem" stroke={1.5} />,
             },
         ],
     },

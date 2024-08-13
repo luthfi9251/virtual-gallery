@@ -64,3 +64,10 @@ export const profileLoaderFotoSampul = ({ src, quality }) => {
     }
     return `${IMAGE_SERVICE_URL}/1200x240/${src}`;
 };
+
+export const landingPageFeaturedLoader = ({ src }) => {
+    if (src.includes("picsum.photos")) {
+        return src;
+    }
+    return `${IMAGE_SERVICE_URL}${src}`;
+};

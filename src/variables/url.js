@@ -7,6 +7,7 @@ export const URL_TANART = {
     PELUKIS_BUKA_PAMERAN: "/p/pameran/buka-pameran",
     PELUKIS_PAMERAN: "/p/pameran",
     PELUKIS_PAMERAN_EDIT: (idPameran) => `/p/pameran/edit/${idPameran}`,
+    USER_DAFTAR: "/login?action=register",
     USER_PROFILE: "/profile",
     USER_PROFILE_EDIT: "/profile/edit",
     USER_CHECKOUT: (pameranId, karyaId) =>

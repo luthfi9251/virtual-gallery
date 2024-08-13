@@ -46,6 +46,18 @@ export const formatTanggalMulaiSelesai = (startIso, endIso) => {
         return `${startDay} ${startMonth} - ${endDay} ${endMonth} ${year}`;
     }
 };
+export const formatTanggalMulaiSelesaiLandingPage = (startIso, endIso) => {
+    const startDate = dayjs(startIso).locale("id");
+    const endDate = dayjs(endIso).locale("id");
+
+    const startDay = startDate.date();
+    const endDay = endDate.date();
+    const startMonth = startDate.format("MMMM");
+    const endMonth = endDate.format("MMMM");
+    const year = startDate.year();
+
+    return `${startDay} ${startMonth} - ${endDay} ${endMonth}, ${year}`;
+};
 
 export const capitalizeFirstLetterOfEachWord = (sentence) => {
     return sentence

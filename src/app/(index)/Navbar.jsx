@@ -168,7 +168,7 @@ export default function Navbar({ children, session }) {
                 </AppShellSection>
             </AppShellNavbar>
 
-            <AppShellMain>{children}</AppShellMain>
+            <AppShellMain p={0}>{children}</AppShellMain>
         </AppShell>
     );
 }

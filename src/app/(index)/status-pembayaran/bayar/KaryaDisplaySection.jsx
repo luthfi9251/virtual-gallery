@@ -7,6 +7,7 @@ export default function KaryaDisplaySection({ dataKarya }) {
             <Image
                 width={300}
                 height={300}
+                alt="image"
                 src={dataKarya?.lukisan_url}
                 loader={dataKarya?.lukisan_url && karyaImageLoader}
                 className=" object-contain cols-span-1 aspect-[5/6] bg-slate-100 rounded-lg"

@@ -41,6 +41,7 @@ model User {
   Profile                 Profile?
   checkoutHistoryBuyer    CheckoutHistory[] @relation("checkout_buyer_id")
   checkoutHistoryValidate CheckoutHistory[] @relation("checkout_validate_id")
+  CMSPageVariable         CMSPageVariable[]
 }
 
 enum UserRole {
@@ -193,4 +194,15 @@ model PaymentDetails {
   bukti_transfer_url    String
   created_at            DateTime        @default(now())
   updated_at            DateTime        @updatedAt
+}
+
+model CMSPageVariable {
+  id                 Int      @id @default(autoincrement())
+  tag                String   @unique
+  value              String   @db.Text
+  page_group         String
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+  UpdatedBy          User     @relation(fields: [last_updated_by_id], references: [id])
+  last_updated_by_id String
 }

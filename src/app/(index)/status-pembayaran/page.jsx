@@ -33,7 +33,7 @@ async function Page() {
     let mappedData = mapDataResponse(data.data);
     return (
         <div className=" w-full flex justify-center">
-            <div className="w-full max-w-[1300px] flex flex-col p-1 md:p-2 gap-3">
+            <div className="w-full max-w-[1300px] flex flex-col p-1 md:p-2 gap-3 mt-[60px]">
                 <Title order={2}>Status Pembayaran</Title>
                 <DataTableComponent records={mappedData} />
             </div>

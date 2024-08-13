@@ -24,7 +24,7 @@ export default async function Page(props) {
     dataPameran = dataPameran.data;
     return (
         <div className=" w-full flex justify-center">
-            <div className="w-full max-w-[1300px] flex flex-col p-1 md:p-2">
+            <div className="w-full max-w-[1300px] flex flex-col p-1 md:p-2 mt-[60px]">
                 <Image
                     width={1300}
                     height={520}
