@@ -1,7 +1,7 @@
 describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
     before(() => {
         //prepare user account
-        cy.exec("npx prisma migrate reset --skip-generate --force");
+        cy.exec("npx prisma migrate reset --force");
         cy.fixture("users/kurator1.json").then((data) => {
             cy.accountApply(data, "kurator");
             cy.accountVerification(data.nama_lengkap, "kurator");

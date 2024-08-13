@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
-import { Title, Avatar, Group } from "@mantine/core";
+import { Title, Group } from "@mantine/core";
+import { AvatarProfileSmall } from "@/components/AvatarNavbar";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import {
     pameranBannerLoader,
@@ -13,7 +14,6 @@ import Link from "next/link";
 import { URL_TANART } from "@/variables/url";
 
 export default function CardPameran({ dataPameran, isMostViewed = false }) {
-    // console.log(dataPameran);
     return (
         <div className="shadow flex flex-col rounded-xl overflow-hidden">
             <Image
@@ -42,16 +42,10 @@ export default function CardPameran({ dataPameran, isMostViewed = false }) {
                 </Title>
                 <div className="w-full flex justify-between">
                     <Group className="gap-0 md:gap-2">
-                        <Avatar
-                            src={
-                                dataPameran?.foto_profil
-                                    ? profileLoaderFotoProfil(
-                                          dataPameran?.foto_profil
-                                      )
-                                    : "/EMPTY_USER_PROFILE.png"
-                            }
+                        <AvatarProfileSmall
+                            src={dataPameran?.foto_profil}
                             alt="it's me"
-                            size="xs"
+                            size={30}
                         />
                         <p className="text-xs capitalize">
                             {dataPameran?.nama_lengkap}

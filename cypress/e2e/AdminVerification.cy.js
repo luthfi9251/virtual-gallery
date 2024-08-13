@@ -1,6 +1,6 @@
 describe("Verification Admin Apply | Verifikasi Akun Kontributor", () => {
     before(() => {
-        cy.exec("npx prisma migrate reset --skip-generate --force");
+        cy.exec("npx prisma migrate reset --force");
 
         cy.fixture("users/kurator1.json").then((data) => {
             cy.accountApply(data, "pelukis");

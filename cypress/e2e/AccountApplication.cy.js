@@ -1,6 +1,6 @@
 describe("Account Application | Pengajuan Akun", () => {
     before(() => {
-        cy.exec("npx prisma migrate reset --skip-generate --force");
+        cy.exec("npx prisma migrate reset --force");
     });
 
     beforeEach(() => {

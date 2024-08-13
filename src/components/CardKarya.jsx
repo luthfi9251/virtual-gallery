@@ -7,10 +7,11 @@ import {
     Container,
     Overlay,
     Group,
-    Avatar,
 } from "@mantine/core";
+import Avatar from "./Avatar";
 import Image from "next/image";
 import myImageLoader, { karyaImageLoader } from "@/loader/imageLoader";
+import { AvatarProfileSmall } from "./AvatarNavbar";
 
 function Status({ status }) {
     if (status === "DIKURASI") {
@@ -91,19 +92,10 @@ export default function CardKarya({
                 )}
             </CardSection>
             <Group gap="xs" className="my-1 self-start">
-                <Avatar
-                    src={
-                        data?.foto_profil
-                            ? myImageLoader({
-                                  src: data?.foto_profil,
-                                  width: 100,
-                                  quality: 75,
-                              })
-                            : "/EMPTY_USER_PROFILE.png"
-                    }
-                    variant="transparent"
-                    size="xs"
+                <AvatarProfileSmall
+                    src={data?.foto_profil}
                     alt="Image"
+                    size={25}
                 />
                 <Text
                     data-cy="text-nama_lengkap"

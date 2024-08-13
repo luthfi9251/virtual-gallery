@@ -58,7 +58,7 @@ export default function ModalDetailKarya({ disclosure, karyaId, idPameran }) {
                     <FaRegArrowAltCircleLeft className="w-full h-full" />
                 </ActionIcon>
                 <Group>
-                    <AvatarProfileSmall size="xs" src={data?.foto_profil} />
+                    <AvatarProfileSmall size={30} src={data?.foto_profil} />
                     <Text className="text-sm">{data?.nama_lengkap}</Text>
                 </Group>
                 <Title className="font-medium text-lg md:text-2xl xl:text-4xl">

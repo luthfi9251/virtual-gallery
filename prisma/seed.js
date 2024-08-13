@@ -264,11 +264,6 @@ async function main() {
             },
         },
     });
-
-    for (let i = 0; i < 3; i++) {
-        await seedKaryaPelukis({ idPelukis: PelukisAccount1.Seniman.id });
-    }
-
     const KuratorAccount1 = await prisma.user.upsert({
         where: { email: "kurator1@kurator.com" },
         update: {},
@@ -299,41 +294,34 @@ async function main() {
         },
     });
 
-    let pelukisRandom1 = await seedPelukisAccount();
-    let kuratorrRandom1 = await seedKuratorAccount();
+    if (process.env.USE_DUMMY_DATA === "true") {
+        for (let i = 0; i < 3; i++) {
+            await seedKaryaPelukis({ idPelukis: PelukisAccount1.Seniman.id });
+        }
 
-    // let tambahKarya1 = await templateSeedPelukisAndKaryaSiapPamer(
-    //     pelukisRandom1.Seniman.id,
-    //     kuratorrRandom1.Kurator.id
-    // );
-    // let tambahKarya2 = await templateSeedPelukisAndKaryaSiapPamer(
-    //     pelukisRandom1.Seniman.id,
-    //     kuratorrRandom1.Kurator.id
-    // );
-    // let tambahKarya3 = await templateSeedPelukisAndKaryaSiapPamer(
-    //     pelukisRandom1.Seniman.id,
-    //     kuratorrRandom1.Kurator.id
-    // );
+        let pelukisRandom1 = await seedPelukisAccount();
+        let kuratorrRandom1 = await seedKuratorAccount();
 
-    const COUNT_KARYA = 8;
-    let promKarya = [];
-    for (let i = 0; i < COUNT_KARYA; i++) {
-        promKarya.push(
-            templateSeedPelukisAndKaryaSiapPamer(
-                pelukisRandom1.Seniman.id,
-                kuratorrRandom1.Kurator.id
-            )
-        );
+        const COUNT_KARYA = 8;
+        let promKarya = [];
+        for (let i = 0; i < COUNT_KARYA; i++) {
+            promKarya.push(
+                templateSeedPelukisAndKaryaSiapPamer(
+                    pelukisRandom1.Seniman.id,
+                    kuratorrRandom1.Kurator.id
+                )
+            );
+        }
+
+        let karyaList = await Promise.all(promKarya);
+        let seedPameran = await seedPameranPelukis({
+            idPelukis: pelukisRandom1.Seniman.id,
+            idsKarya: karyaList.map((item) => item.uploadKarya.id),
+        });
+
+        let pelukisRandom2 = await templateSeedPameranPelukisComplete();
+        let pelukisRandom3 = await templateSeedPameranPelukisComplete();
     }
-
-    let karyaList = await Promise.all(promKarya);
-    let seedPameran = await seedPameranPelukis({
-        idPelukis: pelukisRandom1.Seniman.id,
-        idsKarya: karyaList.map((item) => item.uploadKarya.id),
-    });
-
-    let pelukisRandom2 = await templateSeedPameranPelukisComplete();
-    let pelukisRandom3 = await templateSeedPameranPelukisComplete();
 
     console.log({
         AdminAccount,
@@ -343,11 +331,11 @@ async function main() {
         // KuratorAccount3,
     });
 
-    console.log({
-        pelukisRandom1,
-        kuratorrRandom1,
-        seedPameran,
-    });
+    // console.log({
+    //     pelukisRandom1,
+    //     kuratorrRandom1,
+    //     seedPameran,
+    // });
 }
 main()
     .then(async () => {

@@ -19,18 +19,15 @@ import { profileLoaderFotoProfil } from "@/loader/imageLoader";
 import { URL_TANART } from "@/variables/url";
 import { signOutAction } from "@/actions/authAction";
 
-export const AvatarProfileSmall = ({ src = null, size = "md" }) => {
+export const AvatarProfileSmall = ({ src = null, size = 30 }) => {
     return (
         <Avatar
-            src={
-                src
-                    ? profileLoaderFotoProfil({
-                          src,
-                      })
-                    : "/EMPTY_USER_PROFILE.png"
-            }
+            src={src || "/EMPTY_USER_PROFILE.png"}
+            loader={src && profileLoaderFotoProfil}
             className="border cursor-pointer"
             alt="it's meeee"
+            width={size}
+            height={size}
         />
     );
 };
@@ -68,13 +65,8 @@ export default function AvatarNavbar({
                     </Box>
                 ) : (
                     <Avatar
-                        src={
-                            profilePicture
-                                ? profileLoaderFotoProfil({
-                                      src: profilePicture,
-                                  })
-                                : "/EMPTY_USER_PROFILE.png"
-                        }
+                        src={profilePicture || "/EMPTY_USER_PROFILE.png"}
+                        loader={profilePicture && profileLoaderFotoProfil}
                         className="border cursor-pointer"
                         alt="foto profil"
                         data-cy="btn-profile"

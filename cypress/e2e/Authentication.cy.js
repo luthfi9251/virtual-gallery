@@ -5,7 +5,7 @@ describe("Authentication", () => {
     });
 
     before(() => {
-        cy.exec("npx prisma migrate reset --skip-generate --force");
+        cy.exec("npx prisma migrate reset --force");
     });
 
     it("should success login with right credentials", () => {

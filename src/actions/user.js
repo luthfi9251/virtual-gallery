@@ -271,9 +271,6 @@ export const isEmailUsed = async (email) => {
 export const addpelukisOrKuratorFromEmail = async (mode, data) => {
     try {
         let session = await auth();
-        if (session.user?.role !== "ADMIN") {
-            throw new Error("Anda tidak memiliki akses");
-        }
         const { email, deskripsi } = data;
         let query = {
             data: {

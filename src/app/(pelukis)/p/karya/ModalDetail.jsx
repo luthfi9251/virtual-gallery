@@ -274,7 +274,7 @@ export default function ModalDetailKarya({
                 <Title order={2}>{dataActive?.judul}</Title>
                 <Group>
                     <AvatarProfileSmall
-                        size="xs"
+                        size={35}
                         src={dataActive?.foto_profil}
                     />
                     <Text className="text-sm">{dataActive?.nama_lengkap}</Text>
