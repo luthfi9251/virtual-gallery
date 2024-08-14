@@ -1,9 +1,10 @@
 services:
     web:
         container_name: tanart-web-service
-        build:
-            dockerfile: Dockerfile
-            context: .
+        image: tanart-virtual-gallery:lighter
+        # build:
+        #     dockerfile: Dockerfile
+        #     context: .
         ports:
             - 3001:3000
         env_file:
