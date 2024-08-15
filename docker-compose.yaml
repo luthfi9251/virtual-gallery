@@ -6,8 +6,10 @@ services:
         #     dockerfile: Dockerfile
         #     context: .
         ports:
-            - 3001:3000
+            - 3000:3000
         env_file:
             - .env
+        environment:
+            - DATABASE_URL=mysql://root:B4rc3lon4@host.docker.internal:3306/tanart-virtual-gallery?schema=public
         volumes:
             - ./public:/app/public

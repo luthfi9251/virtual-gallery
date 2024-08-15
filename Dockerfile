@@ -6,6 +6,9 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+ENV TZ="Asia/Jakarta"
+ENV NEXT_PUBLIC_IMAGE_SERVICE_URL="https://images.tanartspace.com/img"
+
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \

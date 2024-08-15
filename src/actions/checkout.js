@@ -69,8 +69,6 @@ export const getCheckoutPageData = async (pameranId, karyaId) => {
             },
         });
 
-        console.log(karyaInformation);
-
         if (!karyaInformation) {
             throw new Error(
                 "Maaf anda tidak dapat melakukan pemelian pada karya ini"
@@ -150,7 +148,7 @@ export const checkoutKarya = async (data) => {
 
         // Step 3 : compute Expire Date
         let createdAt = dayjs();
-        let expiredDateCompute = createdAt.add(30, "minute");
+        let expiredDateCompute = createdAt.add(3, "day");
 
         let createCheckoutOrder = prisma.CheckoutHistory.create({
             data: {

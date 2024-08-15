@@ -29,7 +29,9 @@ export const KuratorComment = ({ userInfo, kurasiData }) => {
             className="flex gap-2 shadow-lg border p-2 rounded"
             data-cy="card-komen"
         >
-            <AvatarProfileSmall size="md" />
+            <div>
+                <AvatarProfileSmall size={30} />
+            </div>
             <Stack gap="xs">
                 <Group>
                     <Text
@@ -65,7 +67,9 @@ export const KuratorComment = ({ userInfo, kurasiData }) => {
 export const KuratorCommentV2 = ({ userInfo, kurasiData }) => {
     return (
         <div className="flex gap-2 border-b-2 p-3" data-cy="card-komen">
-            <AvatarProfileSmall size="md" />
+            <div>
+                <AvatarProfileSmall size={30} />
+            </div>
             <Stack gap="xs" className="w-full">
                 <Group>
                     <Text

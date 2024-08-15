@@ -8,8 +8,24 @@ import { getCheckoutPageData } from "@/actions/checkout";
 import withAuth from "@/hoc/withAuthCheck";
 import Link from "next/link";
 import { URL_TANART } from "@/variables/url";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
 async function Page(props) {
+    let session = await auth();
+    if (!session?.user) {
+        redirect(
+            URL_TANART.USER_LOGIN_WITH_REDIRECT(
+                encodeURIComponent(
+                    URL_TANART.USER_CHECKOUT(
+                        props.params.pameranId,
+                        props.searchParams.karya
+                    )
+                )
+            )
+        );
+    }
+
     let res = await getCheckoutPageData(
         props.params.pameranId,
         props.searchParams.karya
@@ -62,4 +78,4 @@ async function Page(props) {
     );
 }
 
-export default withAuth(Page);
+export default Page;

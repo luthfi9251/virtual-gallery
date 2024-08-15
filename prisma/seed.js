@@ -219,6 +219,55 @@ async function templateSeedPameranPelukisComplete(count) {
     return seedPameran;
 }
 
+async function seedVirtualGalleryLandingPageData(idAdmin) {
+    // /300x375/fe310b00-1eda-449c-bab7-a587ea412507.jpeg
+    const TAG_CMS_VIRTUAL_GALLERY = {
+        JUMLAH_KURATOR: 40,
+        JUMLAH_PELUKIS: 20,
+        NAMA_FEATURED_KURATOR: "Melanie",
+        NAMA_FEATURED_PELUKIS: "Ahmad Sukri",
+        BIO_FEATURED_KURATOR:
+            "Telah mengkurasi berbagai karya lukisan dengan keahlian yang tajam dan sentuhan artistik, menyusun pameran yang tidak hanya menginspirasi, tetapi juga memberikan perspektif baru bagi para penikmat seni.",
+        BIO_FEATURED_PELUKIS:
+            "Seorang seniman produktif yang telah menghasilkan berbagai karya lukisan, masing-masing menampilkan keunikan dan kedalaman visi kreatifnya, serta mampu menyentuh hati dan pikiran banyak orang.",
+        FOTO_FEATURED_PELUKIS:
+            "/300x375/fe310b00-1eda-449c-bab7-a587ea412507.jpeg",
+        FOTO_FEATURED_KURATOR:
+            "/300x375/fe310b00-1eda-449c-bab7-a587ea412507.jpeg",
+    };
+    const PAGE_GROUP = "CMS_VIRTUAL_GALLERY";
+    let tagList = Object.keys(TAG_CMS_VIRTUAL_GALLERY);
+    let prismaPromList = tagList.map((item) => {
+        return prisma.cMSPageVariable.upsert({
+            where: {
+                tag: item,
+            },
+            update: {
+                value: "" + TAG_CMS_VIRTUAL_GALLERY[item],
+                page_group: PAGE_GROUP,
+                UpdatedBy: {
+                    connect: {
+                        id: idAdmin,
+                    },
+                },
+            },
+            create: {
+                tag: item,
+                value: "" + TAG_CMS_VIRTUAL_GALLERY[item],
+                page_group: PAGE_GROUP,
+                UpdatedBy: {
+                    connect: {
+                        id: idAdmin,
+                    },
+                },
+            },
+        });
+    });
+
+    let result = await Promise.all(prismaPromList);
+    return result;
+}
+
 async function main() {
     const PASSWORD_ADMIN = process.env.SUPER_ADMIN_PASSWORD || "passwordadmin";
     const EMAIL_ADMIN = process.env.SUPER_ADMIN_EMAIL || "admin@admin.com";
@@ -293,6 +342,8 @@ async function main() {
             },
         },
     });
+
+    await seedVirtualGalleryLandingPageData(AdminAccount.id);
 
     if (process.env.USE_DUMMY_DATA === "true") {
         for (let i = 0; i < 3; i++) {

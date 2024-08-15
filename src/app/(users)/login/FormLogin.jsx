@@ -52,6 +52,12 @@ export default function FormLogin({ loginHandler }) {
     });
 
     let handleSubmitLogin = async (data) => {
+        let redirectPath = "/";
+
+        if (searchParams.get("redirect")) {
+            redirectPath = decodeURIComponent(searchParams.get("redirect"));
+        }
+
         setLoading(true);
         setError(null);
         loginUser(data)
@@ -61,7 +67,7 @@ export default function FormLogin({ loginHandler }) {
                         title: "Halo!",
                         message: `Selamat datang`,
                     });
-                    router.push("/");
+                    router.push(redirectPath);
                 } else {
                     setError(res.message || "Terjadi kesalahan saat Login!");
                 }

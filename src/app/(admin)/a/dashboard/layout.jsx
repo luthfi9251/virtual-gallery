@@ -108,6 +108,15 @@ let NAV_DATA_GROUP = [
                 href: "/a/dashboard/cms-virtual-gallery",
                 leftSection: <BsHouseGearFill size="1rem" stroke={1.5} />,
             },
+            {
+                label: (
+                    <Text fz="md" fw="500">
+                        Company Profile
+                    </Text>
+                ),
+                href: "/a/dashboard/cms-company-profile",
+                leftSection: <BsHouseGearFill size="1rem" stroke={1.5} />,
+            },
         ],
     },
 ];
