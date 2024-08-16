@@ -35,7 +35,6 @@ export default function FormProviderCMS({ children, data }) {
             foto_pelukis: "",
             foto_kurator: "",
         };
-        console.log({ data, dataText });
         let formDataGambar = new FormData();
         formDataGambar.append("foto_kurator", data.foto_kurator);
         formDataGambar.append("foto_pelukis", data.foto_pelukis);

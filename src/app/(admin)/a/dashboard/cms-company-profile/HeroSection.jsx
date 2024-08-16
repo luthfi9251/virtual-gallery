@@ -1,5 +1,10 @@
 "use client";
 import {
+    addHeroCarrouselData,
+    deleteHeroCarrouselData,
+    getHeroCarrouselData,
+} from "@/actions/admin";
+import {
     Title,
     TextInput,
     FileInput,
@@ -10,11 +15,15 @@ import {
     TableTr,
     TableTh,
     TableCaption,
+    Text,
     TableTd,
     ActionIcon,
 } from "@mantine/core";
 import { Table, TableData } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 export default function HeroSection() {
@@ -26,6 +35,7 @@ export default function HeroSection() {
         { position: 58, mass: 140.12, symbol: "Ce", name: "Cerium" },
     ];
 
+    const queryClient = useQueryClient();
     const form = useForm({
         name: "hero-section",
         mode: "uncontrolled",
@@ -38,9 +48,109 @@ export default function HeroSection() {
             gambar: isNotEmpty("Tidak Boleh Kosong!"),
         },
     });
+    const heroQuery = useQuery({
+        queryKey: ["hero_carrousel"],
+        queryFn: async () => {
+            let res = await getHeroCarrouselData();
+            if (res.isError) {
+                throw res.error;
+            }
+            return res.data;
+        },
+        staleTime: 1000 * 60 * 5,
+    });
+    const mutation = useMutation({
+        mutationFn: (data) => {
+            return addHeroCarrouselData(data);
+        },
+    });
 
     const handleSubmit = (data) => {
-        console.log(data);
+        const id = notifications.show({
+            color: "gray",
+            loading: true,
+            autoClose: false,
+            withCloseButton: false,
+            title: "Loading",
+            message: "Menyimpan data",
+        });
+        let formData = new FormData();
+        formData.append("tag", data.tag);
+        formData.append("image", data.gambar);
+        mutation
+            .mutateAsync(formData)
+            .then((res) => {
+                if (res.isError) throw new Error(res.error);
+                queryClient.invalidateQueries({ queryKey: ["hero_carrousel"] });
+                notifications.update({
+                    id,
+                    title: "Berhasil",
+                    message: "Berhasil mengupdate data!",
+                    loading: false,
+                    autoClose: 2000,
+                    icon: null,
+                    color: "teal",
+                });
+            })
+            .catch((err) => {
+                notifications.update({
+                    id,
+                    color: "red",
+                    title: "Gagal",
+                    message: err.message,
+                    loading: false,
+                    autoClose: 2000,
+                    icon: null,
+                });
+            });
+    };
+
+    const deleteModal = (id) =>
+        modals.openConfirmModal({
+            title: "Please confirm your action",
+            children: (
+                <Text size="sm">Apakah anda yakin untuk menghapus item?</Text>
+            ),
+            labels: { confirm: "Confirm", cancel: "Cancel" },
+            onCancel: () => console.log("Cancel"),
+            onConfirm: () => handleDelete(id),
+        });
+
+    const handleDelete = (idTag) => {
+        const id = notifications.show({
+            color: "gray",
+            loading: true,
+            autoClose: false,
+            withCloseButton: false,
+            title: "Loading",
+            message: "Menghapus Data",
+        });
+
+        deleteHeroCarrouselData(idTag)
+            .then((res) => {
+                if (res.isError) throw new Error(res.error);
+                queryClient.invalidateQueries({ queryKey: ["hero_carrousel"] });
+                notifications.update({
+                    id,
+                    title: "Berhasil",
+                    message: "Berhasil mengupdate data!",
+                    loading: false,
+                    autoClose: 2000,
+                    icon: null,
+                    color: "teal",
+                });
+            })
+            .catch((err) => {
+                notifications.update({
+                    id,
+                    color: "red",
+                    title: "Gagal",
+                    message: err.message,
+                    loading: false,
+                    autoClose: 2000,
+                    icon: null,
+                });
+            });
     };
 
     return (
@@ -83,15 +193,16 @@ export default function HeroSection() {
                         </TableTr>
                     </TableThead>
                     <TableTbody>
-                        {elements.map((element) => (
-                            <TableTr key={element.name}>
-                                <TableTd>{element.name}</TableTd>
-                                <TableTd>{element.symbol}</TableTd>
+                        {heroQuery.data?.map((element, idx) => (
+                            <TableTr key={idx}>
+                                <TableTd>{element.tag}</TableTd>
+                                <TableTd>{element.value}</TableTd>
                                 <TableTd>
                                     <ActionIcon
                                         variant="filled"
                                         color="red"
                                         aria-label="Delete"
+                                        onClick={() => deleteModal(element.id)}
                                     >
                                         <FaRegTrashAlt
                                             style={{
