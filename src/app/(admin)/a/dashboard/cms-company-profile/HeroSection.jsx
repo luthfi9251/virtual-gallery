@@ -4,6 +4,7 @@ import {
     deleteHeroCarrouselData,
     getHeroCarrouselData,
 } from "@/actions/admin";
+import { landingPageFeaturedLoader } from "@/loader/imageLoader";
 import {
     Title,
     TextInput,
@@ -24,6 +25,7 @@ import { isNotEmpty, useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 export default function HeroSection() {
@@ -188,7 +190,18 @@ export default function HeroSection() {
                         {heroQuery.data?.map((element, idx) => (
                             <TableTr key={idx}>
                                 <TableTd>{element.tag}</TableTd>
-                                <TableTd>{element.value}</TableTd>
+                                <TableTd>
+                                    <Link
+                                        href={landingPageFeaturedLoader({
+                                            src: element.value,
+                                        })}
+                                        target="_blank"
+                                        className="underline text-blue-600"
+                                        prefetch={false}
+                                    >
+                                        Lihat Gambar
+                                    </Link>
+                                </TableTd>
                                 <TableTd>
                                     <ActionIcon
                                         variant="filled"
