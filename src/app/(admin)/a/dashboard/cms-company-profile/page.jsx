@@ -8,6 +8,9 @@ import {
 } from "@mantine/core";
 import HeroSection from "./HeroSection";
 import AboutSection from "./AboutSection";
+import GallerySection from "./GallerySection";
+import ActivitySection from "./ActivitySection";
+import ContactSection from "./ContactSection";
 import { getAboutLP } from "@/actions/admin";
 
 export default async function Page() {
@@ -19,6 +22,9 @@ export default async function Page() {
             <Stack>
                 <HeroSection />
                 <AboutSection text={aboutText.data?.value || ""} />
+                <GallerySection />
+                <ActivitySection />
+                <ContactSection />
             </Stack>
         </Container>
     );
