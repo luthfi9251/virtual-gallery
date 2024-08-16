@@ -236,3 +236,50 @@ export const deleteHeroCarrouselData = async (idTag) => {
         return serverResponseFormat(null, true, err.message);
     }
 };
+
+export const addAndUpdateAbout = async (text) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        const ABOUT_TAG_NAME = "ABOUT_US_LANDING_PAGE";
+        let addAbout = await prisma.CMSPageVariable.upsert({
+            where: {
+                tag: ABOUT_TAG_NAME,
+            },
+            update: {
+                value: text,
+                page_group: CMS_COMPANY_PROFILE,
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+            create: {
+                tag: ABOUT_TAG_NAME,
+                value: text,
+                page_group: CMS_COMPANY_PROFILE,
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+        });
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getAboutLP = async () => {
+    let data = await prisma.CMSPageVariable.findUnique({
+        where: {
+            tag: "ABOUT_US_LANDING_PAGE",
+        },
+    });
+
+    return serverResponseFormat(data, false, null);
+};

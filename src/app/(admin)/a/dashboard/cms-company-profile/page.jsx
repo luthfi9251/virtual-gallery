@@ -7,22 +7,18 @@ import {
     Title,
 } from "@mantine/core";
 import HeroSection from "./HeroSection";
+import AboutSection from "./AboutSection";
+import { getAboutLP } from "@/actions/admin";
 
-export default function Page() {
+export default async function Page() {
+    let aboutText = await getAboutLP();
     return (
         <Container fluid>
             <Title order={2}>CMS Landing Page</Title>
             <Space h="xl" />
             <Stack>
                 <HeroSection />
-                {/* <SimpleGrid cols={2} className="self-center">
-                    <Button className="w-full" variant="outline">
-                        Batal
-                    </Button>
-                    <Button className="w-full" type="submit">
-                        Simpan
-                    </Button>
-                </SimpleGrid> */}
+                <AboutSection text={aboutText.data?.value || ""} />
             </Stack>
         </Container>
     );
