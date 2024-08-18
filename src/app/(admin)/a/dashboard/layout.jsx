@@ -105,8 +105,26 @@ let NAV_DATA_GROUP = [
                         Virtual Gallery
                     </Text>
                 ),
-                href: "/a/dashboard/cms-virtual-gallery",
+                href: "#",
                 leftSection: <BsHouseGearFill size="1rem" stroke={1.5} />,
+                children: [
+                    {
+                        label: (
+                            <Text fz="md" fw="500">
+                                Landing Page
+                            </Text>
+                        ),
+                        href: "/a/dashboard/cms-virtual-gallery",
+                    },
+                    {
+                        label: (
+                            <Text fz="md" fw="500">
+                                Umum
+                            </Text>
+                        ),
+                        href: "/a/dashboard/cms-general-vg",
+                    },
+                ],
             },
             {
                 label: (
