@@ -61,14 +61,18 @@ export default function Home() {
                             ini!"
                         </Text>
                     </div>
-                    <div className="flex-1 flex justify-center">
-                        <Button
-                            variant="white"
-                            component={Link}
-                            href={URL_TANART.USER_DAFTAR}
-                        >
-                            Daftar
-                        </Button>
+                    <div className="flex-1 flex flex-col items-end">
+                        <div className="flex flex-col items-center">
+                            <Text>Daftar Disini</Text>
+                            <Button
+                                className="w-[150px]"
+                                variant="white"
+                                component={Link}
+                                href={URL_TANART.USER_DAFTAR}
+                            >
+                                Daftar
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

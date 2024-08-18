@@ -571,3 +571,143 @@ export const getContact = async () => {
         return serverResponseFormat(null, true, err.message);
     }
 };
+
+export const addAndUpdateOwnerDesc = async (data) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        const ABOUT_OWNER_TAG_NAME = "ABOUT_OWNER_LANDING_PAGE";
+        let mappedData = {
+            nama: data.nama || "",
+            deskripsi: data.deskripsi || "",
+        };
+
+        let addAbout = await prisma.CMSPageVariable.upsert({
+            where: {
+                tag: ABOUT_OWNER_TAG_NAME,
+            },
+            update: {
+                value: JSON.stringify(mappedData),
+                page_group: CMS_COMPANY_PROFILE,
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+            create: {
+                tag: ABOUT_OWNER_TAG_NAME,
+                value: JSON.stringify(mappedData),
+                page_group: CMS_COMPANY_PROFILE,
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+        });
+
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const updateImageAboutOwner = async (formData) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        const ABOUT_OWNER_IMAGE_TAG_NAME = "ABOUT_OWNER_LANDING_PAGE_IMAGE";
+
+        let imageBlob = formData.get("image");
+
+        const imageUploadBody = (buffer, extension) => {
+            let formData = new FormData();
+            formData.append("image", buffer);
+            formData.append("ext", extension);
+            return formData;
+        };
+
+        if (!imageBlob) {
+            throw new Error("Harus disertai gambar!");
+        }
+
+        let uploadBody = imageUploadBody(
+            imageBlob,
+            imageBlob.type.split("/")[1]
+        );
+
+        let urlResponse = await uploadImageToBackendWithSize(uploadBody, {
+            width: 400,
+            height: 533,
+        });
+
+        let addImage = await prisma.CMSPageVariable.upsert({
+            where: {
+                tag: ABOUT_OWNER_IMAGE_TAG_NAME,
+            },
+            update: {
+                value: urlResponse.resizedPath,
+                page_group: CMS_COMPANY_PROFILE,
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+            create: {
+                tag: ABOUT_OWNER_IMAGE_TAG_NAME,
+                value: urlResponse.resizedPath,
+                page_group: CMS_COMPANY_PROFILE,
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+        });
+
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getOwnerDesc = async () => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        const ABOUT_OWNER_TAG_NAME = "ABOUT_OWNER_LANDING_PAGE";
+        const ABOUT_OWNER_IMAGE_TAG_NAME = "ABOUT_OWNER_LANDING_PAGE_IMAGE";
+
+        let aboutDesc = prisma.CMSPageVariable.findUnique({
+            where: {
+                tag: ABOUT_OWNER_TAG_NAME,
+            },
+        });
+
+        let aboutImage = prisma.CMSPageVariable.findUnique({
+            where: {
+                tag: ABOUT_OWNER_IMAGE_TAG_NAME,
+            },
+        });
+
+        let prom = await Promise.all([aboutDesc, aboutImage]);
+
+        let parsed = JSON.parse(prom[0].value);
+        let returned = {
+            deskripsi: parsed.deskripsi,
+            nama: parsed.nama,
+            imageUrl: prom[1].value,
+        };
+        return serverResponseFormat(returned, false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};

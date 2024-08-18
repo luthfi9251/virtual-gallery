@@ -16,12 +16,6 @@ export default function GallerySection({ data }) {
     const imageTwoDisclosure = useDisclosure(false);
     const imageThreeDisclosure = useDisclosure(false);
 
-    const [imageBlobList, setImageBlobList] = useState({
-        imageOne: null,
-        imageTwo: null,
-        imageThree: null,
-    });
-
     const [imageSrcList, setImageSrcList] = useState({
         imageOne: data?.IMAGEONE,
         imageTwo: data?.IMAGETWO,
@@ -29,10 +23,6 @@ export default function GallerySection({ data }) {
     });
 
     const handleUpdateStateBlob = (tag, value) => {
-        let temp = imageBlobList;
-        temp[tag] = value;
-        setImageBlobList(temp);
-
         let formData = new FormData();
         formData.append("image", value);
 
@@ -123,7 +113,7 @@ export default function GallerySection({ data }) {
                         fill
                         src={imageSrcList.imageTwo || "/default/3.png"}
                         loader={
-                            imageSrcList.imageOne && landingPageFeaturedLoader
+                            imageSrcList.imageTwo && landingPageFeaturedLoader
                         }
                         className="object-cover"
                     />
@@ -153,7 +143,7 @@ export default function GallerySection({ data }) {
                         fill
                         src={imageSrcList.imageThree || "/default/3.png"}
                         loader={
-                            imageSrcList.imageOne && landingPageFeaturedLoader
+                            imageSrcList.imageThree && landingPageFeaturedLoader
                         }
                         className="object-cover"
                     />

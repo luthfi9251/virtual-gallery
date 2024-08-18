@@ -14,6 +14,8 @@ export async function GET(req, props) {
         let PREFIX = {
             HERO_CARROUSEL: "HERO_CARROUSEL",
             ABOUT_US_LANDING_PAGE: "ABOUT_US_LANDING_PAGE",
+            ABOUT_OWNER_LANDING_PAGE: "ABOUT_OWNER_LANDING_PAGE",
+            ABOUT_OWNER_IMAGE_TAG_NAME: "ABOUT_OWNER_LANDING_PAGE_IMAGE",
             GALLERY_LANDING_PAGE: "GALLERY_LANDING_PAGE",
             ACTIVITY_LANDING_PAGE: "ACTIVITY_LANDING_PAGE",
             CONTACT_LANDING_PAGE: "CONTACT_LANDING_PAGE",
@@ -22,13 +24,18 @@ export async function GET(req, props) {
         let responseFormat = {
             hero_image_list: [],
             about_us: "",
+            about_owner: {
+                nama: "",
+                deskripsi: "",
+                imageUrl: "",
+            },
             gallery: {
                 first: "",
                 second: "",
                 third: "",
             },
             activity_list: [],
-            contact: {},
+            contact: [],
         };
 
         dataCMS.forEach((item) => {
@@ -66,12 +73,31 @@ export async function GET(req, props) {
             } else if (tag.startsWith(PREFIX.ACTIVITY_LANDING_PAGE)) {
                 let parsed = JSON.parse(item.value);
                 responseFormat.activity_list.push({
-                    imageUrl: parsed.imageUrl,
+                    imageUrl: loaderLandingPage(parsed.imageUrl),
                     name: parsed.name,
                 });
             } else if (tag.startsWith(PREFIX.CONTACT_LANDING_PAGE)) {
                 let parsed = JSON.parse(item.value);
-                responseFormat.contact = parsed;
+                let formattedResponse = [];
+                Object.keys(parsed).forEach((item) => {
+                    if (item !== "alamat") {
+                        formattedResponse.push({
+                            type: item.toUpperCase(),
+                            value: parsed[item],
+                            link: "",
+                        });
+                    }
+                });
+                responseFormat.contact = formattedResponse;
+                responseFormat.alamat = parsed.alamat;
+            } else if (tag === PREFIX.ABOUT_OWNER_LANDING_PAGE) {
+                let parsed = JSON.parse(item.value);
+                responseFormat.about_owner.nama = parsed.nama;
+                responseFormat.about_owner.deskripsi = parsed.deskripsi;
+            } else if (tag === PREFIX.ABOUT_OWNER_IMAGE_TAG_NAME) {
+                responseFormat.about_owner.imageUrl = loaderLandingPage(
+                    item.value
+                );
             }
         });
         return NextResponse.json(responseFormat);

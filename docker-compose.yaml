@@ -1,7 +1,7 @@
 services:
     web:
         container_name: tanart-web-service
-        image: tanart-virtual-gallery:lighter
+        image: luthfi9251/tanart-virtual-gallery:light-latest
         # build:
         #     dockerfile: Dockerfile
         #     context: .

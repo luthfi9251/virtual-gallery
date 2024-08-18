@@ -16,6 +16,7 @@ import {
     getActivityData,
     getContact,
     getGalleryData,
+    getOwnerDesc,
 } from "@/actions/admin";
 
 export default async function Page() {
@@ -23,12 +24,14 @@ export default async function Page() {
     let galleryImage = getGalleryData();
     let activityData = getActivityData();
     let contactdata = getContact();
+    let ownerAbout = getOwnerDesc();
 
     let promResult = await Promise.all([
         aboutText,
         galleryImage,
         activityData,
         contactdata,
+        ownerAbout,
     ]);
     return (
         <Container fluid>
@@ -36,7 +39,10 @@ export default async function Page() {
             <Space h="xl" />
             <Stack>
                 <HeroSection />
-                <AboutSection text={promResult[0].data?.value || ""} />
+                <AboutSection
+                    text={promResult[0].data?.value || ""}
+                    ownerData={promResult[4].data || {}}
+                />
                 <GallerySection data={promResult[1].data || {}} />
                 <ActivitySection data={promResult[2].data || []} />
                 <ContactSection data={promResult[3].data || {}} />

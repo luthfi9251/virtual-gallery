@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 export const signOutAction = async () => {
-    await signOut({ redirect: true, redirectTo: "/a" });
+    await signOut({ redirect: true, redirectTo: "/" });
     revalidatePath("/", "layout");
     redirect("/");
 };
