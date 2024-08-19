@@ -31,7 +31,7 @@ RUN npx prisma generate
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-ENV DATABASE_URL=mysql://root:root@host.docker.internal:3306/tanart-virtual-gallery?schema=public
+# ENV DATABASE_URL=mysql://root:root@host.docker.internal:3306/tanart-virtual-gallery?schema=public
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
