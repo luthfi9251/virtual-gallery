@@ -1,5 +1,8 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 const CMS_COMPANY_PROFILE = "CMS_COMPANY_PROFILE";
 const loaderLandingPage = (url) => `${process.env.IMAGE_SERVICE_URL}/img${url}`;

@@ -2,14 +2,12 @@ services:
     web:
         container_name: tanart-web-service
         image: luthfi9251/tanart-virtual-gallery:light-latest
-        # build:
-        #     dockerfile: Dockerfile
-        #     context: .
+        build:
+            dockerfile: Dockerfile
+            context: .
         ports:
             - 3000:3000
         env_file:
             - .env
         environment:
-            - DATABASE_URL=mysql://root:B4rc3lon4@host.docker.internal:3306/tanart-virtual-gallery?schema=public
-        volumes:
-            - ./public:/app/public
+            - DATABASE_URL=mysql://root:root@host.docker.internal:3306/tanart-virtual-gallery?schema=public

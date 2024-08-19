@@ -31,6 +31,8 @@ RUN npx prisma generate
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+ENV DATABASE_URL=mysql://root:root@host.docker.internal:3306/tanart-virtual-gallery?schema=public
+
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
@@ -55,7 +57,7 @@ RUN mkdir .next
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder  /app/.next/static ./.next/static
-COPY ./prisma ./
+COPY --from=builder /app/prisma ./prisma
 
 
 EXPOSE 3000
