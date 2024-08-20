@@ -711,3 +711,40 @@ export const getOwnerDesc = async () => {
         return serverResponseFormat(null, true, err.message);
     }
 };
+
+export const updateGeneralTextEditor = async (mode, value) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        const RICH_TEXT_HTML_PREFIX = "RICH_TEXT_HTML_PREFIX";
+        let addTag = await prisma.CMSPageVariable.upsert({
+            where: {
+                tag: `${RICH_TEXT_HTML_PREFIX}_${mode}`,
+            },
+            update: {
+                value: value,
+                page_group: CMS_VIRTUAL_GALLERY,
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+            create: {
+                tag: `${RICH_TEXT_HTML_PREFIX}_${mode}`,
+                value: value,
+                page_group: CMS_VIRTUAL_GALLERY,
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+        });
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};

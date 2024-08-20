@@ -23,6 +23,25 @@ import AvatarNavbar from "@/components/AvatarNavbar";
 import { useMemo } from "react";
 import myImageLoader, { profileLoaderFotoProfil } from "@/loader/imageLoader";
 
+const NAV_DATA = [
+    {
+        title: "Dashboard",
+        href: "/p/dashboard",
+    },
+    {
+        title: "Karya",
+        href: "/p/karya",
+    },
+    {
+        title: "Pameran",
+        href: "/p/pameran",
+    },
+    {
+        title: "Group",
+        href: "/p/group",
+    },
+];
+
 function NavItem({ href, title }) {
     return (
         <Link
@@ -85,10 +104,15 @@ export default function Navbar({ children, session }) {
                             visibleFrom="sm"
                             className="grow"
                         >
-                            <NavItem title="Dashboard" href="/p/dashboard" />
-                            <NavItem title="Karya" href="/p/karya" />
-                            <NavItem title="Pameran" href="/p/pameran" />
-                            <NavItem title="Group" href="/p/group" />
+                            {NAV_DATA.map((item, key) => {
+                                return (
+                                    <NavItem
+                                        key={key}
+                                        title={item.title}
+                                        href={item.href}
+                                    />
+                                );
+                            })}
                         </Group>
                         {/* <AvatarNavbar /> */}
                         <Box visibleFrom="sm">
@@ -115,8 +139,15 @@ export default function Navbar({ children, session }) {
             <AppShellNavbar py="md" px={4}>
                 <AppShellSection grow>
                     <Stack gap="sm" className="h-full w-full">
-                        <NavItem title="Home" href="/" />
-                        <NavItem title="Pameran" href="/" />
+                        {NAV_DATA.map((item, key) => {
+                            return (
+                                <NavItem
+                                    key={key}
+                                    title={item.title}
+                                    href={item.href}
+                                />
+                            );
+                        })}
                     </Stack>
                 </AppShellSection>
                 <AppShellSection px="md">
