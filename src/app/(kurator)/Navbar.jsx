@@ -111,10 +111,7 @@ export default function Navbar({ children, session }) {
 
             <AppShellNavbar py="md" px={4}>
                 <AppShellSection grow>
-                    <Stack gap="sm" className="h-full w-full">
-                        <NavItem title="Home" href="/" />
-                        <NavItem title="Pameran" href="/" />
-                    </Stack>
+                    <Stack gap="sm" className="h-full w-full"></Stack>
                 </AppShellSection>
                 <AppShellSection px="md">
                     {session?.user ? (

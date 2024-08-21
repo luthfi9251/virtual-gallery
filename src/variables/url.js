@@ -8,6 +8,9 @@ export const URL_TANART = {
     ADMIN_PAMERAN_EDIT: (idPameran) =>
         `/a/dashboard/manage-pameran/edit/${idPameran}`,
     ADMIN_PAMERAN_SEE: (slug) => `/a/dashboard/manage-pameran/lihat/${slug}`,
+    ADMIN_CMS_VIRTUAL_GENERAL: "/a/dashboard/cms-general-vg",
+    ADMIN_CMS_VIRTUAL_GENERAL_EDIT: (mode) =>
+        `/a/dashboard/cms-general-vg/edit?mode=${mode}`,
     KURATOR_DASHBOARD_KURASI: "/k/kurasi-karya",
     PELUKIS_KARYA: "/p/karya",
     PELUKIS_BUKA_PAMERAN: "/p/pameran/buka-pameran",
