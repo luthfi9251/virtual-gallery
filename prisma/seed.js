@@ -282,6 +282,22 @@ async function main() {
             tgl_lhr: new Date().toISOString(),
             role: "ADMIN",
             password: hashPassword(PASSWORD_ADMIN), //passwordadmin
+            Seniman: {
+                create: {
+                    is_verified: true,
+                    verified_at: new Date().toISOString(),
+                    deskripsi:
+                        "saya tidak memiliki pengalamana sebagai pelukis hehehehehhehehhehehhehehehheheh",
+                },
+            },
+            Kurator: {
+                create: {
+                    is_verified: true,
+                    verified_at: new Date().toISOString(),
+                    deskripsi:
+                        "saya tidak memiliki pengalamana sebagai kurator hehehehehhehehhehehhehehehheheh",
+                },
+            },
         },
     });
     const PelukisAccount1 = await prisma.user.upsert({

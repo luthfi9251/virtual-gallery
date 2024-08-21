@@ -567,8 +567,8 @@ export const updatePameranById = async (idPameran, formData) => {
     }
 };
 
-const checkIsPameranOpen = (tglMulai, tglSelesai) => {
-    let today = new Date();
+export const checkIsPameranOpen = (tglMulai, tglSelesai) => {
+    let today = dayjs();
     let mulaiDate = new Date(tglMulai);
     let selesaiDate = new Date(tglSelesai);
     let addOneDayToSelesaiDate = dayjs(selesaiDate).add(1, "day").toDate();

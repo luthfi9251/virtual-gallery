@@ -7,6 +7,7 @@ import {
     FaUserTie,
     FaFileInvoiceDollar,
 } from "react-icons/fa6";
+import { RiSlideshow4Line } from "react-icons/ri";
 import { BsHouseGearFill } from "react-icons/bs";
 import { FaHome, FaPenFancy } from "react-icons/fa";
 import { MdManageAccounts } from "react-icons/md";
@@ -85,6 +86,15 @@ let NAV_DATA_GROUP = [
     {
         group: "Karya",
         link: [
+            {
+                label: (
+                    <Text fz="md" fw="500">
+                        Pameran
+                    </Text>
+                ),
+                href: "/a/dashboard/manage-pameran",
+                leftSection: <RiSlideshow4Line size="1rem" stroke={1.5} />,
+            },
             {
                 label: (
                     <Text fz="md" fw="500">

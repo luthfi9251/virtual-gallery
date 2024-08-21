@@ -2,10 +2,11 @@
 
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { serverResponseFormat } from "@/lib/utils";
+import { generateSlug, serverResponseFormat } from "@/lib/utils";
 import { uploadImageToBackendWithSize } from "./image";
 import { revalidatePath } from "next/cache";
 import { URL_TANART } from "@/variables/url";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const CMS_VIRTUAL_GALLERY = "CMS_VIRTUAL_GALLERY";
 const CMS_COMPANY_PROFILE = "CMS_COMPANY_PROFILE";
@@ -708,6 +709,273 @@ export const getOwnerDesc = async () => {
         };
         return serverResponseFormat(returned, false, null);
     } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getAllKaryaReadyToPameranAdmin = async () => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+
+        let karyaPelukis = await prisma.Karya.findMany({
+            where: {
+                status: "SELESAI",
+            },
+
+            select: {
+                id: true,
+                judul: true,
+                deskripsi: true,
+                aliran: true,
+                media: true,
+                teknik: true,
+                harga: true,
+                created_at: true,
+                panjang: true,
+                lebar: true,
+                status: true,
+                lukisan_url: true,
+            },
+        });
+        // console.log(karyaPelukis);
+        return karyaPelukis.map((item) => {
+            return {
+                ...item,
+                harga: parseInt(item.harga),
+                panjang: item.panjang + "",
+                lebar: item.lebar + "",
+                id_karya: item.id,
+            };
+        });
+    } catch (err) {
+        throw err;
+    }
+};
+
+export const createPameranAdmin = async (formData) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        let dataPameran = JSON.parse(formData.get("dataPameran"));
+        let karyaList = JSON.parse(formData.get("karyaList"));
+        let sampulBlob = formData.get("sampulBlob");
+        let bannerBlob = formData.get("bannerBlob");
+
+        if (karyaList.length == 0) {
+            throw new Error("Anda belum memilih karya!");
+        }
+
+        const imageUploadBody = (buffer, extension) => {
+            let formData = new FormData();
+            formData.append("image", buffer);
+            formData.append("ext", extension);
+            return formData;
+        };
+
+        let sampulBody = imageUploadBody(
+            sampulBlob,
+            sampulBlob.type.split("/")[1]
+        );
+        let bannerBody = imageUploadBody(
+            bannerBlob,
+            bannerBlob.type.split("/")[1]
+        );
+
+        let uploadBanner = uploadImageToBackendWithSize(bannerBody, {
+            width: 1000,
+            height: 334,
+        });
+        let uploadSampul = uploadImageToBackendWithSize(sampulBody, {
+            width: 250,
+            height: 334,
+        });
+
+        let [resSampul, resBanner] = await Promise.all([
+            uploadSampul,
+            uploadBanner,
+        ]);
+
+        const generateSlugPameran =
+            generateSlug(dataPameran.nama_pameran) +
+            "-" +
+            session.user.Seniman.id.slice(-6);
+
+        let bukaPameran = await prisma.Pameran.create({
+            data: {
+                nama_pameran: dataPameran.nama_pameran,
+                deskripsi: dataPameran.deskripsi,
+                banner_url: resBanner.filename,
+                sampul_url: resSampul.filename,
+                tgl_mulai: new Date(dataPameran.tanggal[0]).toISOString(),
+                tgl_selesai: new Date(dataPameran.tanggal[1]).toISOString(),
+                slug: generateSlugPameran,
+                status: "OPEN",
+                Seniman: {
+                    connect: {
+                        id: session.user.Seniman.id,
+                    },
+                },
+                KaryaPameran: {
+                    create: karyaList.map((item) => {
+                        return {
+                            Karya: {
+                                connect: {
+                                    id: item,
+                                },
+                            },
+                        };
+                    }),
+                },
+            },
+        });
+        return serverResponseFormat("success");
+    } catch (err) {
+        console.log(err);
+        if (err instanceof PrismaClientKnownRequestError) {
+            if (err.meta.target === "Pameran_slug_key") {
+                return serverResponseFormat(
+                    null,
+                    true,
+                    "Anda telah memiliki pameran dengan nama yang sama!"
+                );
+            }
+        }
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getAllPameranAdmin = async () => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        let data = await prisma.Pameran.findMany({
+            include: {
+                Seniman: {
+                    select: {
+                        User: {
+                            select: {
+                                nama_lengkap: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        let mappedData = data.map((item) => {
+            return {
+                ...item,
+                nama_lengkap: item.Seniman.User.nama_lengkap,
+            };
+        });
+        return mappedData;
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getPameranBySlugAdmin = async (slug) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        let SELECT_QUERY = {
+            id: true,
+            nama_pameran: true,
+            deskripsi: true,
+            sampul_url: true,
+            banner_url: true,
+            tgl_mulai: true,
+            tgl_selesai: true,
+            status: true,
+            slug: true,
+            Seniman: {
+                select: {
+                    User: {
+                        select: {
+                            id: true,
+                            username: true,
+                            created_at: true,
+                            nama_lengkap: true,
+                            foto_profil: true,
+                            Profile: {
+                                select: {
+                                    bio: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            KaryaPameran: {
+                select: {
+                    Karya: {
+                        select: {
+                            id: true,
+                            lukisan_url: true,
+                            judul: true,
+                            deskripsi: true,
+                            created_at: true,
+                            aliran: true,
+                        },
+                    },
+                },
+            },
+        };
+
+        let pameran = prisma.Pameran.findUnique({
+            where: {
+                slug,
+            },
+            select: SELECT_QUERY,
+        });
+
+        let promAll = await Promise.all([pameran]);
+        pameran = promAll[0];
+
+        if (!pameran) {
+            throw "Pameran Tidak ditemukan!";
+        }
+
+        return serverResponseFormat({
+            id_pameran: pameran.id,
+            nama_pameran: pameran.nama_pameran,
+            sampul_url: pameran.sampul_url,
+            banner_url: pameran.banner_url,
+            deskripsi: pameran.deskripsi,
+            tgl_mulai: pameran.tgl_mulai,
+            tgl_selesai: pameran.tgl_selesai,
+            status: pameran.status,
+            slug: pameran.slug,
+            user: {
+                id_user: pameran.Seniman.User.id,
+                nama_lengkap: pameran.Seniman.User.nama_lengkap,
+                foto_profil: pameran.Seniman.User.foto_profil,
+                username: pameran.Seniman.User.username,
+                bio: pameran.Seniman.User.Profile?.bio || "Tidak ada Biografi",
+                created_at: pameran.Seniman.User.created_at,
+            },
+            karya: pameran.KaryaPameran.map((item) => {
+                return {
+                    id_karya: item.Karya.id,
+                    lukisan_url: item.Karya.lukisan_url,
+                    judul: item.Karya.judul,
+                    deskripsi: item.Karya.deskripsi,
+                    created_at: item.Karya.created_at,
+                    aliran: item.Karya.aliran,
+                };
+            }),
+        });
+    } catch (err) {
+        console.log({ err });
         return serverResponseFormat(null, true, err.message);
     }
 };

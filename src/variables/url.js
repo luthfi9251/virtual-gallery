@@ -3,6 +3,11 @@ export const URL_TANART = {
     ADMIN_DASHBOARD_AKUN_EDIT: (id) => `/a/dashboard/akun/edit/${id}`,
     ADMIN_VALIDASI_PEMBAYARAN: "/a/dashboard/validasi-pembayaran",
     ADMIN_CMS_COMPANY_PROFILE: "/a/dashboard/cms-company-profile",
+    ADMIN_BUKA_PAMERAN: "/a/dashboard/manage-pameran/buka",
+    ADMIN_MANAGE_PAMERAN: "/a/dashboard/manage-pameran",
+    ADMIN_PAMERAN_EDIT: (idPameran) =>
+        `/a/dashboard/manage-pameran/edit/${idPameran}`,
+    ADMIN_PAMERAN_SEE: (slug) => `/a/dashboard/manage-pameran/lihat/${slug}`,
     KURATOR_DASHBOARD_KURASI: "/k/kurasi-karya",
     PELUKIS_KARYA: "/p/karya",
     PELUKIS_BUKA_PAMERAN: "/p/pameran/buka-pameran",

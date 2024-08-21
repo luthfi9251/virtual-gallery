@@ -48,7 +48,7 @@ export default function AvatarNavbar({
     return (
         <Menu
             shadow="md"
-            width={200}
+            width={300}
             trigger="click-hover"
             openDelay={100}
             closeDelay={400}
@@ -74,7 +74,7 @@ export default function AvatarNavbar({
                 )}
             </MenuTarget>
 
-            <MenuDropdown>
+            <MenuDropdown className="max-h-[400px] overflow-y-auto">
                 <div className="w-full flex flex-col items-center p-2">
                     <Image
                         src={profilePicture || "/EMPTY_USER_PROFILE.png"}
