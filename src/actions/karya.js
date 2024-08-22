@@ -309,13 +309,15 @@ export const getKaryaByID = async (idKarya) => {
 
         let mappedResponse = {
             ...karya,
+            lebar: parseFloat(karya.lebar),
+            panjang: parseFloat(karya.panjang),
             harga: parseInt(karya.harga),
             id_seniman: karya.Seniman.id,
             id_user: karya.Seniman.User.id,
             nama_lengkap: karya.Seniman.User.nama_lengkap,
             foto_profil: karya.Seniman.User.foto_profil,
         };
-
+        console.log("testttt");
         return serverResponseFormat(mappedResponse, false, null);
     } catch (err) {
         console.log(err);

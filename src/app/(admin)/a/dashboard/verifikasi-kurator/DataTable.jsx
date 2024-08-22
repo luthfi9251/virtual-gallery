@@ -8,6 +8,7 @@ import {
     Textarea,
     Text,
     ScrollAreaAutosize,
+    Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useMemo, useState } from "react";
@@ -152,24 +153,34 @@ export default function DataTableComponent({ records }) {
                 centered
             >
                 <Stack>
-                    <InputWrapper label="Nama Lengkap">
-                        <Input value={selectedData?.nama_lengkap} disabled />
-                    </InputWrapper>
-                    <InputWrapper label="Email">
-                        <Input value={selectedData?.email} disabled />
-                    </InputWrapper>
-                    <InputWrapper label="Tgl Pengajuan">
-                        <Input value={selectedData?.tgl_pengajuan} disabled />
-                    </InputWrapper>
-                    <InputWrapper label="Deskripsi">
-                        <Textarea
-                            value={selectedData?.deskripsi}
-                            disabled
-                            autosize
-                            minRows={2}
-                            maxRows={4}
-                        />
-                    </InputWrapper>
+                    <div>
+                        <Title order={4} className="text-base">
+                            Nama Lengkap
+                        </Title>
+                        <p className="text-base">
+                            {selectedData?.nama_lengkap}
+                        </p>
+                    </div>
+                    <div>
+                        <Title order={4} className="text-base">
+                            Email
+                        </Title>
+                        <p className="text-base">{selectedData?.email}</p>
+                    </div>
+                    <div>
+                        <Title order={4} className="text-base">
+                            Tgl Pengajuan
+                        </Title>
+                        <p className="text-base">
+                            {selectedData?.tgl_pengajuan}
+                        </p>
+                    </div>
+                    <div>
+                        <Title order={4} className="text-base">
+                            Deskripsi diri
+                        </Title>
+                        <p className="text-base">{selectedData?.deskripsi}</p>
+                    </div>
                     <Button
                         loading={mutation.isPending}
                         data-cy="btn-confirm-verifikasi"

@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa6";
 import { RiSlideshow4Line } from "react-icons/ri";
 import { BsHouseGearFill } from "react-icons/bs";
-import { FaHome, FaPenFancy } from "react-icons/fa";
+import { FaHome, FaPenFancy, FaRegImages } from "react-icons/fa";
 import { MdManageAccounts } from "react-icons/md";
 import withAuthAndRoleCheck from "@/hoc/withAuthAndRoleCheck";
 import { PAGE_CONFIG } from "@/variables/page";
@@ -86,6 +86,15 @@ let NAV_DATA_GROUP = [
     {
         group: "Karya",
         link: [
+            {
+                label: (
+                    <Text fz="md" fw="500">
+                        Karya
+                    </Text>
+                ),
+                href: "/a/dashboard/manage-karya",
+                leftSection: <FaRegImages size="1rem" stroke={1.5} />,
+            },
             {
                 label: (
                     <Text fz="md" fw="500">

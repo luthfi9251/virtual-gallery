@@ -738,6 +738,16 @@ export const getAllKaryaReadyToPameranAdmin = async () => {
                 lebar: true,
                 status: true,
                 lukisan_url: true,
+                Seniman: {
+                    select: {
+                        User: {
+                            select: {
+                                nama_lengkap: true,
+                                foto_profil: true,
+                            },
+                        },
+                    },
+                },
             },
         });
         // console.log(karyaPelukis);
@@ -748,6 +758,8 @@ export const getAllKaryaReadyToPameranAdmin = async () => {
                 panjang: item.panjang + "",
                 lebar: item.lebar + "",
                 id_karya: item.id,
+                nama_seniman: item.Seniman.User.nama_lengkap,
+                foto_profil: item.Seniman.User.foto_profil,
             };
         });
     } catch (err) {
@@ -1012,6 +1024,40 @@ export const updateGeneralTextEditor = async (mode, value) => {
             },
         });
         return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getAllKaryaAdmin = async () => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        let data = await prisma.Karya.findMany({
+            orderBy: {
+                created_at: "desc",
+            },
+            include: {
+                Seniman: {
+                    select: {
+                        User: {
+                            select: {
+                                nama_lengkap: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        let mappedData = data.map((item) => {
+            return {
+                ...item,
+                nama_lengkap: item.Seniman.User.nama_lengkap,
+            };
+        });
+        return mappedData;
     } catch (err) {
         return serverResponseFormat(null, true, err.message);
     }

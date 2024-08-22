@@ -18,7 +18,7 @@ export const getCheckoutPageData = async (pameranId, karyaId) => {
 
         //lakukan pengecekan sebelum bisa checkout
 
-        let karyaInformation = await prisma.Karya.findUnique({
+        let karyaInformationProm = prisma.Karya.findUnique({
             where: {
                 id: karyaId,
                 checkoutHistory: {
@@ -68,6 +68,22 @@ export const getCheckoutPageData = async (pameranId, karyaId) => {
                 },
             },
         });
+        const RICH_TEXT_HTML_PREFIX = "RICH_TEXT_HTML_PREFIX_ALUR_PEMBELIAN";
+        let alurPembayaranText = prisma.CMSPageVariable.findUnique({
+            where: {
+                tag: RICH_TEXT_HTML_PREFIX,
+            },
+            select: {
+                value: true,
+            },
+        });
+
+        let resultProm = await Promise.all([
+            karyaInformationProm,
+            alurPembayaranText,
+        ]);
+        let karyaInformation = resultProm[0];
+        let cmsText = resultProm[1];
 
         if (!karyaInformation) {
             throw new Error(
@@ -76,6 +92,7 @@ export const getCheckoutPageData = async (pameranId, karyaId) => {
         }
 
         let dataResponse = {
+            alurPembelian: cmsText.value,
             dataKarya: {
                 judul: karyaInformation.judul,
                 lukisan_url: karyaInformation.lukisan_url,
@@ -289,10 +306,15 @@ export const getDataBayarPage = async (chekoutId) => {
             },
             include: {
                 Buyer: true,
-                Karya: true,
-                Pameran: {
+                Karya: {
                     select: {
-                        nama_pameran: true,
+                        media: true,
+                        judul: true,
+                        lukisan_url: true,
+                        teknik: true,
+                        panjang: true,
+                        lebar: true,
+                        harga: true,
                         Seniman: {
                             select: {
                                 User: {
@@ -304,6 +326,7 @@ export const getDataBayarPage = async (chekoutId) => {
                         },
                     },
                 },
+                Pameran: true,
             },
         });
 

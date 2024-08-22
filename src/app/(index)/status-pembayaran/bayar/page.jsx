@@ -16,6 +16,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { formatToRupiah } from "@/lib/formatter";
 import DataTransferForm from "./DataTransferForm";
+import prisma from "@/lib/prisma";
+import HTMLInjector from "@/components/HTMLInjector";
 
 const restructureResponse = (data) => {
     return {
@@ -23,7 +25,7 @@ const restructureResponse = (data) => {
             nama_pameran: data?.Pameran.nama_pameran,
             judul_karya: data?.Karya.judul,
             lukisan_url: data?.Karya.lukisan_url,
-            nama_pelukis: data?.Pameran.Seniman.User.nama_lengkap,
+            nama_pelukis: data?.Karya.Seniman.User.nama_lengkap,
             tahun: new Date(data?.created_at).getFullYear(),
             media: data?.Karya.media,
             teknik: data?.Karya.teknik,
@@ -36,7 +38,36 @@ const restructureResponse = (data) => {
     };
 };
 
+async function getCaraPembayaran() {
+    const RICH_TEXT_HTML_PREFIX = "RICH_TEXT_HTML_PREFIX_CARA_PEMBAYARAN";
+    let caraPembayaranText = await prisma.CMSPageVariable.findUnique({
+        where: {
+            tag: RICH_TEXT_HTML_PREFIX,
+        },
+        select: {
+            value: true,
+        },
+    });
+
+    return caraPembayaranText.value;
+}
+async function getNomorRekening() {
+    const RICH_TEXT_HTML_PREFIX = "RICH_TEXT_HTML_PREFIX_NOMOR_REKENING";
+    let nomorRekeningText = await prisma.CMSPageVariable.findUnique({
+        where: {
+            tag: RICH_TEXT_HTML_PREFIX,
+        },
+        select: {
+            value: true,
+        },
+    });
+
+    return nomorRekeningText.value;
+}
+
 export default async function Page(props) {
+    let caraPembayaran = await getCaraPembayaran();
+    let nomorRekening = await getNomorRekening();
     let data = await getDataBayarPage(props.searchParams.invoice);
     if (data.isError) {
         return (
@@ -65,23 +96,13 @@ export default async function Page(props) {
                         <AccordionItem value="cara_pembayaran">
                             <AccordionControl>Cara Pembayaran</AccordionControl>
                             <AccordionPanel>
-                                Lorem ipsum dolor sit amet consectetur
-                                adipisicing elit. Blanditiis, animi adipisci!
-                                Sed excepturi voluptate pariatur maiores! Sequi,
-                                debitis dolor, error maxime alias deleniti
-                                facere repellat, doloribus magni quidem illo
-                                iusto.
+                                <HTMLInjector content={caraPembayaran} />
                             </AccordionPanel>
                         </AccordionItem>
                         <AccordionItem value="rekening_tujuan">
                             <AccordionControl>Rekening Tujuan</AccordionControl>
                             <AccordionPanel>
-                                Lorem ipsum dolor sit amet consectetur
-                                adipisicing elit. Blanditiis, animi adipisci!
-                                Sed excepturi voluptate pariatur maiores! Sequi,
-                                debitis dolor, error maxime alias deleniti
-                                facere repellat, doloribus magni quidem illo
-                                iusto.
+                                <HTMLInjector content={nomorRekening} />
                             </AccordionPanel>
                         </AccordionItem>
                     </Accordion>

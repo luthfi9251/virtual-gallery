@@ -10,6 +10,7 @@ import Link from "next/link";
 import { URL_TANART } from "@/variables/url";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import HTMLInjector from "@/components/HTMLInjector";
 
 async function Page(props) {
     let session = await auth();
@@ -55,8 +56,14 @@ async function Page(props) {
                     <Title>Checkout</Title>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-2 py-2 mt-3">
                         <Stack className="lg:col-span-2" gap="xl">
-                            <Title order={4}>Alur Pembelian Karya</Title>
-                            <div className="w-full h-[100px] bg-blue-200"></div>
+                            <div>
+                                <Title order={4}>Alur Pembelian Karya</Title>
+                                <div className="w-full p-2 rounded shadow mt-2">
+                                    <HTMLInjector
+                                        content={data.alurPembelian}
+                                    />
+                                </div>
+                            </div>
                             <div>
                                 <Title order={4}>Order</Title>
                                 <KaryaDisplaySection

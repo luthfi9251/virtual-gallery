@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { IoSearchSharp } from "react-icons/io5";
 import PameranProvider from "./PameranProvider";
-import CardKaryaCheckBox from "@/app/(pelukis)/p/pameran/buka-pameran/CardKaryaCheckBox";
+import { CardKaryaCheckBoxV2 } from "@/app/(pelukis)/p/pameran/buka-pameran/CardKaryaCheckBox";
 const MAX_ITEM_PER_PAGE = 8;
 
 export default function KaryaSection() {
@@ -68,9 +68,9 @@ export default function KaryaSection() {
                 onChange={setSelectedKarya}
                 className="w-full py-5"
             >
-                <SimpleGrid cols={{ base: 2, sm: 4 }}>
+                <SimpleGrid cols={{ base: 1, sm: 4 }}>
                     {showedKaryaPerPage.map((item, i) => {
-                        return <CardKaryaCheckBox data={item} key={i} />;
+                        return <CardKaryaCheckBoxV2 data={item} key={i} />;
                     })}
                 </SimpleGrid>
             </CheckboxGroup>
