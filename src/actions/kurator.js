@@ -78,6 +78,7 @@ export const getAllKurasiKaryaComment = async (idKarya) => {
             select: {
                 KurasiKarya: {
                     select: {
+                        id: true,
                         komentar: true,
                         harga_maks: true,
                         harga_min: true,
@@ -113,6 +114,7 @@ export const getAllKurasiKaryaComment = async (idKarya) => {
             };
 
             return {
+                id: item.id,
                 userInfo,
                 kurasiData,
             };

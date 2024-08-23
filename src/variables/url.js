@@ -5,6 +5,7 @@ export const URL_TANART = {
     ADMIN_CMS_COMPANY_PROFILE: "/a/dashboard/cms-company-profile",
     ADMIN_BUKA_PAMERAN: "/a/dashboard/manage-pameran/buka",
     ADMIN_MANAGE_PAMERAN: "/a/dashboard/manage-pameran",
+    ADMIN_MANAGE_KARYA: "/a/dashboard/manage-karya",
     ADMIN_PAMERAN_EDIT: (idPameran) =>
         `/a/dashboard/manage-pameran/edit/${idPameran}`,
     ADMIN_PAMERAN_SEE: (slug) => `/a/dashboard/manage-pameran/lihat/${slug}`,

@@ -36,16 +36,11 @@ export default function DataTableComponent({ records }) {
     const disclosure = useDisclosure(false);
     const disclosureEdit = useDisclosure(false);
     const [selectedIdKarya, setSelectedIdKara] = useState(null);
+    const [selectedDataKarya, setSelectedDataKara] = useState(null);
     const [modalData, setModalData] = useState({});
 
     let columnTable = useMemo(
         () => [
-            {
-                accessorKey: "index",
-                header: "No.",
-                size: 20,
-                Cell: ({ renderedCellValue, row }) => row.index + 1,
-            },
             {
                 accessorKey: "lukisan_url",
                 header: " ",
@@ -149,6 +144,7 @@ export default function DataTableComponent({ records }) {
                             <ActionIcon
                                 onClick={() => {
                                     setSelectedIdKara(row.original.id);
+                                    setSelectedDataKara(row.original);
                                     disclosureEdit[1].open();
                                 }}
                                 variant="filled"
@@ -169,6 +165,8 @@ export default function DataTableComponent({ records }) {
     const table = useMantineReactTable({
         columns: columnTable,
         data: records,
+        enableColumnPinning: true,
+        columnPinning: { right: ["judul"] },
         enableColumnActions: false,
         enableColumnFilters: false,
         enablePagination: true,
@@ -206,6 +204,7 @@ export default function DataTableComponent({ records }) {
             <ModalEditKarya
                 disclosure={disclosureEdit}
                 karyaId={selectedIdKarya}
+                dataKarya={selectedDataKarya}
             />
         </>
     );

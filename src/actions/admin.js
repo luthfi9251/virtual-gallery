@@ -1054,11 +1054,91 @@ export const getAllKaryaAdmin = async () => {
         let mappedData = data.map((item) => {
             return {
                 ...item,
+                lebar: parseFloat(item.lebar),
+                panjang: parseFloat(item.panjang),
+                harga: parseInt(item.harga),
                 nama_lengkap: item.Seniman.User.nama_lengkap,
             };
         });
         return mappedData;
     } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const updateDataLukisan = async (id, data) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        let uploadKarya = await prisma.Karya.update({
+            where: {
+                id: id,
+            },
+            data: {
+                judul: data.judul,
+                deskripsi: data.deskripsi,
+                aliran: data.aliran,
+                media: data.media,
+                teknik: data.teknik,
+                panjang: data.panjang,
+                lebar: data.lebar,
+            },
+        });
+        revalidatePath(URL_TANART.ADMIN_MANAGE_KARYA);
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const deletekomentarKurasiKurator = async (idKurasi, idKarya) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+
+        let deleteKurasi = await prisma.KurasiKarya.delete({
+            where: {
+                id: idKurasi,
+            },
+            select: {
+                Karya: {
+                    select: {
+                        id: true,
+                    },
+                },
+            },
+        });
+
+        try {
+            let updateKaryaIfAny = await prisma.Karya.update({
+                where: {
+                    id: deleteKurasi.Karya.id,
+                    KurasiKarya: {
+                        none: {},
+                    },
+                },
+                data: {
+                    status: "DIKURASI",
+                },
+            });
+        } catch (err) {
+            if (
+                err instanceof PrismaClientKnownRequestError &&
+                err.code === "P2025"
+            ) {
+                return serverResponseFormat("OK", false, null);
+            } else {
+                throw err;
+            }
+        }
+        revalidatePath(URL_TANART.ADMIN_MANAGE_KARYA);
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        console.log(err);
         return serverResponseFormat(null, true, err.message);
     }
 };

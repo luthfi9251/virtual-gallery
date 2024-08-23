@@ -317,7 +317,6 @@ export const getKaryaByID = async (idKarya) => {
             nama_lengkap: karya.Seniman.User.nama_lengkap,
             foto_profil: karya.Seniman.User.foto_profil,
         };
-        console.log("testttt");
         return serverResponseFormat(mappedResponse, false, null);
     } catch (err) {
         console.log(err);
