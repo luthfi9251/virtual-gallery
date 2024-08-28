@@ -11,6 +11,7 @@ import {
     Button,
     Title,
     SimpleGrid,
+    Select,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { DatePickerInput } from "@mantine/dates";
@@ -23,7 +24,7 @@ import { usePameranFormContext } from "./PameranProvider";
 import ImageModalSelection from "@/components/ImageModalSelection";
 import { pameranBannerLoader, pameranSampulLoader } from "@/loader/imageLoader";
 
-export default function BukaPameran() {
+export default function BukaPameran({ senimanAll }) {
     const {
         pameranData,
         setPameranData,
@@ -171,6 +172,14 @@ export default function BukaPameran() {
                             locale="id"
                             valueFormat="DD MMMM YYYY"
                             withAsterisk
+                        />
+                        <Select
+                            key={form.key("initiator_id")}
+                            {...form.getInputProps("initiator_id")}
+                            label="Pameran Diinisiasi Oleh"
+                            placeholder="Pilih Pelukis"
+                            data={senimanAll}
+                            searchable
                         />
                     </GridCol>
                 </Grid>

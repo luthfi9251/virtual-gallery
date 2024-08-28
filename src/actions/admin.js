@@ -35,6 +35,41 @@ export const resetPasswordAdmin = async (id, password) => {
     }
 };
 
+export const getAllPelukisAccount = async () => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        let seniman = await prisma.Seniman.findMany({
+            where: {
+                is_verified: true,
+            },
+            select: {
+                id: true,
+                User: {
+                    select: {
+                        nama_lengkap: true,
+                        username: true,
+                        foto_profil: true,
+                    },
+                },
+            },
+        });
+        let mapped = seniman.map((item) => {
+            return {
+                id_seniman: item.id,
+                nama_lengkap: item.User.nama_lengkap,
+                username: item.User.username,
+                foto_profil: item.User.foto_profil,
+            };
+        });
+        return serverResponseFormat(mapped, false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
 export const updateCMSVirtualGallery = async (dataText, formDataGambar) => {
     try {
         let session = await auth();
@@ -853,7 +888,7 @@ export const createPameranAdmin = async (formData) => {
                 status: "OPEN",
                 Seniman: {
                     connect: {
-                        id: session.user.Seniman.id,
+                        id: dataPameran.initiator_id || session.user.Seniman.id,
                     },
                 },
                 KaryaPameran: {

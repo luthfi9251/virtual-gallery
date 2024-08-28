@@ -408,6 +408,7 @@ export const getPameranById = async (idPameran) => {
             slug: true,
             Seniman: {
                 select: {
+                    id: true,
                     User: {
                         select: {
                             id: true,
@@ -508,7 +509,7 @@ export const updatePameranById = async (idPameran, formData) => {
             slug: generateSlugPameran,
             Seniman: {
                 connect: {
-                    id: session.user.Seniman.id,
+                    id: dataPameran.initiator_id || session.user.Seniman.id,
                 },
             },
             KaryaPameran: {
