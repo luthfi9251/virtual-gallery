@@ -75,7 +75,7 @@ export default function AvatarNavbar({
                 )}
             </MenuTarget>
 
-            <MenuDropdown className="max-h-[400px] overflow-y-auto">
+            <MenuDropdown className="max-h-[400px] md:max-h-screen overflow-y-auto">
                 <div className="w-full flex flex-col items-center p-2">
                     <Image
                         src={profilePicture || "/EMPTY_USER_PROFILE.png"}

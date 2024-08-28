@@ -4,7 +4,6 @@ import { MdMailOutline } from "react-icons/md";
 import CardWrapper from "./CardWrapper";
 
 export default function ContactSection({ data }) {
-    console.log(data);
     return (
         <CardWrapper>
             <Title order={3}>Kontak Info & Sosial Media</Title>
