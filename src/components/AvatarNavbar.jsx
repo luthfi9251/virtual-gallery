@@ -1,3 +1,4 @@
+"use client";
 import {
     Menu,
     MenuTarget,
@@ -33,6 +34,7 @@ export const AvatarProfileSmall = ({ src = null, size = 30 }) => {
 };
 
 export default function AvatarNavbar({
+    toggleSideBar,
     namaLengkap,
     email,
     profilePicture,
@@ -52,7 +54,6 @@ export default function AvatarNavbar({
             trigger="click-hover"
             openDelay={100}
             closeDelay={400}
-            withArrow
             offset={20}
         >
             <MenuTarget>
@@ -74,7 +75,7 @@ export default function AvatarNavbar({
                 )}
             </MenuTarget>
 
-            <MenuDropdown className="max-h-[400px] overflow-y-auto">
+            <MenuDropdown className="max-h-[400px] md:max-h-screen overflow-y-auto">
                 <div className="w-full flex flex-col items-center p-2">
                     <Image
                         src={profilePicture || "/EMPTY_USER_PROFILE.png"}
@@ -93,6 +94,7 @@ export default function AvatarNavbar({
                     <MenuItem
                         data-cy="link-to-profile"
                         component={Link}
+                        onClick={isMobile ? toggleSideBar : () => {}}
                         href={URL_TANART.USER_PROFILE}
                         className="text-center my-2 bg-tanArtBlue-600 text-white hover:bg-tanArtBlue-900"
                     >

@@ -28,11 +28,94 @@ import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { URL_TANART } from "@/variables/url";
 import { deleteUser } from "@/actions/user";
+import { modals } from "@mantine/modals";
+import { resetPasswordAdmin } from "@/actions/admin";
 
 export default function UserDataForm({ data }) {
     const [modalDeleteOpened, modalDeleteHandler] = useDisclosure(false);
     const [loadingDelete, setLoadingDelete] = useState(false);
+    const [loadingReset, setLoadingReset] = useState(false);
     const router = useRouter();
+
+    let resetPasswordForm = useForm({
+        name: "resete-password",
+        mode: "uncontrolled",
+        initialValues: {
+            password: "",
+            "confirm-password": "",
+        },
+        validate: {
+            password: hasLength(
+                { min: 6, max: 100 },
+                "Password minimal 6 huruf"
+            ),
+            "confirm-password": matchesField(
+                "password",
+                "Tidak sama dengan password!"
+            ),
+        },
+    });
+
+    const resetPasswordHandler = async (dataForm) => {
+        setLoadingReset(true);
+        resetPasswordAdmin(data?.id, dataForm.password)
+            .then((res) => {
+                if (res.isError) throw res.error;
+
+                notifications.show({
+                    title: "Berhasil Reset!",
+                    message: `Berhasil reset password akun`,
+                });
+                modalDeleteHandler.close();
+            })
+            .catch((err) => {
+                notifications.show({
+                    color: "red",
+                    title: "Gagal Reset Password!",
+                    message: err.message,
+                });
+            })
+            .finally(() => {
+                setLoadingReset(false);
+                resetPasswordForm.reset();
+                modals.closeAll();
+            });
+    };
+
+    const modalResetPassword = () =>
+        modals.open({
+            title: "Reset Password",
+            centered: true,
+            children: (
+                <Stack
+                    component="form"
+                    onSubmit={resetPasswordForm.onSubmit(resetPasswordHandler)}
+                >
+                    <TextInput
+                        label="Kata Sandi Baru"
+                        data-autofocus
+                        key={resetPasswordForm.key("password")}
+                        withAsterisk
+                        {...resetPasswordForm.getInputProps("password")}
+                    />
+                    <TextInput
+                        label="Ulang Kata Sandi"
+                        key={resetPasswordForm.key("confirm-password")}
+                        withAsterisk
+                        {...resetPasswordForm.getInputProps("confirm-password")}
+                    />
+                    <Button
+                        loading={loadingReset}
+                        fullWidth
+                        type="submit"
+                        mt="md"
+                    >
+                        Simpan
+                    </Button>
+                </Stack>
+            ),
+        });
+
     let form = useForm({
         name: "register-form",
         mode: "uncontrolled",
@@ -160,7 +243,9 @@ export default function UserDataForm({ data }) {
                 </GridCol>
                 <GridCol span={{ base: 12, md: 2 }} py={{ base: 1, md: 20 }}>
                     <Stack>
-                        <Button color="gray">Reset Password</Button>
+                        <Button color="gray" onClick={modalResetPassword}>
+                            Reset Password
+                        </Button>
                         <Button color="red" onClick={modalDeleteHandler.open}>
                             Hapus Akun
                         </Button>

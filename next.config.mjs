@@ -16,6 +16,11 @@ const nextConfig = {
             },
             {
                 protocol: "https",
+                hostname: "images.tanartspace.com",
+                pathname: "/img/**",
+            },
+            {
+                protocol: "https",
                 hostname: "picsum.photos",
                 pathname: "/**",
             },

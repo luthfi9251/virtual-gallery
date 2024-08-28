@@ -268,6 +268,7 @@ export const getMinAndMaxHarga = async (idKarya) => {
 
 export const updateKaryaSetharga = async (idKarya, harga) => {
     try {
+        console.log("harga terbaca server : " + harga);
         let updateKarya = await prisma.Karya.update({
             where: {
                 id: idKarya,

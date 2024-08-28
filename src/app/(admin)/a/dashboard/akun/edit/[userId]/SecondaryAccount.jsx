@@ -25,16 +25,13 @@ export default function SecondaryAccount({ jenisAkun, data }) {
                             />
                             <Textarea
                                 label="Deskripsi Pengalaman"
+                                rows={7}
                                 value={data.deskripsi}
-                                rows={5}
                                 disabled
                             />
                         </Stack>
                     </form>
                 </Fieldset>
-            </GridCol>
-            <GridCol span={{ base: 12, md: 2 }} py={{ base: 1, md: 20 }}>
-                <Stack></Stack>
             </GridCol>
         </Grid>
     );
