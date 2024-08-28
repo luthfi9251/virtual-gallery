@@ -3,6 +3,7 @@ import CaraPembayaran from "./CaraPembayaranSection";
 import CardText from "./CardText";
 import { URL_TANART } from "@/variables/url";
 import { MODE_EDIT } from "./edit/page";
+import prisma from "@/lib/prisma";
 
 async function getData() {
     const RICH_TEXT_HTML_PREFIX = "RICH_TEXT_HTML_PREFIX";

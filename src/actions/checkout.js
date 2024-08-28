@@ -165,7 +165,7 @@ export const checkoutKarya = async (data) => {
 
         // Step 3 : compute Expire Date
         let createdAt = dayjs();
-        let expiredDateCompute = createdAt.add(3, "day");
+        let expiredDateCompute = createdAt.add(2, "day");
 
         let createCheckoutOrder = prisma.CheckoutHistory.create({
             data: {

@@ -40,7 +40,7 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
         });
         cy.visit("/p/dashboard");
         cy.contains("a", "Karya").click();
-        cy.get('[href="/p/karya"]').click();
+        cy.get('[href="/p/karya"]').first().click();
         cy.get('[data-cy="btn-unggah"]').click();
         cy.location("pathname").should("equal", "/p/karya/unggah");
         cy.fixture("lukisan/lukisan1.jpg", null).as("lukisan1");
@@ -158,7 +158,7 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
         });
         cy.visit("/p/dashboard");
         cy.contains("a", "Karya").click();
-        cy.get('[href="/p/karya"]').click();
+        cy.get('[href="/p/karya"]').first().click();
 
         cy.fixture("lukisan/lukisan3").then((data) => {
             cy.contains('[data-cy="card-karya"]', data.judul).click({
@@ -222,7 +222,7 @@ describe("Artwork Flow | Flow Karya unggah dan kurasi", () => {
         });
         cy.visit("/p/dashboard");
         cy.contains("a", "Karya").click();
-        cy.get('[href="/p/karya"]').click();
+        cy.get('[href="/p/karya"]').first().click();
 
         cy.fixture("lukisan/lukisan4").then((data) => {
             cy.contains('[data-cy="card-karya"]', data.judul).click({

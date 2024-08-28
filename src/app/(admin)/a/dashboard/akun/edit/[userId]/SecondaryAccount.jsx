@@ -26,6 +26,7 @@ export default function SecondaryAccount({ jenisAkun, data }) {
                             <Textarea
                                 label="Deskripsi Pengalaman"
                                 value={data.deskripsi}
+                                rows={5}
                                 disabled
                             />
                         </Stack>
@@ -33,10 +34,7 @@ export default function SecondaryAccount({ jenisAkun, data }) {
                 </Fieldset>
             </GridCol>
             <GridCol span={{ base: 12, md: 2 }} py={{ base: 1, md: 20 }}>
-                <Stack>
-                    <Button color="yellow">Deactivate Akun</Button>
-                    <Button color="red">Hapus Akun</Button>
-                </Stack>
+                <Stack></Stack>
             </GridCol>
         </Grid>
     );

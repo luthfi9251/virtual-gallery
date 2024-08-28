@@ -172,7 +172,7 @@ export default function ActivitySection({ data }) {
             </form>
             <Space h="xl" />
             <div>
-                <Table stickyHeader stickyHeaderOffset={60}>
+                <Table>
                     <TableThead>
                         <TableTr>
                             <TableTh>Tag</TableTh>

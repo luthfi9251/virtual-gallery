@@ -178,7 +178,7 @@ export default function HeroSection() {
             </form>
             <Space h="xl" />
             <div className="">
-                <Table stickyHeader stickyHeaderOffset={60}>
+                <Table>
                     <TableThead>
                         <TableTr>
                             <TableTh>Tag</TableTh>
