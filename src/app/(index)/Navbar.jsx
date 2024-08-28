@@ -150,6 +150,7 @@ export default function Navbar({ children, session }) {
                                     </Text>
                                 </div>
                                 <AvatarNavbar
+                                    toggleSideBar={toggle}
                                     namaLengkap={session?.user.nama_lengkap}
                                     email={session?.user.email}
                                     profilePicture={imageUrl}

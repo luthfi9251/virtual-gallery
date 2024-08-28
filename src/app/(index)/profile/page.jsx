@@ -13,7 +13,7 @@ async function Page() {
     let data = await getUserProfile();
     return (
         <div className="w-full flex justify-center">
-            <div className="w-full max-w-[1200px] flex flex-col gap-5">
+            <div className="w-full max-w-[1200px] flex flex-col gap-5 p-3 md:p-0">
                 <HeadSection data={data.profile} />
                 <BioSection data={data.profile} />
                 <ContactSection data={data} />

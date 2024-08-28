@@ -8,38 +8,34 @@ import {
     Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useContext } from "react";
 import CardKarya from "@/components/CardKarya";
 import ModalDetailKarya from "./ModalDetail";
 import { useMediaQuery } from "@mantine/hooks";
+import { KaryaContext } from "./KaryaProvider";
 
-export default function TabContent({ data }) {
+export default function TabContent() {
+    let { data, setDataOriginal, dataOriginal } = useContext(KaryaContext);
     const isMobile = useMediaQuery("(max-width: 48em)");
     const [activeTab, setActiveTab] = useState("all");
     const [activeData, setActiveData] = useState(null);
     const disclosure = useDisclosure(false);
-    const [dataOriginal, setDataOriginal] = useState(data);
 
     const karyaFiltered = useMemo(() => {
         switch (activeTab) {
             case "pending":
-                return dataOriginal.filter(
-                    (item) => item.status === "DIKURASI"
-                );
+                return data.filter((item) => item.status === "DIKURASI");
             case "terkurasi":
-                return dataOriginal.filter(
-                    (item) => item.status === "TERKURASI"
-                );
+                return data.filter((item) => item.status === "TERKURASI");
             case "selesai":
-                return dataOriginal.filter((item) => item.status === "SELESAI");
+                return data.filter((item) => item.status === "SELESAI");
             case "terjual":
-                return dataOriginal.filter((item) => item.status === "TERJUAL");
-
+                return data.filter((item) => item.status === "TERJUAL");
             default:
-                return dataOriginal;
+                return data;
                 break;
         }
-    }, [activeTab, dataOriginal]);
+    }, [activeTab, dataOriginal, data]);
 
     const handleCardOnClick = (data) => {
         setActiveData(data);

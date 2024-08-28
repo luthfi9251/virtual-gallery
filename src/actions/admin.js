@@ -7,9 +7,33 @@ import { uploadImageToBackendWithSize } from "./image";
 import { revalidatePath } from "next/cache";
 import { URL_TANART } from "@/variables/url";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { hashPassword } from "@/lib/bcrypt";
 
 const CMS_VIRTUAL_GALLERY = "CMS_VIRTUAL_GALLERY";
 const CMS_COMPANY_PROFILE = "CMS_COMPANY_PROFILE";
+
+export const resetPasswordAdmin = async (id, password) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+        let hashedPassword = hashPassword(password);
+
+        let updatePassword = await prisma.User.update({
+            where: {
+                id,
+            },
+            data: {
+                password: hashedPassword,
+            },
+        });
+
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
 
 export const updateCMSVirtualGallery = async (dataText, formDataGambar) => {
     try {
@@ -1084,6 +1108,7 @@ export const updateDataLukisan = async (id, data) => {
                 teknik: data.teknik,
                 panjang: data.panjang,
                 lebar: data.lebar,
+                harga: data.harga,
             },
         });
         revalidatePath(URL_TANART.ADMIN_MANAGE_KARYA);

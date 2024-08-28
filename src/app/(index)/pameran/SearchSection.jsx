@@ -1,9 +1,35 @@
 "use client";
+import { useQuery } from "@tanstack/react-query";
 import { Group, TextInput, Button, rem } from "@mantine/core";
 import { CiSearch } from "react-icons/ci";
 import { Spotlight, SpotlightActionData, spotlight } from "@mantine/spotlight";
+import { getPameranOpen } from "@/actions/pameran";
+import { useRouter } from "next/navigation";
+import { URL_TANART } from "@/variables/url";
+
+async function getPameranSearch(router) {
+    let response = await getPameranOpen();
+    console.log({ response });
+
+    return response.data.map((item) => {
+        return {
+            id: item.slug,
+            label: item.nama_pameran,
+            description: item.nama_pameran + " - " + item.nama_lengkap,
+            onClick: () => router.push(URL_TANART.PAMERAN_VIEW(item.slug)),
+        };
+    });
+}
 
 export default function SearchSection() {
+    let router = useRouter();
+    let querySearch = useQuery({
+        queryKey: ["search", "pameran"],
+        queryFn: async () => await getPameranSearch(router),
+        staleTime: 1000 * 60 * 60,
+        placeholderData: [],
+    });
+
     const actions = [
         {
             id: "home",
@@ -40,7 +66,7 @@ export default function SearchSection() {
                 </Button>
             </Group>
             <Spotlight
-                actions={actions}
+                actions={querySearch.data}
                 nothingFound="Nothing found..."
                 highlightQuery
                 searchProps={{
