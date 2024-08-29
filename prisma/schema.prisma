@@ -107,7 +107,7 @@ model KurasiKarya {
   id         Int      @id @default(autoincrement())
   Kurator    Kurator  @relation(fields: [kurator_id], references: [id])
   kurator_id String
-  Karya      Karya    @relation(fields: [karya_id], references: [id])
+  Karya      Karya    @relation(fields: [karya_id], references: [id], onDelete: Cascade)
   karya_id   String
   komentar   String   @db.Text
   harga_maks Decimal

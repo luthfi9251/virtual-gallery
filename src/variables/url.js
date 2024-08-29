@@ -14,6 +14,7 @@ export const URL_TANART = {
         `/a/dashboard/cms-general-vg/edit?mode=${mode}`,
     KURATOR_DASHBOARD_KURASI: "/k/kurasi-karya",
     PELUKIS_KARYA: "/p/karya",
+    PELUKIS_EDIT_KARYA: (id) => `/p/karya/edit/${id}`,
     PELUKIS_BUKA_PAMERAN: "/p/pameran/buka-pameran",
     PELUKIS_PAMERAN: "/p/pameran",
     PELUKIS_PAMERAN_EDIT: (idPameran) => `/p/pameran/edit/${idPameran}`,

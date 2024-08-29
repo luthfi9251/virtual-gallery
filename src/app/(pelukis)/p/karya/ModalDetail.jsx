@@ -26,10 +26,17 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { useQuery } from "@tanstack/react-query";
 import LoadingWrapper from "@/components/LoadingWrapper";
 import { getAllKurasiKaryaComment } from "@/actions/kurator";
-import { getMinAndMaxHarga, updateKaryaSetharga } from "@/actions/karya";
+import {
+    deleteKaryaPelukis,
+    getMinAndMaxHarga,
+    updateKaryaSetharga,
+} from "@/actions/karya";
 import { useForm, isInRange, isNotEmpty } from "@mantine/form";
 import { formatToRupiah } from "@/lib/formatter";
 import { notifications } from "@mantine/notifications";
+import Link from "next/link";
+import { URL_TANART } from "@/variables/url";
+import { useRouter } from "next/navigation";
 
 const FormHarga = forwardRef(
     ({ showFormHandler, handleSubmitForm, idKarya, isLoading }, ref) => {
@@ -69,6 +76,7 @@ const FormHarga = forwardRef(
                         thousandSeparator=" "
                         withAsterisk
                         allowNegative={false}
+                        allowDecimal={false}
                         key={formHarga.key("harga")}
                         {...formHarga.getInputProps("harga")}
                     />
@@ -185,7 +193,7 @@ const TabKaryaInformation = ({ information }) => {
     );
 };
 
-const openDeleteModal = () =>
+const openDeleteModal = (handleDelete) =>
     modals.openConfirmModal({
         title: "Hapus Karya",
         centered: true,
@@ -198,10 +206,10 @@ const openDeleteModal = () =>
         labels: { confirm: "Hapus Karya", cancel: "Batal" },
         confirmProps: { color: "red" },
         onCancel: () => console.log("Cancel"),
-        onConfirm: () => console.log("Confirmed"),
+        onConfirm: () => handleDelete(),
     });
 
-const MenuKarya = () => {
+const MenuKarya = ({ handleDelete, idKarya }) => {
     return (
         <Menu shadow="md" width={200} position="bottom-end">
             <MenuTarget>
@@ -218,8 +226,19 @@ const MenuKarya = () => {
 
             <MenuDropdown>
                 <MenuLabel>Aksi</MenuLabel>
-                <MenuItem>Ubah</MenuItem>
-                <MenuItem onClick={openDeleteModal}>Hapus</MenuItem>
+                <MenuItem
+                    component={Link}
+                    className="font-medium"
+                    href={URL_TANART.PELUKIS_EDIT_KARYA(idKarya)}
+                >
+                    Ubah
+                </MenuItem>
+                <MenuItem
+                    onClick={() => openDeleteModal(handleDelete)}
+                    className="text-red-500 font-medium"
+                >
+                    Hapus
+                </MenuItem>
             </MenuDropdown>
         </Menu>
     );
@@ -232,7 +251,48 @@ export default function ModalDetailKarya({
 }) {
     const [showHargaForm, setShowHargaForm] = useState(false);
     const [isLoadingUpdateHarga, setIsLoadingUpdateHarga] = useState(false);
+    const router = useRouter();
 
+    const handleDeleteKarya = () => {
+        const id = notifications.show({
+            color: "gray",
+            loading: true,
+            autoClose: false,
+            withCloseButton: false,
+            title: "Loading",
+            message: "Menghapus lukisan",
+        });
+        deleteKaryaPelukis(dataActive.id_karya)
+            .then((res) => {
+                if (res.isError) throw new Error(res.error);
+                notifications.update({
+                    id,
+                    title: "Berhasil",
+                    message: "Berhasil menghapus lukisan!",
+                    loading: false,
+                    autoClose: 2000,
+                    icon: null,
+                    color: "teal",
+                });
+                disclosure[1].close();
+                setOriginalData((item) =>
+                    item.filter(
+                        (item2) => item2.id_karya !== dataActive.id_karya
+                    )
+                );
+            })
+            .catch((err) => {
+                notifications.update({
+                    id,
+                    color: "red",
+                    title: "Gagal",
+                    message: err.message,
+                    loading: false,
+                    autoClose: 2000,
+                    icon: null,
+                });
+            });
+    };
     const handleSetHarga = async (data) => {
         const filterAndUpdateState = (state) => {
             return state.map((item) =>
@@ -270,8 +330,13 @@ export default function ModalDetailKarya({
             imageSrc={dataActive?.lukisan_url}
         >
             <Stack className="w-full h-full relative" gap={5}>
-                <MenuKarya />
-                <Title order={2}>{dataActive?.judul}</Title>
+                <MenuKarya
+                    idKarya={dataActive?.id_karya}
+                    handleDelete={handleDeleteKarya}
+                />
+                <Title order={2} className="mr-5">
+                    {dataActive?.judul}
+                </Title>
                 <Group>
                     <AvatarProfileSmall
                         size={35}

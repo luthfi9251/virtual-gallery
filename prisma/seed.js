@@ -362,7 +362,7 @@ async function main() {
     await seedVirtualGalleryLandingPageData(AdminAccount.id);
 
     if (process.env.USE_DUMMY_DATA === "true") {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 6; i++) {
             await seedKaryaPelukis({ idPelukis: PelukisAccount1.Seniman.id });
         }
 

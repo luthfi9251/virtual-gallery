@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { URL_TANART } from "@/variables/url";
 import { serverResponseFormat } from "@/lib/utils";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export const unggahKaryaPelukis = async (formData) => {
     try {
@@ -268,7 +269,6 @@ export const getMinAndMaxHarga = async (idKarya) => {
 
 export const updateKaryaSetharga = async (idKarya, harga) => {
     try {
-        console.log("harga terbaca server : " + harga);
         let updateKarya = await prisma.Karya.update({
             where: {
                 id: idKarya,
@@ -307,12 +307,11 @@ export const getKaryaByID = async (idKarya) => {
                 },
             },
         });
-
         let mappedResponse = {
             ...karya,
             lebar: parseFloat(karya.lebar),
             panjang: parseFloat(karya.panjang),
-            harga: parseInt(karya.harga),
+            harga: karya.harga && parseInt(karya.harga),
             id_seniman: karya.Seniman.id,
             id_user: karya.Seniman.User.id,
             nama_lengkap: karya.Seniman.User.nama_lengkap,
@@ -322,5 +321,65 @@ export const getKaryaByID = async (idKarya) => {
     } catch (err) {
         console.log(err);
         return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const updateDataLukisanPelukis = async (idKarya, data) => {
+    try {
+        let session = await auth();
+        if (!session.user.Seniman) {
+            throw new Error("Anda tidak memiliki akun seniman!");
+        }
+
+        let uploadKarya = await prisma.Karya.update({
+            where: {
+                id: idKarya,
+                Seniman: {
+                    id: session.user.Seniman.id,
+                },
+            },
+            data: {
+                judul: data.judul,
+                deskripsi: data.deskripsi,
+                aliran: data.aliran,
+                media: data.media,
+                teknik: data.teknik,
+                panjang: data.panjang,
+                lebar: data.lebar,
+                harga: data.harga,
+            },
+        });
+        revalidatePath(URL_TANART.PELUKIS_KARYA);
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const deleteKaryaPelukis = async (idKarya) => {
+    try {
+        let deleteKarya = await prisma.Karya.delete({
+            where: {
+                id: idKarya,
+                status: {
+                    in: ["DIKURASI", "TERKURASI", "SELESAI"],
+                },
+            },
+        });
+
+        revalidatePath(URL_TANART.PELUKIS_KARYA);
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        if (
+            err instanceof PrismaClientKnownRequestError &&
+            err.code == "P2003"
+        ) {
+            return serverResponseFormat(
+                null,
+                true,
+                "Tidak dapat menghapus karya, karya sedang dalam pameran atau sedang dalam transaksi!!"
+            );
+        }
+        return serverResponseFormat(null, true, "Tidak dapat menghapus karya!");
     }
 };
