@@ -8,6 +8,7 @@ WORKDIR /app
 
 ENV TZ="Asia/Jakarta"
 ENV NEXT_PUBLIC_IMAGE_SERVICE_URL="https://images.tanartspace.com/img"
+# ENV NEXT_PUBLIC_IMAGE_SERVICE_URL="http://imageservice.luthficode.my.id/img"
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* pnpm-lock.yaml* ./
