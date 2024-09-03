@@ -306,15 +306,28 @@ export const pengajuanAkun = async (mode, data) => {
     }
 };
 
-export const uploadProfilePicture = async (formdata, idUser) => {
+export const uploadProfilePicture = async (formdataProfile, idUser) => {
     try {
-        let upload = await uploadImageToBackend(formdata);
+        const imageUploadBody = (buffer, extension) => {
+            let formData = new FormData();
+            formData.append("image", buffer);
+            formData.append("ext", extension);
+            return formData;
+        };
+        let uploadBody = imageUploadBody(
+            formData.get("image"),
+            formData.get("image").type.split("/")[1]
+        );
+        let uploadProfil = await uploadImageToBackendWithSize(uploadBody, {
+            width: 200,
+            height: 200,
+        });
         await prisma.User.update({
             where: {
                 id: idUser,
             },
             data: {
-                foto_profil: upload.filename,
+                foto_profil: uploadProfil.filename,
             },
         });
         return "Success";

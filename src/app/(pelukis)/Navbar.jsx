@@ -36,10 +36,6 @@ const NAV_DATA = [
         title: "Pameran",
         href: "/p/pameran",
     },
-    {
-        title: "Group",
-        href: "/p/group",
-    },
 ];
 
 function NavItem({ href, title }) {
