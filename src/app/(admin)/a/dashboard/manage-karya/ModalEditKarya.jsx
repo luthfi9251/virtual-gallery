@@ -69,8 +69,8 @@ function FormDataKaryaSection({ karyaId, queryClient, closeModal, dataKarya }) {
                 "Wajib diisi, Maksimal 100 karakter!"
             ),
             deskripsi: hasLength(
-                { min: 5, max: 500 },
-                "Minimal 5 Karakter dan Maksimal 500 Karakter!"
+                { min: 5, max: 1000 },
+                "Minimal 5 Karakter dan Maksimal 1000 Karakter!"
             ),
             aliran: isNotEmpty("Tidak boleh kosong!"),
             media: isNotEmpty("Tidak boleh kosong!"),

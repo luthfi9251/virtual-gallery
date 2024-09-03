@@ -18,11 +18,13 @@ export default function PameranProvider({ children, karya }) {
         initialValues: {
             nama_pameran: "",
             deskripsi: "",
+            initiator_id: "",
             tanggal: [null, null],
         },
         validate: {
             nama_pameran: isNotEmpty("Tidak Boleh Kosong!"),
             deskripsi: isNotEmpty("Tidak Boleh Kosong!"),
+            initiator_id: isNotEmpty("Tidak Boleh Kosong!"),
             tanggal: (value) =>
                 value[0] === null || value[1] === null
                     ? "Jadwal tidak boleh kosong"

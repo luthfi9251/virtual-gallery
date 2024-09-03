@@ -129,7 +129,7 @@ function KaryaInformationSection({ data }) {
                         </tr>
                         <tr className="h-[20px]">
                             <td className="w-[90px]">Media</td>
-                            <td>Canvas</td>
+                            <td>{data?.media}</td>
                         </tr>
                         <tr className="h-[20px]">
                             <td className="w-[90px]">Teknik</td>
@@ -137,7 +137,7 @@ function KaryaInformationSection({ data }) {
                         </tr>
                         <tr className="h-[20px]">
                             <td className="w-[90px]">Aliran</td>
-                            <td>Sesat</td>
+                            <td>{data?.aliran}</td>
                         </tr>
                         <tr className="h-[20px]">
                             <td className="w-[90px]">Ukuran</td>

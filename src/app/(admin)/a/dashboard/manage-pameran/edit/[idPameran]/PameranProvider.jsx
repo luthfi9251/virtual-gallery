@@ -19,6 +19,7 @@ export default function PameranProvider({ children, karya, data }) {
         initialValues: {
             nama_pameran: data.nama_pameran,
             deskripsi: data.deskripsi,
+            initiator_id: data.Seniman.id,
             tanggal: [new Date(data.tgl_mulai), new Date(data.tgl_selesai)],
         },
         validate: {

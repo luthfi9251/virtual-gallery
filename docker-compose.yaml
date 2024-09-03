@@ -10,4 +10,4 @@ services:
         env_file:
             - .env
         environment:
-            - DATABASE_URL=mysql://root:root@localhost:3306/tanart-virtual-gallery?schema=public
+            - DATABASE_URL=mysql://root:B4rc3lon4@host.docker.internal:3306/tanart-virtual-gallery?schema=public

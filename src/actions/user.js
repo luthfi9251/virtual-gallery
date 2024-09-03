@@ -80,7 +80,7 @@ export const getUserDataById = async (id) => {
     return data;
 };
 
-export const addUser = async (data) => {
+export const addUser = async (data, withLogin = true) => {
     try {
         const {
             username,
@@ -103,7 +103,9 @@ export const addUser = async (data) => {
                 role,
             },
         });
-        await loginUser({ email, password });
+        if (withLogin) {
+            await loginUser({ email, password });
+        }
         return addQuery;
     } catch (err) {
         console.log(err);
@@ -181,7 +183,7 @@ export const addPelukisOrKurator = async (data, mode) => {
 
 export const adminAddUser = async (dataUser, aksesAkun) => {
     try {
-        let user = await addUser(dataUser);
+        let user = await addUser(dataUser, false);
         if (aksesAkun.length > 0) {
             let dataAkses = {
                 user_id: user.id,
