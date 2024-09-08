@@ -67,6 +67,11 @@ export default async function Page() {
                         )?.value || ""
                     }
                 />
+                <CardText
+                    href={URL_TANART.ADMIN_FAQ_LIST}
+                    tag="FAQ List"
+                    content="Ubah pertanyaan dan jawaban pada halaman Bantuan"
+                />
             </Stack>
         </Container>
     );

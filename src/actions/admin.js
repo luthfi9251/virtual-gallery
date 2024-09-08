@@ -1202,3 +1202,220 @@ export const deletekomentarKurasiKurator = async (idKurasi, idKarya) => {
         return serverResponseFormat(null, true, err.message);
     }
 };
+
+export const addFAQAdmin = async (data) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+
+        let TAG_FAQ_JENIS = "FAQ_LIST_ITEM";
+
+        //find all faq list
+        let pageData = await prisma.CMSPageVariable.findUnique({
+            where: {
+                tag: TAG_FAQ_JENIS,
+            },
+        });
+
+        let dataWillBeInserrted = {
+            id: Date.now() + "",
+            title: data.pertanyaan,
+            deskripsi: data.deskripsi,
+            jenis: data.jenis,
+        };
+
+        let parsedData = pageData ? JSON.parse(pageData.value) : [];
+        parsedData.push(dataWillBeInserrted);
+
+        let saveData = await prisma.CMSPageVariable.upsert({
+            where: {
+                tag: TAG_FAQ_JENIS,
+            },
+            create: {
+                tag: TAG_FAQ_JENIS,
+                value: JSON.stringify(parsedData),
+                page_group: "FAQ",
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+            update: {
+                value: JSON.stringify(parsedData),
+                page_group: "FAQ",
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+        });
+        revalidatePath(URL_TANART.ADMIN_FAQ_LIST);
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getAllFAQList = async (data) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+
+        let TAG_FAQ_JENIS = "FAQ_LIST_ITEM";
+
+        //find all faq list
+        let faqList = await prisma.CMSPageVariable.findUnique({
+            where: {
+                tag: TAG_FAQ_JENIS,
+            },
+        });
+        let parsed = faqList ? JSON.parse(faqList.value) : [];
+
+        return serverResponseFormat(parsed, false, null);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const deleteFAQIteminList = async (id) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+
+        let TAG_FAQ_JENIS = "FAQ_LIST_ITEM";
+
+        //find all faq list
+        let faqList = await prisma.CMSPageVariable.findUnique({
+            where: {
+                tag: TAG_FAQ_JENIS,
+            },
+        });
+        let parsed = faqList ? JSON.parse(faqList.value) : [];
+        let filtered = parsed.filter((item) => {
+            return item.id !== id;
+        });
+
+        let saveData = await prisma.CMSPageVariable.upsert({
+            where: {
+                tag: TAG_FAQ_JENIS,
+            },
+            create: {
+                tag: TAG_FAQ_JENIS,
+                value: JSON.stringify(filtered),
+                page_group: "FAQ",
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+            update: {
+                value: JSON.stringify(filtered),
+                page_group: "FAQ",
+                UpdatedBy: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+        });
+        revalidatePath(URL_TANART.ADMIN_FAQ_LIST);
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const getFAQListByID = async (id) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+
+        let TAG_FAQ_JENIS = "FAQ_LIST_ITEM";
+
+        //find all faq list
+        let faqList = await prisma.CMSPageVariable.findUnique({
+            where: {
+                tag: TAG_FAQ_JENIS,
+            },
+        });
+        let parsed = faqList ? JSON.parse(faqList.value) : [];
+        let findItemByID = parsed.find((item) => item.id === id);
+        return serverResponseFormat(findItemByID, false, null);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
+
+export const editFAQListByID = async (id, data) => {
+    try {
+        let session = await auth();
+        if (session.user?.role !== "ADMIN") {
+            throw new Error("Anda tidak memiliki akses");
+        }
+
+        let TAG_FAQ_JENIS = "FAQ_LIST_ITEM";
+
+        //find all faq list
+        let faqList = await prisma.CMSPageVariable.findUnique({
+            where: {
+                tag: TAG_FAQ_JENIS,
+            },
+        });
+        let parsed = faqList ? JSON.parse(faqList.value) : [];
+        let findItemIdx = parsed.findIndex((item) => item.id === id);
+        if (findItemIdx >= 0) {
+            parsed[findItemIdx] = {
+                id: id,
+                title: data.pertanyaan,
+                deskripsi: data.deskripsi,
+                jenis: data.jenis,
+            };
+            let saveData = await prisma.CMSPageVariable.upsert({
+                where: {
+                    tag: TAG_FAQ_JENIS,
+                },
+                create: {
+                    tag: TAG_FAQ_JENIS,
+                    value: JSON.stringify(parsed),
+                    page_group: "FAQ",
+                    UpdatedBy: {
+                        connect: {
+                            id: session.user.id,
+                        },
+                    },
+                },
+                update: {
+                    value: JSON.stringify(parsed),
+                    page_group: "FAQ",
+                    UpdatedBy: {
+                        connect: {
+                            id: session.user.id,
+                        },
+                    },
+                },
+            });
+        } else {
+            throw new Error("ID tidak ditemukan!");
+        }
+        revalidatePath(URL_TANART.ADMIN_FAQ_LIST);
+        return serverResponseFormat("OK", false, null);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};

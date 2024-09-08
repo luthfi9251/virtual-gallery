@@ -87,6 +87,7 @@ export default function Navbar({ children, session }) {
                         >
                             <NavItem title="Home" href="/" />
                             <NavItem title="Pameran" href="/pameran" />
+                            <NavItem title="Bantuan" href="/bantuan" />
                         </Group>
                         {/* <AvatarNavbar /> */}
                         <Box visibleFrom="sm">
@@ -114,7 +115,8 @@ export default function Navbar({ children, session }) {
                 <AppShellSection grow>
                     <Stack gap="sm" className="h-full w-full">
                         <NavItem title="Home" href="/" />
-                        <NavItem title="Pameran" href="/" />
+                        <NavItem title="Pameran" href="/pameran" />
+                        <NavItem title="Bantuan" href="/bantuan" />
                     </Stack>
                 </AppShellSection>
                 <AppShellSection px="md">

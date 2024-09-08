@@ -12,6 +12,9 @@ export const URL_TANART = {
     ADMIN_CMS_VIRTUAL_GENERAL: "/a/dashboard/cms-general-vg",
     ADMIN_CMS_VIRTUAL_GENERAL_EDIT: (mode) =>
         `/a/dashboard/cms-general-vg/edit?mode=${mode}`,
+    ADMIN_FAQ_LIST: "/a/dashboard/cms-general-vg/faq",
+    ADMIN_FAQ_ADD: "/a/dashboard/cms-general-vg/faq/add",
+    ADMIN_FAQ_EDIT: (id) => "/a/dashboard/cms-general-vg/faq/edit/" + id,
     KURATOR_DASHBOARD_KURASI: "/k/kurasi-karya",
     PELUKIS_KARYA: "/p/karya",
     PELUKIS_EDIT_KARYA: (id) => `/p/karya/edit/${id}`,

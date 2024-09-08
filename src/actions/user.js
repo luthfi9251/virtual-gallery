@@ -550,3 +550,54 @@ export const editProfile = async (formData) => {
         return serverResponseFormat(null, true, errMessage);
     }
 };
+
+export const getAllFAQAndGrouped = async () => {
+    try {
+        let TAG_FAQ_JENIS = "FAQ_LIST_ITEM";
+
+        //find all faq list
+        let faqList = await prisma.CMSPageVariable.findUnique({
+            where: {
+                tag: TAG_FAQ_JENIS,
+            },
+        });
+        let parsed = faqList ? JSON.parse(faqList.value) : [];
+
+        let grouped = {
+            umum: [],
+            pelukis: [],
+            kurator: [],
+        };
+
+        parsed.forEach((item) => {
+            item.value = item.id;
+            if (item.jenis === "UMUM") {
+                grouped.umum.push(item);
+            } else if (item.jenis === "PELUKIS") {
+                grouped.pelukis.push(item);
+            } else {
+                grouped.kurator.push(item);
+            }
+        });
+
+        let dataReady = [
+            {
+                title: "Umum",
+                faq_list: grouped.umum,
+            },
+            {
+                title: "Pelukis",
+                faq_list: grouped.pelukis,
+            },
+            {
+                title: "Kurator",
+                faq_list: grouped.kurator,
+            },
+        ];
+
+        return serverResponseFormat(dataReady, false, null);
+    } catch (err) {
+        console.log(err);
+        return serverResponseFormat(null, true, err.message);
+    }
+};
