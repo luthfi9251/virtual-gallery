@@ -575,7 +575,8 @@ export const addAndUpdateContact = async (data) => {
 
         let dataMapped = {
             instagram: data?.instagram || "null",
-            x: data?.x || "null",
+            facebook: data?.facebook || "null",
+            hp: data?.hp || "null",
             gmail: data?.gmail || "null",
             alamat: data?.alamat || "null",
         };

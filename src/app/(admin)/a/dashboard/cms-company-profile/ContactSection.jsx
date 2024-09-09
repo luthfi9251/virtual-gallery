@@ -10,7 +10,8 @@ export default function ContactSection({ data }) {
         mode: "uncontrolled",
         initialValues: {
             instagram: data?.instagram === "null" ? "" : data?.instagram,
-            x: data?.x === "null" ? "" : data?.x,
+            facebook: data?.facebook === "null" ? "" : data?.facebook,
+            hp: data?.hp === "null" ? "" : data?.hp,
             gmail: data?.gmail === "null" ? "" : data?.gmail,
             alamat: data?.alamat === "null" ? "" : data?.alamat,
         },
@@ -69,9 +70,16 @@ export default function ContactSection({ data }) {
                         className=""
                     />
                     <TextInput
-                        key={form.key("x")}
-                        {...form.getInputProps("x")}
-                        label="X"
+                        key={form.key("facebook")}
+                        {...form.getInputProps("facebook")}
+                        label="Facebook"
+                        description="Dapat dikosongi bila tidak ada"
+                        className=""
+                    />
+                    <TextInput
+                        key={form.key("hp")}
+                        {...form.getInputProps("hp")}
+                        label="Nomor HP"
                         description="Dapat dikosongi bila tidak ada"
                         className=""
                     />
