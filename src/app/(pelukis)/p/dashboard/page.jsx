@@ -7,8 +7,8 @@ import FAQ from "./FAQ";
 export default function Home(props) {
     return (
         <div className="max-w-[1100px] mx-auto">
-            <div>
-                <Title order={2}>Selamat Datang, Luthfi</Title>
+            <div className="p-2 md:p-0">
+                <Title order={2}>Selamat Datang</Title>
                 <Space h="xl" />
                 <Stack>
                     <SimpleGrid cols={{ base: 1, md: 2 }}>

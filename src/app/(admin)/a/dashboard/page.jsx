@@ -6,8 +6,8 @@ import PameranSummary from "./PameranSummary";
 export default async function Page(props) {
     return (
         <div className="">
-            <div>
-                <Title order={2}>Selamat Datang, Luthfi</Title>
+            <div className="p-2 md:p-0">
+                <Title order={2}>Selamat Datang</Title>
                 <Space h="xl" />
                 <Stack>
                     <UserSummary />
