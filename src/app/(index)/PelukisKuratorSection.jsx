@@ -5,6 +5,7 @@ import Image from "next/image";
 
 export default async function PelukisKuratorSection() {
     let data = await getCMSVirtualGalleryData();
+    console.log({ data });
     return (
         <div className="flex flex-col justify-center items-center p-5 py-14 gap-7">
             <Title className="text-center">TELAH BERGABUNG</Title>

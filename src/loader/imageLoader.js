@@ -11,63 +11,58 @@ function classifiedImageSize(width) {
 const IMAGE_SERVICE_URL = process.env.NEXT_PUBLIC_IMAGE_SERVICE_URL;
 
 export default function myImageLoader({ src, width, quality }) {
-    if (src.includes("picsum.photos")) {
-        return src;
-    }
-    let classifiedFolder = classifiedImageSize(width);
-    return `${IMAGE_SERVICE_URL}/${classifiedFolder}/${src}`;
+    // if (src.includes("picsum.photos")) {
+    //     return src;
+    // }
+    // let classifiedFolder = classifiedImageSize(width);
+    // return `${IMAGE_SERVICE_URL}/${classifiedFolder}/${src}`;
+    return src;
 }
 
 export const karyaImageLoader = ({ src, width, quality }) => {
-    if (src.includes("picsum.photos")) {
-        return src;
-    }
+    // if (src.includes("picsum.photos")) {
+    //     return src;
+    // }
 
-    if (quality < 50) {
-        return `${IMAGE_SERVICE_URL}/thumbnailBase/${src}`;
-    } else {
-        return `${IMAGE_SERVICE_URL}/original/${src}`;
-    }
+    // if (quality < 50) {
+    //     return `${IMAGE_SERVICE_URL}/thumbnailBase/${src}`;
+    // } else {
+    //     return `${IMAGE_SERVICE_URL}/original/${src}`;
+    // }
+    return src;
 };
 
 export const pameranSampulLoader = ({ src, quality }) => {
-    if (src.includes("picsum.photos")) {
-        return src;
-    }
-    if (quality < 50) {
-        return `${IMAGE_SERVICE_URL}/250x334/${src}`;
-    } else {
-        return `${IMAGE_SERVICE_URL}/original/${src}`;
-    }
+    // if (src.includes("picsum.photos")) {
+    //     return src;
+    // }
+    // if (quality < 50) {
+    //     return `${IMAGE_SERVICE_URL}/250x334/${src}`;
+    // } else {
+    //     return `${IMAGE_SERVICE_URL}/original/${src}`;
+    // }
+    return src;
 };
 
 export const pameranBannerLoader = ({ src, quality }) => {
-    if (src.includes("picsum.photos")) {
-        return src;
-    }
-    if (quality < 50) {
-        return `${IMAGE_SERVICE_URL}/1000x334/${src}`;
-    } else {
-        return `${IMAGE_SERVICE_URL}/original/${src}`;
-    }
+    // if (src.includes("picsum.photos")) {
+    //     return src;
+    // }
+    // if (quality < 50) {
+    //     return `${IMAGE_SERVICE_URL}/1000x334/${src}`;
+    // } else {
+    //     return `${IMAGE_SERVICE_URL}/original/${src}`;
+    // }
+    return src;
 };
 
 export const profileLoaderFotoProfil = ({ src, quality }) => {
-    if (src.includes("picsum.photos")) {
-        return src;
-    }
-    return `${IMAGE_SERVICE_URL}/200x200/${src}`;
+    return src;
 };
 export const profileLoaderFotoSampul = ({ src, quality }) => {
-    if (src.includes("picsum.photos")) {
-        return src;
-    }
-    return `${IMAGE_SERVICE_URL}/1200x240/${src}`;
+    return src;
 };
 
 export const landingPageFeaturedLoader = ({ src }) => {
-    if (src.includes("picsum.photos")) {
-        return src;
-    }
-    return `${IMAGE_SERVICE_URL}${src}`;
+    return src;
 };

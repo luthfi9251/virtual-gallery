@@ -39,6 +39,7 @@
         "@tiptap/react": "^2.6.4",
         "@tiptap/starter-kit": "^2.6.4",
         "bcryptjs": "^2.4.3",
+        "cloudinary": "^2.5.1",
         "clsx": "^2.1.1",
         "dayjs": "^1.11.11",
         "mantine-react-table": "^2.0.0-beta.4",

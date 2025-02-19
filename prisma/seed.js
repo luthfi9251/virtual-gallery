@@ -231,9 +231,9 @@ async function seedVirtualGalleryLandingPageData(idAdmin) {
         BIO_FEATURED_PELUKIS:
             "Seorang seniman produktif yang telah menghasilkan berbagai karya lukisan, masing-masing menampilkan keunikan dan kedalaman visi kreatifnya, serta mampu menyentuh hati dan pikiran banyak orang.",
         FOTO_FEATURED_PELUKIS:
-            "/300x375/fe310b00-1eda-449c-bab7-a587ea412507.jpeg",
+            "https://res.cloudinary.com/dwsf7qb6y/image/upload/c_thumb,w_200,g_face/v1739969633/tanart/uhgblewx97gohdsl0ois.jpg",
         FOTO_FEATURED_KURATOR:
-            "/300x375/fe310b00-1eda-449c-bab7-a587ea412507.jpeg",
+            "https://res.cloudinary.com/dwsf7qb6y/image/upload/c_thumb,w_200,g_face/v1739969631/tanart/lvvlvjukw1sypythsp2q.png",
     };
     const PAGE_GROUP = "CMS_VIRTUAL_GALLERY";
     let tagList = Object.keys(TAG_CMS_VIRTUAL_GALLERY);

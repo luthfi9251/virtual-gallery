@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: "standalone",
+    // output: "standalone",
     images: {
         remotePatterns: [
             {
@@ -18,6 +18,11 @@ const nextConfig = {
                 protocol: "https",
                 hostname: "images.tanartspace.com",
                 pathname: "/img/**",
+            },
+            {
+                protocol: "https",
+                hostname: "cloudinary.com",
+                pathname: "/**",
             },
             {
                 protocol: "https",
