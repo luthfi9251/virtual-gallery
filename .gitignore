@@ -40,3 +40,5 @@ next-env.d.ts
 
 /public/bukti_transfer/*
 .env
+
+*.zip

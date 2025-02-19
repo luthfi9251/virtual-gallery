@@ -8,7 +8,8 @@
         "start": "next start",
         "lint": "next lint",
         "cypress:open": "cypress open",
-        "cypress:headless": "cypress run --headless --browser chrome"
+        "cypress:headless": "cypress run --headless --browser chrome",
+        "postinstall": "prisma generate"
     },
     "prisma": {
         "seed": "node prisma/seed.js"
